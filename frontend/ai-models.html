@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS AI Models — Catalog of the predictive intelligence models powering the climate-health platform." />
+  <title>CHEWS — AI Models</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div>
+  </div>
+  <div class="app-layout">
+            <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section"><div class="nav-section__label">Overview</div>
+          <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="map"></i></span>
+              <span class="nav-link__text">Strategic Planning</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="strategic.html#vulnerability" class="nav-sublink">Vulnerability Score</a>
+              <a href="strategic.html#hazard" class="nav-sublink">Hazard Map</a>
+              <a href="strategic.html#pollution" class="nav-sublink">Pollution Hotspot</a>
+              <a href="strategic.html#carbon" class="nav-sublink">Carbon Footprint</a>
+            </div>
+          </div>
+          
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="zap"></i></span>
+              <span class="nav-link__text">Early Warning</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="early-warning.html" class="nav-sublink">Warning Center</a>
+            </div>
+          </div>
+
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="hospital"></i></span>
+              <span class="nav-link__text">Healthcare Readiness</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="healthcare.html#forecast" class="nav-sublink">Disease Forecast</a>
+              <a href="healthcare.html#anomaly" class="nav-sublink">Anomaly Detection</a>
+              <a href="healthcare.html#surge" class="nav-sublink">Surge Planning</a>
+            </div>
+          </div>
+
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="pill"></i></span>
+              <span class="nav-link__text">Point-of-Care</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="point-of-care.html#triage" class="nav-sublink">Multilingual Triage</a>
+              <a href="point-of-care.html#assistant" class="nav-sublink">Health Assistant</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div><div class="topbar__title">AI Models</div><div class="topbar__subtitle">The predictive intelligence powering CHEWS</div></div>
+        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+      </div>
+
+      <div class="page fade-in">
+        <!-- Hero -->
+        <div class="models-hero">
+          <div class="models-hero__eyebrow">Open AI · Explainable · Decision-grade</div>
+          <h1 class="models-hero__title">A modular ML pipeline for climate-health intelligence</h1>
+          <p class="models-hero__desc">
+            CHEWS runs a multi-layer machine learning architecture: hazard-specific risk models,
+            an epidemiological forecaster, a vulnerability engine, a healthcare readiness model,
+            and a fusion layer that combines them into a single, explainable decision score.
+            Every prediction ships with drivers, confidence, and a model card.
+          </p>
+          <div class="grid-4">
+            <div class="metric">
+              <div class="metric__icon"><i data-lucide="cpu"></i></div>
+              <div class="metric__label">Active Models</div>
+              <div class="metric__value text-accent" id="kpi-active">—</div>
+              <div class="metric__trend metric__trend--stable" id="kpi-active-sub">Loading…</div>
+            </div>
+            <div class="metric">
+              <div class="metric__icon"><i data-lucide="layers"></i></div>
+              <div class="metric__label">Model Families</div>
+              <div class="metric__value" style="color:var(--accent-2)">5</div>
+              <div class="metric__trend metric__trend--stable">Environmental · Epi · Vulnerability · Readiness · Fusion</div>
+            </div>
+            <div class="metric">
+              <div class="metric__icon"><i data-lucide="activity"></i></div>
+              <div class="metric__label">Avg Backtest Accuracy</div>
+              <div class="metric__value" style="color:var(--warning)">0.81</div>
+              <div class="metric__trend metric__trend--stable">AUC across predictive layer</div>
+            </div>
+            <div class="metric">
+              <div class="metric__icon"><i data-lucide="git-branch"></i></div>
+              <div class="metric__label">Open-Source Path</div>
+              <div class="metric__value" style="color:var(--purple)">DPG</div>
+              <div class="metric__trend metric__trend--stable">DPGA-aligned, schema-first</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter chips -->
+        <div class="models-filter" id="models-filter">
+          <button class="models-filter__chip is-active" data-filter="all" type="button">All <span class="models-filter__chip-count" data-count="all"></span></button>
+          <button class="models-filter__chip" data-filter="predictive" type="button">Predictive Core <span class="models-filter__chip-count" data-count="predictive"></span></button>
+          <button class="models-filter__chip" data-filter="hazard" type="button">Hazard Models <span class="models-filter__chip-count" data-count="hazard"></span></button>
+          <button class="models-filter__chip" data-filter="support" type="button">Decision Support <span class="models-filter__chip-count" data-count="support"></span></button>
+          <button class="models-filter__chip" data-filter="sustainability" type="button">Sustainability <span class="models-filter__chip-count" data-count="sustainability"></span></button>
+          <button class="models-filter__chip" data-filter="roadmap" type="button">Roadmap <span class="models-filter__chip-count" data-count="roadmap"></span></button>
+        </div>
+
+        <!-- ============================================================
+             SECTION 1: Core Prediction Layer
+             ============================================================ -->
+        <div class="models-section__heading"><i data-lucide="cpu"></i> Core Prediction Layer</div>
+        <div class="model-grid">
+
+          <!-- Environmental Risk Model -->
+          <div class="model-card" data-family="predictive" data-status="live" id="env-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="cloud-rain"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Environmental Risk Model</div>
+                <div class="model-card__sub">v1.2 · Predictive Core</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Predicts environmental suitability for malaria transmission and broader vector-borne disease risk from climate signals.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span>
+                <span class="model-chip">Rainfall</span><span class="model-chip">Temperature</span><span class="model-chip">Humidity</span><span class="model-chip">Soil saturation</span>
+              </div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span>
+                <span class="model-chip model-chip--out">Risk score 0–1</span><span class="model-chip model-chip--out">Factor contributions</span>
+              </div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">Gradient Boosting + sigmoid rules</div></div>
+              <div><div class="model-meta__label">Backtest AUC</div><div class="model-meta__value">0.83</div></div>
+              <div><div class="model-meta__label">Updated</div><div class="model-meta__value">Weekly</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/environmental.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="index.html#malaria-card" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-env">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-env">
+              <dl>
+                <dt>Training data</dt><dd>5 years of Sierra Leone DHIS2 case data joined with CHIRPS rainfall + NASA POWER reanalysis</dd>
+                <dt>Evaluation</dt><dd>Walk-forward CV, weekly horizon, chiefdom resolution</dd>
+                <dt>Top drivers</dt><dd>14-day rainfall sum, mean humidity (7d), breeding-site density</dd>
+                <dt>Known limits</dt><dd>Sparse station coverage in Tonkolili &amp; Kailahun; falls back to rule layer</dd>
+                <dt>Fairness</dt><dd>Stratified validation by chiefdom poverty band — no >5% accuracy gap</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Epidemiological Forecasting -->
+          <div class="model-card" data-family="predictive" data-status="live" id="epi-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="trending-up"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Epidemiological Forecasting Model</div>
+                <div class="model-card__sub">v0.9 · Predictive Core</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Forecasts disease onset, surge probability, and peak windows for malaria, cholera, dengue and respiratory illness.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span>
+                <span class="model-chip">Reported cases</span><span class="model-chip">Climate lag features</span><span class="model-chip">Seasonality</span><span class="model-chip">Community reports</span>
+              </div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span>
+                <span class="model-chip model-chip--out">Onset probability</span><span class="model-chip model-chip--out">Surge probability</span><span class="model-chip model-chip--out">Peak window</span><span class="model-chip model-chip--out">7d / 30d forecast</span>
+              </div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">Seasonal trend + GBM residual (NeuralProphet target)</div></div>
+              <div><div class="model-meta__label">Backtest MAE</div><div class="model-meta__value">±18% on weekly cases</div></div>
+              <div><div class="model-meta__label">Confidence</div><div class="model-meta__value">80% &amp; 95% PI bands</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/services/forecast_engine.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="healthcare.html#forecast" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-epi">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-epi">
+              <dl>
+                <dt>Diseases</dt><dd>Malaria, cholera, dengue, respiratory</dd>
+                <dt>Climate features</dt><dd>14-day rainfall, mean temperature, humidity, AQI lag</dd>
+                <dt>Use cases</dt><dd>District alerting, surge planning, supply pre-positioning</dd>
+                <dt>Roadmap</dt><dd>Migrate residual to NeuralProphet; add mobility proxies</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Vulnerability & Exposure -->
+          <div class="model-card" data-family="predictive" data-status="live" id="vuln-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="users"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Vulnerability &amp; Exposure Engine</div>
+                <div class="model-card__sub">v1.0 · Predictive Core</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Ranks communities by climate-health vulnerability using an IPCC-style composite of hazard, exposure, sensitivity and adaptive capacity.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span>
+                <span class="model-chip">Population density</span><span class="model-chip">U5 &amp; pregnant pop.</span><span class="model-chip">WASH coverage</span><span class="model-chip">ITN coverage</span><span class="model-chip">Road access</span>
+              </div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span>
+                <span class="model-chip model-chip--out">Composite score</span><span class="model-chip model-chip--out">Priority rank</span><span class="model-chip model-chip--out">Vulnerability level</span>
+              </div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">IPCC composite + Getis-Ord Gi* hot-spot</div></div>
+              <div><div class="model-meta__label">Spatial smoothing</div><div class="model-meta__value">Moran's I autocorrelation</div></div>
+              <div><div class="model-meta__label">Equity weighting</div><div class="model-meta__value">U5 + maternal variants</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/services/vulnerability.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="strategic.html#vulnerability" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-vuln">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-vuln">
+              <dl>
+                <dt>Data sources</dt><dd>WorldPop, DHS, OpenStreetMap, MoH facility registry</dd>
+                <dt>Resolution</dt><dd>Chiefdom-level (admin-3) for Sierra Leone</dd>
+                <dt>Validation</dt><dd>Cross-checked against UNICEF MICS deprivation rankings</dd>
+                <dt>Use cases</dt><dd>NGO intervention targeting, resource pre-positioning</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Healthcare Readiness -->
+          <div class="model-card" data-family="predictive" data-status="live" id="readiness-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="bed"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Healthcare Readiness Model</div>
+                <div class="model-card__sub">v0.8 · Predictive Core</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Predicts facility overload, supply pressure and surge response gaps for hospitals, health centers and clinics.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span>
+                <span class="model-chip">Bed capacity</span><span class="model-chip">Staff ratio</span><span class="model-chip">Supply days</span><span class="model-chip">Current cases</span><span class="model-chip">Forecast surge</span>
+              </div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span>
+                <span class="model-chip model-chip--out">Readiness score</span><span class="model-chip model-chip--out">Gap list</span><span class="model-chip model-chip--out">Expected surge cases</span><span class="model-chip model-chip--out">Action recs</span>
+              </div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">M/M/c queuing + LightGBM (historical surges)</div></div>
+              <div><div class="model-meta__label">Output tiers</div><div class="model-meta__value">Ready / Partial / At Risk / Critical Gap</div></div>
+              <div><div class="model-meta__label">Latency target</div><div class="model-meta__value">&lt;150ms p99</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/routers/healthcare.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="healthcare.html#surge" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-readiness">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-readiness">
+              <dl>
+                <dt>Use cases</dt><dd>Surge planning, supply pre-positioning, NGO logistics coordination</dd>
+                <dt>Integrations</dt><dd>Pulls stockouts from DHIS2 Logistics Management Information System (LMIS)</dd>
+                <dt>Roadmap</dt><dd>Add staff-availability time-series, integrate with mSupply</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Final Risk Intelligence Engine (Fusion) -->
+          <div class="model-card" data-family="predictive" data-status="live" id="fusion-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="layers-3"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Final Risk Intelligence Engine</div>
+                <div class="model-card__sub">v1.0 · Fusion Layer</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Combines all upstream models into a single decision-grade composite score with district prioritization and operational recommendations.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span>
+                <span class="model-chip">Environmental</span><span class="model-chip">Epidemiological</span><span class="model-chip">Exposure</span><span class="model-chip">Readiness</span>
+              </div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span>
+                <span class="model-chip model-chip--out">Composite risk</span><span class="model-chip model-chip--out">District ranking</span><span class="model-chip model-chip--out">Top-3 actions</span><span class="model-chip model-chip--out">Driver attribution</span>
+              </div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">Weighted ensemble, weights grid-searched on outbreaks</div></div>
+              <div><div class="model-meta__label">Default weights</div><div class="model-meta__value">Env 0.30 · Epi 0.35 · Vuln 0.20 · Readiness 0.15</div></div>
+              <div><div class="model-meta__label">Confidence</div><div class="model-meta__value">Data-completeness gated</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/risk_engine.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="index.html#malaria-card" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-fusion">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-fusion">
+              <dl>
+                <dt>Why a fusion layer?</dt><dd>Combines complementary signals so decision-makers see one number, not five dashboards</dd>
+                <dt>Override</dt><dd>MoH admins can rebalance weights per country; changes are versioned and audited</dd>
+                <dt>Decision support, not automation</dt><dd>Always shows the human override path — never auto-acts</dd>
+              </dl>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================
+             SECTION 2: Hazard-Specific Sub-Models
+             ============================================================ -->
+        <div class="models-section__heading"><i data-lucide="cloud-lightning"></i> Hazard-Specific Sub-Models</div>
+        <div class="model-grid">
+
+          <div class="model-card" data-family="hazard" data-status="live" id="flood-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="waves"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Flood Risk Model</div>
+                <div class="model-card__sub">v1.0 · Hazard</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Estimates flash-flood and waterlogging risk from rainfall intensity, accumulation and terrain.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Rain intensity</span><span class="model-chip">Rain 24h</span><span class="model-chip">Elevation</span><span class="model-chip">Soil saturation</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">Flood score</span><span class="model-chip model-chip--out">Impact statement</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Approach</div><div class="model-meta__value">Hydrologic threshold + terrain weighting</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/flood_risk.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="early-warning.html" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="hazard" data-status="live" id="heat-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="thermometer-sun"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Heat Stress Model</div>
+                <div class="model-card__sub">v1.0 · Hazard</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Computes wet-bulb globe temperature (WBGT) and heat category for outdoor exposure and maternal risk.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Temperature</span><span class="model-chip">Humidity</span><span class="model-chip">UV index</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">WBGT</span><span class="model-chip model-chip--out">Heat category</span><span class="model-chip model-chip--out">Protective actions</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Approach</div><div class="model-meta__value">WBGT formula (Liljegren) + threshold mapping</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/heat_stress.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="early-warning.html" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="hazard" data-status="live" id="aq-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="wind"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Air Quality Model</div>
+                <div class="model-card__sub">v1.0 · Hazard</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Converts PM2.5 / PM10 readings into AQI bands and health-impact guidance for sensitive groups.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">PM2.5</span><span class="model-chip">PM10</span><span class="model-chip">NO₂</span><span class="model-chip">O₃</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">AQI</span><span class="model-chip model-chip--out">Category</span><span class="model-chip model-chip--out">Sensitive-group risk</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Approach</div><div class="model-meta__value">EPA AQI formula + dose-response health impact</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/air_quality.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="early-warning.html" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================
+             SECTION 3: Decision Support & Detection
+             ============================================================ -->
+        <div class="models-section__heading"><i data-lucide="sparkles"></i> Decision Support &amp; Detection</div>
+        <div class="model-grid">
+
+          <div class="model-card" data-family="support" data-status="live" id="assistant-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="bot"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">AI Health Assistant</div>
+                <div class="model-card__sub">v0.7 · Decision Support</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Multilingual triage and prevention guidance for community health workers, mothers and caregivers — with offline fallback.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Symptoms</span><span class="model-chip">Patient group</span><span class="model-chip">Language</span><span class="model-chip">Climate context</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">Urgency level</span><span class="model-chip model-chip--out">Actions</span><span class="model-chip model-chip--out">Prevention guidance</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Architecture</div><div class="model-meta__value">RAG over WHO/MoH guidelines + slot-filled triage paths</div></div>
+              <div><div class="model-meta__label">Languages</div><div class="model-meta__value">English, Krio, Français (Mende/Temne roadmap)</div></div>
+              <div><div class="model-meta__label">Safety rails</div><div class="model-meta__value">No diagnosis, no prescriptions, always cites referral path</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/services/triage_assistant.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="point-of-care.html#assistant" class="btn btn--secondary btn--sm">Try it →</a>
+              <button class="btn btn--ghost btn--sm" type="button" data-toggle="card-assistant">View model card</button>
+            </div>
+            <div class="model-card__details" id="card-assistant">
+              <dl>
+                <dt>Offline mode</dt><dd>5 MB on-device knowledge pack covers the top 30 community questions</dd>
+                <dt>Channels</dt><dd>Web FAB on every page, dedicated Point-of-Care tab, SMS fallback (roadmap)</dd>
+                <dt>Ethics</dt><dd>Cannot diagnose or prescribe — every answer ends with a referral guidance line</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="support" data-status="live" id="explainability">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="brain"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Explainability Layer</div>
+                <div class="model-card__sub">v1.0 · Decision Support</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Every prediction ships with feature attribution, counterfactual suggestions and a human-readable narrative.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Any model output</span><span class="model-chip">Feature vector</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">Driver bars</span><span class="model-chip model-chip--out">Counterfactuals</span><span class="model-chip model-chip--out">Narrative</span><span class="model-chip model-chip--out">Model card link</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Methods</div><div class="model-meta__value">SHAP-style attribution, contribution decomposition</div></div>
+              <div><div class="model-meta__label">Where it's shown</div><div class="model-meta__value">Inline on every result panel — not hidden in tooltips</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="index.html#model-explainability" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="support" data-status="live" id="anomaly-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="search"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Anomaly Detector</div>
+                <div class="model-card__sub">v0.6 · Decision Support</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Surfaces statistically unusual readings against historical baselines — used to spot pollution spikes, heat anomalies and case anomalies.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Observed vs expected</span><span class="model-chip">Temporal window</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">Severity</span><span class="model-chip model-chip--out">Possible causes</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Algorithm</div><div class="model-meta__value">Z-score + seasonal decomposition</div></div>
+              <div><div class="model-meta__label">Roadmap</div><div class="model-meta__value">Add spatial autocorrelation (Moran's I)</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="healthcare.html#anomaly" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="support" data-status="live" id="alert-engine">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="bell-ring"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Alert Engine</div>
+                <div class="model-card__sub">v1.0 · Decision Support</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Rule-based, deterministic alert generation with tiered escalation (HCW → DHO → MoH → national EOC).</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Model outputs</span><span class="model-chip">Thresholds</span><span class="model-chip">Location</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">Severity</span><span class="model-chip model-chip--out">Audience</span><span class="model-chip model-chip--out">Auto-trigger flag</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Why rule-based?</div><div class="model-meta__value">Auditable, deterministic, regulator-friendly</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/services/alert_engine.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="early-warning.html#section-alert-feed" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================
+             SECTION 4: Sustainability
+             ============================================================ -->
+        <div class="models-section__heading"><i data-lucide="leaf"></i> Sustainability</div>
+        <div class="model-grid">
+          <div class="model-card" data-family="sustainability" data-status="live" id="carbon-model">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="leaf"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Carbon Accounting Model</div>
+                <div class="model-card__sub">v1.0 · Sustainability</div>
+              </div>
+              <span class="model-status model-status--live">Live</span>
+            </div>
+            <p class="model-card__desc">Estimates facility-level GHG emissions from diesel, charcoal, kerosene, grid and generator usage — and quantifies solar mitigation.</p>
+            <div class="model-card__io">
+              <div class="model-io-row"><span class="model-io-label">Inputs</span><span class="model-chip">Diesel</span><span class="model-chip">Charcoal</span><span class="model-chip">Electricity</span><span class="model-chip">Generator hrs</span><span class="model-chip">Solar kWh</span></div>
+              <div class="model-io-row"><span class="model-io-label">Outputs</span><span class="model-chip model-chip--out">kgCO₂e</span><span class="model-chip model-chip--out">Per-source breakdown</span><span class="model-chip model-chip--out">Mitigation potential</span></div>
+            </div>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Method</div><div class="model-meta__value">IPCC Tier 1 emission factors</div></div>
+              <div><div class="model-meta__label">Repo</div><div class="model-meta__value">backend/models/carbon_accounting.py</div></div>
+            </div>
+            <div class="model-card__actions">
+              <a href="strategic.html#carbon" class="btn btn--secondary btn--sm">Try it →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 5: Roadmap
+             ============================================================ -->
+        <div class="models-section__heading"><i data-lucide="git-branch"></i> Roadmap &amp; Research</div>
+        <div class="model-grid">
+
+          <div class="model-card" data-family="roadmap" data-status="roadmap">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="line-chart"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">7-Day NeuralProphet Forecaster</div>
+                <div class="model-card__sub">Predictive Core · roadmap</div>
+              </div>
+              <span class="model-status model-status--roadmap">Phase 1</span>
+            </div>
+            <p class="model-card__desc">Hybrid NeuralProphet + LightGBM residual model with 80% / 95% prediction intervals for chiefdom-week disease forecasting.</p>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Target horizon</div><div class="model-meta__value">7 &amp; 30 day</div></div>
+              <div><div class="model-meta__label">Why</div><div class="model-meta__value">Replaces linear forecaster with calibrated PI bands</div></div>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="roadmap" data-status="roadmap">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="scatter-chart"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Community Cluster Detector</div>
+                <div class="model-card__sub">Detection · roadmap</div>
+              </div>
+              <span class="model-status model-status--roadmap">Phase 4</span>
+            </div>
+            <p class="model-card__desc">Spatio-temporal DBSCAN over community fever reports to surface outbreaks 5–10 days ahead of formal surveillance.</p>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Window</div><div class="model-meta__value">7 days, 5 km radius (tunable)</div></div>
+              <div><div class="model-meta__label">Privacy</div><div class="model-meta__value">PII hashed; only aggregates leave the service</div></div>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="roadmap" data-status="roadmap">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="baby"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Maternal Heat Risk Model</div>
+                <div class="model-card__sub">Maternal &amp; Child Health · roadmap</div>
+              </div>
+              <span class="model-status model-status--roadmap">Phase 5</span>
+            </div>
+            <p class="model-card__desc">Predicts excess obstetric admissions during heatwaves to pre-position maternal staff and supplies.</p>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Inputs</div><div class="model-meta__value">Heat index, maternal denominator, ANC coverage</div></div>
+              <div><div class="model-meta__label">Why</div><div class="model-meta__value">UNICEF child-centered resilience priority</div></div>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="roadmap" data-status="roadmap">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="languages"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">Multilingual NLP (Mende &amp; Temne)</div>
+                <div class="model-card__sub">Assistant · roadmap</div>
+              </div>
+              <span class="model-status model-status--roadmap">Phase 3</span>
+            </div>
+            <p class="model-card__desc">Expands the AI Health Assistant to Mende and Temne to reach 95% of Sierra Leone's population in their first language.</p>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Approach</div><div class="model-meta__value">Curated KB + community-validated translations</div></div>
+              <div><div class="model-meta__label">Why</div><div class="model-meta__value">DPG language inclusivity indicator</div></div>
+            </div>
+          </div>
+
+          <div class="model-card" data-family="roadmap" data-status="roadmap">
+            <div class="model-card__head">
+              <div class="model-card__icon"><i data-lucide="radio-tower"></i></div>
+              <div class="model-card__title-wrap">
+                <div class="model-card__title">IoT Sensor Fusion</div>
+                <div class="model-card__sub">Hazard · roadmap</div>
+              </div>
+              <span class="model-status model-status--roadmap">Future</span>
+            </div>
+            <p class="model-card__desc">Ingests low-cost IoT weather and AQ stations as a complement to satellite reanalysis for hyper-local predictions.</p>
+            <div class="model-card__meta">
+              <div><div class="model-meta__label">Why</div><div class="model-meta__value">Reduces spatial sparsity in remote chiefdoms</div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================
+             Open-source / DPG strip
+             ============================================================ -->
+        <div class="card mt-1 mb-1">
+          <div class="card__header">
+            <div>
+              <div class="card__title"><i data-lucide="git-branch"></i> Open-Source &amp; Digital Public Good Strategy</div>
+              <div class="card__desc">CHEWS is designed to register with the Digital Public Goods Alliance.</div>
+            </div>
+          </div>
+          <div class="grid-3 mb-1">
+            <div class="result-panel result-panel--info">
+              <div class="section-heading"><i data-lucide="check-circle"></i> Open from day one</div>
+              <ul class="result-list result-list--success">
+                <li>Schema + OpenAPI spec</li>
+                <li>Environmental, Flood, Heat models</li>
+                <li>Vulnerability index methodology</li>
+                <li>Community Reporting SDK (PWA + SMS)</li>
+              </ul>
+            </div>
+            <div class="result-panel result-panel--warning">
+              <div class="section-heading"><i data-lucide="lock"></i> Gated by data agreements</div>
+              <ul class="result-list result-list--warning">
+                <li>Country-trained weights (when trained on patient-level data)</li>
+                <li>Named-official escalation rules</li>
+                <li>NGO operations templates with org-specific data</li>
+              </ul>
+            </div>
+            <div class="result-panel result-panel--accent">
+              <div class="section-heading"><i data-lucide="external-link"></i> Standards alignment</div>
+              <ul class="result-list result-list--success">
+                <li>DHIS2 App Hub plugin (read + write)</li>
+                <li>DPGA 9-indicator alignment</li>
+                <li>Aggregated datasets on Zenodo</li>
+                <li>CC-BY-4.0 for aggregates</li>
+              </ul>
+            </div>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-dim);text-align:center">
+            Full design specification: <code>docs/ARCHITECTURE.md</code>
+          </p>
+        </div>
+
+      </div>
+      <footer class="footer"><p>CHEWS v3.0 · SafetySphere · AI Models · Sierra Leone </p></footer>
+    </main>
+  </div>
+  <script src="ai-models.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+  <script src="health-assistant.js"></script>
+</body>
+</html>
