@@ -116,3 +116,10 @@ async function askAssistant() {
     textEl.textContent = "Error connecting to assistant: " + err.message;
   }
 }
+
+document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+
+(function initFromHash() {
+  const h = location.hash.slice(1);
+  if (h && ["triage", "assistant"].includes(h)) switchTab(h);
+})();

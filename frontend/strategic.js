@@ -155,3 +155,10 @@ document.getElementById("carbon-form").addEventListener("submit", e => {
     has_solar: document.getElementById("c-has-solar").checked,
   }, "carbon-result");
 });
+
+document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+
+(function initFromHash() {
+  const h = location.hash.slice(1);
+  if (h && ["vulnerability", "hazard", "pollution", "carbon"].includes(h)) switchTab(h);
+})();

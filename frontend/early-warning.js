@@ -7,7 +7,7 @@ const API = "http://127.0.0.1:8000";
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");
 if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar--open")); }
 
-const SEVERITY_ICONS = { Emergency: "<i data-lucide="alert-circle" class="text-danger"></i>", Warning: "<i data-lucide="alert-triangle" class="text-warning"></i>", Watch: "<i data-lucide="info" class="text-warning"></i>", Advisory: "<i data-lucide="info" class="text-accent-2"></i>", Info: "<i data-lucide="info"></i>" };
+const SEVERITY_ICONS = { Emergency: `<i data-lucide="alert-circle" class="text-danger"></i>`, Warning: `<i data-lucide="alert-triangle" class="text-warning"></i>`, Watch: `<i data-lucide="info" class="text-warning"></i>`, Advisory: `<i data-lucide="info" class="text-accent-2"></i>`, Info: `<i data-lucide="info"></i>` };
 const SEVERITY_CLASS = { Emergency: "emergency", Warning: "warning", Watch: "watch", Advisory: "advisory" };
 
 // Comprehensive Assessment
@@ -57,10 +57,10 @@ function renderAssessment(data) {
 
   // Hazard cards
   const hazardConfig = {
-    air_quality: { icon: "<i data-lucide="wind"></i>", label: "Air Quality", main: `AQI ${data.hazards.air_quality.aqi}`, sub: data.hazards.air_quality.category },
-    flood: { icon: "<i data-lucide="waves"></i>", label: "Flood Risk", main: data.hazards.flood.score.toFixed(2), sub: data.hazards.flood.level },
-    heat: { icon: "<i data-lucide="thermometer"></i>", label: "Heat Stress", main: `${data.hazards.heat.wbgt}°C`, sub: data.hazards.heat.category },
-    uv: { icon: "<i data-lucide="sun"></i>", label: "UV Index", main: data.hazards.uv.index.toFixed(1), sub: data.hazards.uv.level },
+    air_quality: { icon: `<i data-lucide="wind"></i>`, label: "Air Quality", main: `AQI ${data.hazards.air_quality.aqi}`, sub: data.hazards.air_quality.category },
+    flood: { icon: `<i data-lucide="waves"></i>`, label: "Flood Risk", main: data.hazards.flood.score.toFixed(2), sub: data.hazards.flood.level },
+    heat: { icon: `<i data-lucide="thermometer"></i>`, label: "Heat Stress", main: `${data.hazards.heat.wbgt}°C`, sub: data.hazards.heat.category },
+    uv: { icon: `<i data-lucide="sun"></i>`, label: "UV Index", main: data.hazards.uv.index.toFixed(1), sub: data.hazards.uv.level },
   };
 
   for (const [, cfg] of Object.entries(hazardConfig)) {
@@ -94,7 +94,7 @@ function renderAssessment(data) {
 }
 
 function renderAlertItem(a) {
-  const icon = SEVERITY_ICONS[a.severity] || "<i data-lucide="info"></i>";
+  const icon = SEVERITY_ICONS[a.severity] || `<i data-lucide="info"></i>`;
   const cls = SEVERITY_CLASS[a.severity] || "advisory";
   return `<div class="alert-item">
     <div class="alert-item__severity alert-item__severity--${cls}">${icon}</div>
@@ -151,3 +151,5 @@ async function loadAlerts() {
 }
 
 loadAlerts();
+
+document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));

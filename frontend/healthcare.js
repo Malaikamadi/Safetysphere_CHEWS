@@ -42,7 +42,7 @@ function renderForecast(data) {
   el.classList.remove("hidden"); el.classList.add("slide-up");
 
   const lvlClass = data.predicted_risk_level.toLowerCase().replace(/\s+/g, '-');
-  const trendIcon = { Rising: "<i data-lucide="trending-up"></i>", Stable: "<i data-lucide="arrow-right"></i>", Declining: "<i data-lucide="trending-down"></i>" }[data.risk_trend] || "<i data-lucide="arrow-right"></i>";
+  const trendIcon = { Rising: `<i data-lucide="trending-up"></i>`, Stable: `<i data-lucide="arrow-right"></i>`, Declining: `<i data-lucide="trending-down"></i>` }[data.risk_trend] || `<i data-lucide="arrow-right"></i>`;
   const trendColor = { Rising: "var(--danger)", Stable: "var(--text-dim)", Declining: "var(--success)" }[data.risk_trend];
 
   el.innerHTML = `
@@ -209,3 +209,10 @@ function renderSurge(data) {
     </div>
   `;
 }
+
+document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+
+(function initFromHash() {
+  const h = location.hash.slice(1);
+  if (h && ["forecast", "anomaly", "surge"].includes(h)) switchTab(h);
+})();

@@ -38,6 +38,8 @@ if (menuToggle && sidebar) {
   });
 }
 
+document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+
 // ==================== System Health Check ====================
 async function checkHealth() {
   const statusEl = document.getElementById("api-status");
@@ -144,9 +146,9 @@ function showResults(data) {
 function renderModelCards(breakdown) {
   modelCards.innerHTML = "";
   const models = [
-    { key: "environmental", icon: "<i data-lucide="globe"></i>", name: "Environmental", color: "var(--accent)", weight: "40%" },
-    { key: "epidemiological", icon: "<i data-lucide="bar-chart-2"></i>", name: "Epidemiological", color: "var(--warning)", weight: "40%" },
-    { key: "exposure", icon: "<i data-lucide="users"></i>", name: "Exposure", color: "var(--purple)", weight: "20%" },
+    { key: "environmental", icon: `<i data-lucide="globe"></i>`, name: "Environmental", color: "var(--accent)", weight: "40%" },
+    { key: "epidemiological", icon: `<i data-lucide="bar-chart-2"></i>`, name: "Epidemiological", color: "var(--warning)", weight: "40%" },
+    { key: "exposure", icon: `<i data-lucide="users"></i>`, name: "Exposure", color: "var(--purple)", weight: "20%" },
   ];
   models.forEach(m => {
     const d = breakdown[m.key];

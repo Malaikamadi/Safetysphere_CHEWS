@@ -28,7 +28,7 @@
   --shadow: 0 8px 32px rgba(0,0,0,0.5);
   --shadow-lg: 0 16px 64px rgba(0,0,0,0.6);
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --sidebar-w: 260px;
+  --sidebar-w: 300px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -141,7 +141,7 @@ body {
 
 .nav-link {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.65rem;
   padding: 0.6rem 0.75rem;
   border-radius: var(--radius-sm);
@@ -166,6 +166,7 @@ body {
 
 .nav-link__icon {
   width: 32px; height: 32px;
+  margin-top: 0.1rem;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1rem;
@@ -175,6 +176,79 @@ body {
 
 .nav-link--active .nav-link__icon {
   background: rgba(52, 211, 153, 0.12);
+}
+
+.nav-link__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.nav-link__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+.nav-link__title {
+  font-weight: 600;
+  color: inherit;
+  line-height: 1.25;
+}
+
+.nav-link__desc {
+  font-size: 0.62rem;
+  line-height: 1.35;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.nav-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.38rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.nav-badge--live {
+  color: var(--accent);
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+.nav-badge--roadmap {
+  color: var(--accent-2);
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.nav-link--sub {
+  padding: 0.42rem 0.65rem 0.42rem 1.5rem;
+  margin-left: 0.35rem;
+  border-left: 2px solid rgba(148, 163, 184, 0.12);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.nav-link--sub .nav-link__icon {
+  width: 26px;
+  height: 26px;
+  font-size: 0.8rem;
+}
+
+.nav-link--soon {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.nav-link--soon:hover {
+  background: rgba(148, 163, 184, 0.04);
+  color: var(--text);
 }
 
 .sidebar__footer {
