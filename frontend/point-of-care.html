@@ -11,105 +11,72 @@
 <body>
   <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
   <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
       <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
       <nav class="sidebar__nav">
-        <div class="nav-section">
-          <div class="nav-section__label">Overview</div>
-          <a href="index.html" class="nav-link" id="nav-home">
-            <span class="nav-link__icon"><i data-lucide="crosshair"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Command Center</span><span class="nav-badge nav-badge--live">Live</span></span>
-              <span class="nav-link__desc">Global overview, live risk indicators, system status</span>
-            </span>
-          </a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon" aria-label="Situation Room (roadmap)">
-            <span class="nav-link__icon"><i data-lucide="radar"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Situation Room</span><span class="nav-badge nav-badge--roadmap">Soon</span></span>
-              <span class="nav-link__desc">Active outbreaks, emergency events, escalation monitoring</span>
-            </span>
-          </a>
+        <div class="nav-section"><div class="nav-section__label">Overview</div>
+          <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
         </div>
-
+        
         <div class="nav-section">
-          <div class="nav-section__label">Area 1 · Strategic Planning</div>
-          <a href="strategic.html" class="nav-link" id="nav-strategic">
-            <span class="nav-link__icon"><i data-lucide="map"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Strategic Planning</span><span class="nav-badge nav-badge--live">Live</span></span>
-              <span class="nav-link__desc">Climate–health mapping, vulnerability scoring</span>
-            </span>
-          </a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="layers"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Risk Mapping</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Geospatial heatmaps, flood &amp; disease overlays</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="table-2"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Data Explorer</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Regional datasets, trend analysis</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="sliders-horizontal"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Resource Optimization</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Healthcare allocation simulation, supply forecasting</span></span></a>
-        </div>
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="map"></i></span>
+              <span class="nav-link__text">Strategic Planning</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="strategic.html#vulnerability" class="nav-sublink">Vulnerability Score</a>
+              <a href="strategic.html#hazard" class="nav-sublink">Hazard Map</a>
+              <a href="strategic.html#pollution" class="nav-sublink">Pollution Hotspot</a>
+              <a href="strategic.html#carbon" class="nav-sublink">Carbon Footprint</a>
+            </div>
+          </div>
+          
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="zap"></i></span>
+              <span class="nav-link__text">Early Warning</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="early-warning.html" class="nav-sublink">Warning Center</a>
+            </div>
+          </div>
 
-        <div class="nav-section">
-          <div class="nav-section__label">Area 2 · Early Warning</div>
-          <a href="early-warning.html" class="nav-link" id="nav-ew">
-            <span class="nav-link__icon"><i data-lucide="zap"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Early Warning</span><span class="nav-badge nav-badge--live">Live</span></span>
-              <span class="nav-link__desc">Real-time alerts &amp; environmental assessment</span>
-            </span>
-          </a>
-          <a href="healthcare.html#forecast" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="line-chart"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Forecast Engine</span><span class="nav-badge nav-badge--live">ML</span></span><span class="nav-link__desc">7-day outlook, outbreak forecasting, environmental modeling</span></span></a>
-          <a href="early-warning.html#section-alert-feed" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="bell-ring"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Alert Network</span></span><span class="nav-link__desc">SMS alerts, community notifications, NGO escalation</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="radio-tower"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Sensor Network</span><span class="nav-badge nav-badge--roadmap">Future</span></span><span class="nav-link__desc">IoT stations, weather monitoring</span></span></a>
-        </div>
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="hospital"></i></span>
+              <span class="nav-link__text">Healthcare Readiness</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="healthcare.html#forecast" class="nav-sublink">Disease Forecast</a>
+              <a href="healthcare.html#anomaly" class="nav-sublink">Anomaly Detection</a>
+              <a href="healthcare.html#surge" class="nav-sublink">Surge Planning</a>
+            </div>
+          </div>
 
-        <div class="nav-section">
-          <div class="nav-section__label">Area 3 · Healthcare Readiness</div>
-          <a href="healthcare.html" class="nav-link" id="nav-hc">
-            <span class="nav-link__icon"><i data-lucide="hospital"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Healthcare Readiness</span><span class="nav-badge nav-badge--live">Live</span></span>
-              <span class="nav-link__desc">Forecasting, anomalies &amp; surge planning</span>
-            </span>
-          </a>
-          <a href="healthcare.html#surge" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="bed"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Facility Readiness</span></span><span class="nav-link__desc">Bed capacity, supply pressure, heat vulnerability</span></span></a>
-          <a href="healthcare.html#anomaly" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="microscope"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Disease Surveillance</span></span><span class="nav-link__desc">Malaria &amp; cholera trends, case clustering</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="truck"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Response Coordination</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">NGO coordination, emergency logistics</span></span></a>
-        </div>
-
-        <div class="nav-section">
-          <div class="nav-section__label">Area 4 · Point-of-Care</div>
-          <a href="point-of-care.html" class="nav-link nav-link--active" id="nav-poc">
-            <span class="nav-link__icon"><i data-lucide="pill"></i></span>
-            <span class="nav-link__body">
-              <span class="nav-link__row"><span class="nav-link__title">Point-of-Care</span><span class="nav-badge nav-badge--live">Live</span></span>
-              <span class="nav-link__desc">Triage &amp; frontline tools</span>
-            </span>
-          </a>
-          <a href="point-of-care.html#assistant" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="bot"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">AI Health Assistant</span><span class="nav-badge nav-badge--live">Live</span></span><span class="nav-link__desc">Symptom guidance &amp; prevention education</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="megaphone"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Community Reporting</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Citizen reports, fever clusters, environmental hazards</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="wifi-off"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Offline Access</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Low-bandwidth tools, SMS fallback</span></span></a>
-        </div>
-
-        <div class="nav-section">
-          <div class="nav-section__label">AI Models</div>
-          <a href="index.html#malaria-card" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="wind"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Environmental Risk Model</span><span class="nav-badge nav-badge--live">Live</span></span><span class="nav-link__desc">Climate exposure &amp; hazard fusion (Command Center)</span></span></a>
-          <a href="healthcare.html#forecast" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="trending-up"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Epidemiological Forecasting</span><span class="nav-badge nav-badge--live">Live</span></span><span class="nav-link__desc">Disease onset &amp; surge windows</span></span></a>
-          <a href="strategic.html#vulnerability" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="shield"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Exposure Risk Engine</span><span class="nav-badge nav-badge--live">Live</span></span><span class="nav-link__desc">Vulnerability scoring &amp; composite exposure</span></span></a>
-          <a href="index.html#model-explainability" class="nav-link nav-link--sub"><span class="nav-link__icon"><i data-lucide="brain"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Explainability Layer</span><span class="nav-badge nav-badge--live">Live</span></span><span class="nav-link__desc">Factors, model cards &amp; narrative reasoning</span></span></a>
-        </div>
-
-        <div class="nav-section">
-          <div class="nav-section__label">Platform</div>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="plug"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Integrations</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">DHIS2, OpenStreetMap, weather APIs</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="file-bar-chart"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Reports</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">NGO exports, PDF briefs, situation reports</span></span></a>
-          <a href="#" class="nav-link nav-link--sub nav-link--soon"><span class="nav-link__icon"><i data-lucide="scroll-text"></i></span><span class="nav-link__body"><span class="nav-link__row"><span class="nav-link__title">Audit Logs</span><span class="nav-badge nav-badge--roadmap">Soon</span></span><span class="nav-link__desc">Transparency &amp; data validation history</span></span></a>
+          <div class="nav-group is-expanded">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="pill"></i></span>
+              <span class="nav-link__text">Point-of-Care</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="point-of-care.html#triage" class="nav-sublink">Multilingual Triage</a>
+              <a href="point-of-care.html#assistant" class="nav-sublink">Health Assistant</a>
+            </div>
+          </div>
         </div>
       </nav>
-      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone </span></div></div>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
     </aside>
 
     <main class="main-content">
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
-        <div><div class="topbar__title">Point-of-Care Support</div><div class="topbar__subtitle">Area 4 — Multilingual Triage & Assistant</div></div>
+        <div><div class="topbar__title">Point-of-Care Support</div><div class="topbar__subtitle">Multilingual Triage & Assistant</div></div>
         <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
