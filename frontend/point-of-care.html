@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Point-of-Care — Multilingual triage and health assistant for community health workers." />
+  <title>CHEWS — Point-of-Care Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section"><div class="nav-section__label">Overview</div><a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 1</div><a href="strategic.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 2</div><a href="early-warning.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 3</div><a href="healthcare.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 4</div><a href="point-of-care.html" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="pill"></i></span> Point-of-Care</a></div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone </span></div></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div><div class="topbar__title">Point-of-Care Support</div><div class="topbar__subtitle">Area 4 — Multilingual Triage & Assistant</div></div>
+        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+      </div>
+
+      <div class="page fade-in">
+        <h1 class="page-heading"><i data-lucide="pill"></i> Point-of-Care Support</h1>
+        <p class="page-desc">Data-driven tools to help local authorities and CHWs interpret climate-health data and triage patients.</p>
+
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="triage" onclick="switchTab('triage')"><i data-lucide="stethoscope"></i> Multilingual Triage</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="assistant" onclick="switchTab('assistant')"><i data-lucide="message-square"></i> Health Assistant</button>
+        </div>
+
+        <!-- TRIAGE TAB -->
+        <div id="tab-triage" class="tab-content">
+          <div class="card card--glow-blue">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="stethoscope"></i> Climate-Sensitive Triage</div><div class="card__desc">Assess patient symptoms alongside real-time climate risks to generate triage guidance.</div></div></div>
+            <form id="triage-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="user"></i> Patient Details</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Patient Group</label>
+                    <select id="t-group" class="form-input form-select"><option value="adult">Adult</option><option value="child_under5">Child (&lt;5 years)</option><option value="pregnant">Pregnant Woman</option><option value="elderly">Elderly</option><option value="chronic_illness">Chronic Illness</option><option value="malnourished">Malnourished</option></select></div>
+                  <div class="form-group"><label class="form-label">Language</label>
+                    <select id="t-lang" class="form-input form-select"><option value="en">English</option><option value="kri">Krio (Sierra Leone)</option><option value="fr">Français</option></select></div>
+                </div>
+              </div>
+
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="thermometer"></i> Symptoms</div>
+                <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:0.75rem">Select all symptoms present:</p>
+                <div class="grid-3" style="gap:0.5rem">
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="fever" /> Fever</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="high_fever" /> High Fever (&gt;39°C)</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="headache" /> Headache</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="severe_headache" /> Severe Headache</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="diarrhea" /> Diarrhea</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="bloody_diarrhea" /> Bloody Diarrhea</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="vomiting" /> Vomiting</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="dehydration" /> Dehydration</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="difficulty_breathing" /> Difficulty Breathing</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="chest_pain" /> Chest Pain</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="heat_exhaustion" /> Heat Exhaustion signs</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="confusion" /> Confusion / Altered State</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="convulsions" /> Convulsions</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="unconscious" /> Unconscious</label>
+                  <label class="form-checkbox"><input type="checkbox" name="symptom" value="body_pain" /> Muscle/Joint Pain</label>
+                </div>
+              </div>
+
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="globe"></i> Current Climate Risks (Context)</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Heat Risk (0-1)</label><input type="number" id="t-heat" class="form-input" value="0.2" min="0" max="1" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Air Quality Risk (0-1)</label><input type="number" id="t-aq" class="form-input" value="0.1" min="0" max="1" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Flood Risk (0-1)</label><input type="number" id="t-flood" class="form-input" value="0.1" min="0" max="1" step="0.1" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Generate Triage Guidance</button>
+            </form>
+            <div class="hidden mt-1" id="triage-result"></div>
+          </div>
+        </div>
+
+        <!-- ASSISTANT TAB -->
+        <div id="tab-assistant" class="tab-content hidden">
+          <div class="card card--glow-amber">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="message-square"></i> Multilingual Health Assistant</div><div class="card__desc">Locally-tuned knowledge base for climate-health insights and CHW support.</div></div></div>
+            <div class="ask-form">
+              <select id="a-lang" class="form-input form-select" style="max-width:120px"><option value="en">English</option><option value="kri">Krio</option><option value="fr">Français</option></select>
+              <input type="text" id="a-input" class="form-input" placeholder="Ask a question about climate health, malaria, flood safety..." />
+              <button class="btn btn--secondary" id="btn-ask" type="button">Ask</button>
+            </div>
+            <div class="ask-answer hidden" id="ask-result"><p id="ask-text"></p></div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Point-of-Care Support · Sierra Leone </p></footer>
+    </main>
+  </div>
+  <script src="point-of-care.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

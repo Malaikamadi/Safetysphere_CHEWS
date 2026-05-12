@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS v3.0 — Multi-hazard Climate-Health Intelligence Platform for early warning, strategic planning, healthcare readiness, and point-of-care support." />
+  <title>CHEWS — Climate-Health Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+    <div class="bg-orb bg-orb--4"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <a href="index.html" class="sidebar__brand">
+          <div class="sidebar__icon"><i data-lucide="globe"></i></div>
+          <div>
+            <div class="sidebar__title">CHEWS</div>
+            <div class="sidebar__version">v3.0 · Intelligence Platform</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar__nav">
+        <div class="nav-section">
+          <div class="nav-section__label">Overview</div>
+          <a href="index.html" class="nav-link nav-link--active" id="nav-home">
+            <span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section__label">Area 1</div>
+          <a href="strategic.html" class="nav-link" id="nav-strategic">
+            <span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section__label">Area 2</div>
+          <a href="early-warning.html" class="nav-link" id="nav-ew">
+            <span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section__label">Area 3</div>
+          <a href="healthcare.html" class="nav-link" id="nav-hc">
+            <span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section__label">Area 4</div>
+          <a href="point-of-care.html" class="nav-link" id="nav-poc">
+            <span class="nav-link__icon"><i data-lucide="pill"></i></span> Point-of-Care
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar__footer">
+        <div class="sidebar__status">
+          <span class="pulse-dot"></span>
+          <span>System Online · Sierra Leone </span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <div class="topbar">
+        <div>
+          <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
+        </div>
+        <div>
+          <div class="topbar__title">Command Center</div>
+          <div class="topbar__subtitle">Multi-Hazard Climate-Health Intelligence</div>
+        </div>
+        <div class="topbar__actions">
+          <div class="topbar__badge"><span class="pulse-dot"></span> Live</div>
+        </div>
+      </div>
+
+      <div class="page fade-in">
+        <!-- Key Metrics -->
+        <div class="grid-4 mb-1" id="key-metrics">
+          <div class="metric card--glow-green">
+            <div class="metric__icon"><i data-lucide="bug"></i></div>
+            <div class="metric__label">Malaria Risk</div>
+            <div class="metric__value text-accent" id="metric-malaria">—</div>
+            <div class="metric__trend metric__trend--stable">Run assessment →</div>
+          </div>
+          <div class="metric card--glow-blue">
+            <div class="metric__icon"><i data-lucide="waves"></i></div>
+            <div class="metric__label">Flood Risk</div>
+            <div class="metric__value" style="color:var(--accent-2)" id="metric-flood">—</div>
+            <div class="metric__trend metric__trend--stable">Awaiting data</div>
+          </div>
+          <div class="metric card--glow-amber">
+            <div class="metric__icon"><i data-lucide="thermometer"></i></div>
+            <div class="metric__label">Heat Stress</div>
+            <div class="metric__value" style="color:var(--warning)" id="metric-heat">—</div>
+            <div class="metric__trend metric__trend--stable">Awaiting data</div>
+          </div>
+          <div class="metric card--glow-red">
+            <div class="metric__icon"><i data-lucide="wind"></i></div>
+            <div class="metric__label">Air Quality</div>
+            <div class="metric__value" style="color:var(--orange)" id="metric-aqi">—</div>
+            <div class="metric__trend metric__trend--stable">Awaiting data</div>
+          </div>
+        </div>
+
+        <!-- Quick Assessment -->
+        <div class="grid-2">
+          <!-- Malaria Risk Assessment -->
+          <div class="card card--glow-green" id="malaria-card">
+            <div class="card__header">
+              <div>
+                <div class="card__title"><i data-lucide="bug"></i> Malaria Risk Assessment</div>
+                <div class="card__desc">Multi-layer AI prediction engine</div>
+              </div>
+            </div>
+
+            <form id="predict-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="globe"></i> Environmental</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group">
+                    <label for="rainfall" class="form-label"><i data-lucide="cloud-rain"></i> Rainfall (mm)</label>
+                    <input type="number" id="rainfall" class="form-input" placeholder="120" min="0" max="500" step="0.1" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="temperature" class="form-label"><i data-lucide="thermometer"></i> Temp (°C)</label>
+                    <input type="number" id="temperature" class="form-input" placeholder="28" min="-10" max="55" step="0.1" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="humidity" class="form-label"><i data-lucide="droplet"></i> Humidity (%)</label>
+                    <input type="number" id="humidity" class="form-input" placeholder="78" min="0" max="100" step="0.1" required />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="bar-chart-2"></i> Epidemiological</div>
+                <div class="form__grid">
+                  <div class="form-group">
+                    <label for="reported_cases" class="form-label"><i data-lucide="hospital"></i> Cases</label>
+                    <input type="number" id="reported_cases" class="form-input" placeholder="15" min="0" step="1" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="trend" class="form-label"><i data-lucide="trending-up"></i> Trend</label>
+                    <select id="trend" class="form-input form-select" required>
+                      <option value="stable">Stable</option>
+                      <option value="increasing">Increasing ↑</option>
+                      <option value="decreasing">Decreasing ↓</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="users"></i> Exposure</div>
+                <div class="form__grid">
+                  <div class="form-group">
+                    <label for="vulnerable_population" class="form-label"><i data-lucide="baby"></i> Vulnerable Pop.</label>
+                    <input type="number" id="vulnerable_population" class="form-input" placeholder="20" min="0" value="0" />
+                  </div>
+                  <div class="form-group">
+                    <label for="exposure_level" class="form-label"><i data-lucide="shield"></i> Exposure</label>
+                    <select id="exposure_level" class="form-input form-select">
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn--primary btn--full" id="btn-predict">
+                <span id="btn-text">Run Risk Assessment</span>
+                <span class="hidden" id="btn-loader"><span class="spinner"></span></span>
+              </button>
+            </form>
+
+            <!-- Results (hidden initially) -->
+            <div class="hidden mt-1" id="result-section">
+              <div class="gauge-container">
+                <div class="gauge">
+                  <svg viewBox="0 0 200 120" class="gauge__svg">
+                    <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" id="gauge-arc" stroke-dasharray="0 251" class="gauge__arc"/>
+                    <defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#34d399"/><stop offset="50%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#ef4444"/>
+                    </linearGradient></defs>
+                  </svg>
+                  <div class="gauge__value" id="gauge-value">0.00</div>
+                  <div class="gauge__label">Composite Risk</div>
+                </div>
+              </div>
+              <div style="text-align:center;margin-bottom:1rem"><div class="risk-badge" id="risk-badge">—</div></div>
+              <div id="model-cards" class="model-cards mb-1"></div>
+              <div class="result-panel result-panel--info mb-1">
+                <div class="section-heading"><i data-lucide="brain"></i> AI Explanation</div>
+                <p style="font-size:0.82rem;white-space:pre-line;line-height:1.7" id="explanation-text"></p>
+              </div>
+              <div class="mb-1">
+                <div class="section-heading"><i data-lucide="zap"></i> Contributing Factors</div>
+                <ul class="result-list result-list--warning" id="factors-list"></ul>
+              </div>
+              <div class="mb-1">
+                <div class="section-heading"><i data-lucide="check-circle"></i> Recommendations</div>
+                <ul class="result-list result-list--success" id="recommendations-list"></ul>
+              </div>
+              <button class="btn btn--ghost btn--full" id="btn-reset" type="button">← New Assessment</button>
+            </div>
+          </div>
+
+          <!-- Right column: Quick Tools -->
+          <div class="flex flex-col gap-1">
+            <!-- Health Assistant -->
+            <div class="card card--glow-blue">
+              <div class="card__header">
+                <div>
+                  <div class="card__title"><i data-lucide="message-square"></i> Health Assistant</div>
+                  <div class="card__desc">Ask about climate-health risks, prevention, and treatment</div>
+                </div>
+              </div>
+              <div class="ask-form">
+                <input type="text" id="ask-input" class="form-input" placeholder="e.g. How to prevent malaria?" />
+                <button class="btn btn--secondary" id="btn-ask" type="button">Ask</button>
+              </div>
+              <div class="ask-answer hidden" id="ask-answer"><p id="ask-answer-text"></p></div>
+            </div>
+
+            <!-- Active Alerts -->
+            <div class="card card--glow-amber">
+              <div class="card__header">
+                <div>
+                  <div class="card__title"><i data-lucide="alert-triangle"></i> Active Alerts</div>
+                  <div class="card__desc">Real-time climate-health alerts</div>
+                </div>
+                <a href="early-warning.html" class="btn btn--sm btn--secondary">View All →</a>
+              </div>
+              <div class="alert-feed" id="alert-feed">
+                <div style="text-align:center;padding:2rem 0;color:var(--text-dim);font-size:0.82rem;">
+                  No active alerts. Run assessments to generate alerts.
+                </div>
+              </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="card">
+              <div class="card__header">
+                <div>
+                  <div class="card__title"><i data-lucide="settings"></i> Platform Status</div>
+                </div>
+              </div>
+              <div class="grid-2" style="gap:0.5rem">
+                <div style="font-size:0.78rem;color:var(--text-dim)">API Status</div>
+                <div style="font-size:0.78rem;font-weight:700" id="api-status">Checking...</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Version</div>
+                <div style="font-size:0.78rem;font-weight:700" id="api-version">—</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Models</div>
+                <div style="font-size:0.78rem;font-weight:700" id="api-models">—</div>
+                <div style="font-size:0.78rem;color:var(--text-dim)">Areas Active</div>
+                <div style="font-size:0.78rem;font-weight:700" id="api-areas">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>CHEWS v3.0 · SafetySphere · Climate-Health Intelligence Platform · Sierra Leone </p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

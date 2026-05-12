@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Strategic Planning — Hazard mapping, vulnerability scoring, pollution hotspots, and carbon accounting." />
+  <title>CHEWS — Strategic Planning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div>
+  </div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <a href="index.html" class="sidebar__brand">
+          <div class="sidebar__icon"><i data-lucide="globe"></i></div>
+          <div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div>
+        </a>
+      </div>
+      <nav class="sidebar__nav">
+        <div class="nav-section"><div class="nav-section__label">Overview</div>
+          <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
+        </div>
+        <div class="nav-section"><div class="nav-section__label">Area 1</div>
+          <a href="strategic.html" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning</a>
+        </div>
+        <div class="nav-section"><div class="nav-section__label">Area 2</div>
+          <a href="early-warning.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning</a>
+        </div>
+        <div class="nav-section"><div class="nav-section__label">Area 3</div>
+          <a href="healthcare.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness</a>
+        </div>
+        <div class="nav-section"><div class="nav-section__label">Area 4</div>
+          <a href="point-of-care.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="pill"></i></span> Point-of-Care</a>
+        </div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone </span></div></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div><div class="topbar__title">Strategic Planning</div><div class="topbar__subtitle">Area 1 — Hazard Mapping & Vulnerability Assessment</div></div>
+        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+      </div>
+
+      <div class="page fade-in">
+        <h1 class="page-heading"><i data-lucide="map"></i> Strategic Planning</h1>
+        <p class="page-desc">Map climate hazards, assess facility vulnerability, identify pollution hotspots, and estimate carbon footprints.</p>
+
+        <!-- Tabs -->
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="vulnerability" onclick="switchTab('vulnerability')"><i data-lucide="hospital"></i> Vulnerability Score</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="hazard" onclick="switchTab('hazard')"><i data-lucide="map"></i> Hazard Map</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="pollution" onclick="switchTab('pollution')"><i data-lucide="wind"></i> Pollution Hotspot</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="carbon" onclick="switchTab('carbon')"><i data-lucide="leaf"></i> Carbon Footprint</button>
+        </div>
+
+        <!-- VULNERABILITY TAB -->
+        <div id="tab-vulnerability" class="tab-content">
+          <div class="card card--glow-green">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="hospital"></i> Facility Vulnerability Score</div><div class="card__desc">Composite vulnerability assessment combining hazard exposure, population sensitivity, and adaptive capacity.</div></div></div>
+            <form id="vuln-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="building"></i> Facility Details</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Facility Type</label>
+                    <select id="v-facility-type" class="form-input form-select"><option value="health_center">Health Center</option><option value="hospital">Hospital</option><option value="clinic">Clinic</option><option value="school">School</option></select></div>
+                  <div class="form-group"><label class="form-label">Building Type</label>
+                    <select id="v-building-type" class="form-input form-select"><option value="semi_permanent">Semi-Permanent</option><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="open_air">Open Air</option></select></div>
+                  <div class="form-group"><label class="form-label">Staff Count</label>
+                    <input type="number" id="v-staff" class="form-input" value="5" min="0" /></div>
+                </div>
+                <div class="form__grid form__grid--3" style="margin-top:0.75rem">
+                  <div class="form-group"><label class="form-label">Water Source</label>
+                    <select id="v-water" class="form-input form-select"><option value="borehole">Borehole</option><option value="piped">Piped</option><option value="well">Well</option><option value="surface">Surface Water</option></select></div>
+                  <div class="form-group"><label class="form-label">Power Source</label>
+                    <select id="v-power" class="form-input form-select"><option value="grid_unreliable">Grid (Unreliable)</option><option value="grid_reliable">Grid (Reliable)</option><option value="solar">Solar</option><option value="generator">Generator</option><option value="none">None</option></select></div>
+                  <div class="form-group"><label class="form-label">Road Access</label>
+                    <select id="v-road" class="form-input form-select"><option value="paved">Paved</option><option value="unpaved">Unpaved</option><option value="footpath">Footpath</option><option value="none">None</option></select></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="users"></i> Population</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Children &lt;5</label><input type="number" id="v-under5" class="form-input" value="10" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Pregnant Women</label><input type="number" id="v-pregnant" class="form-input" value="5" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Total Population</label><input type="number" id="v-total" class="form-input" value="200" min="1" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="zap"></i> Hazard Exposure (0–1)</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Flood Risk</label><input type="number" id="v-flood" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
+                  <div class="form-group"><label class="form-label">Heat Risk</label><input type="number" id="v-heat" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
+                  <div class="form-group"><label class="form-label">Air Quality Risk</label><input type="number" id="v-aq" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
+                </div>
+              </div>
+              <label class="form-checkbox" style="margin-bottom:1rem"><input type="checkbox" id="v-plan" /> Has emergency preparedness plan</label>
+              <button type="submit" class="btn btn--primary btn--full">Assess Vulnerability</button>
+            </form>
+            <div class="hidden mt-1" id="vuln-result"></div>
+          </div>
+        </div>
+
+        <!-- HAZARD MAP TAB -->
+        <div id="tab-hazard" class="tab-content hidden">
+          <div class="card card--glow-blue">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="map"></i> Multi-Layer Hazard Map</div><div class="card__desc">Enter location and environmental data to generate a multi-hazard risk assessment.</div></div></div>
+            <form id="hazard-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="map-pin"></i> Location</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Location Name</label><input type="text" id="h-name" class="form-input" value="Community Health Center" /></div>
+                  <div class="form-group"><label class="form-label">Latitude</label><input type="number" id="h-lat" class="form-input" value="8.484" step="0.001" /></div>
+                  <div class="form-group"><label class="form-label">Longitude</label><input type="number" id="h-lng" class="form-input" value="-13.234" step="0.001" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="globe"></i> Environmental Data</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Rainfall (mm/month)</label><input type="number" id="h-rain" class="form-input" value="100" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" id="h-temp" class="form-input" value="28" /></div>
+                  <div class="form-group"><label class="form-label">Humidity (%)</label><input type="number" id="h-hum" class="form-input" value="70" min="0" max="100" /></div>
+                  <div class="form-group"><label class="form-label">PM2.5 (μg/m³)</label><input type="number" id="h-pm25" class="form-input" value="20" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Rainfall Intensity (mm/hr)</label><input type="number" id="h-intensity" class="form-input" value="5" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Elevation (m)</label><input type="number" id="h-elev" class="form-input" value="50" min="0" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Generate Hazard Map</button>
+            </form>
+            <div class="hidden mt-1" id="hazard-result"></div>
+          </div>
+        </div>
+
+        <!-- POLLUTION TAB -->
+        <div id="tab-pollution" class="tab-content hidden">
+          <div class="card card--glow-amber">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="wind"></i> Pollution Hotspot Assessment</div><div class="card__desc">Assess air pollutant concentrations and identify health hotspots.</div></div></div>
+            <form id="pollution-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="factory"></i> Pollutant Concentrations</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">PM2.5 (μg/m³)</label><input type="number" id="p-pm25" class="form-input" value="35" min="0" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">PM10 (μg/m³)</label><input type="number" id="p-pm10" class="form-input" value="50" min="0" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Ozone O₃ (ppb)</label><input type="number" id="p-o3" class="form-input" value="40" min="0" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">NO₂ (ppb)</label><input type="number" id="p-no2" class="form-input" value="30" min="0" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">SO₂ (ppb)</label><input type="number" id="p-so2" class="form-input" value="10" min="0" step="0.1" /></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:1.5rem;margin-bottom:1rem">
+                <label class="form-checkbox"><input type="checkbox" id="p-children" checked /> Children present</label>
+                <label class="form-checkbox"><input type="checkbox" id="p-resp" /> Respiratory conditions</label>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Assess Pollution</button>
+            </form>
+            <div class="hidden mt-1" id="pollution-result"></div>
+          </div>
+        </div>
+
+        <!-- CARBON TAB -->
+        <div id="tab-carbon" class="tab-content hidden">
+          <div class="card card--glow-purple">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="leaf"></i> Carbon Footprint Estimator</div><div class="card__desc">Estimate facility-level greenhouse gas emissions (Scope 1, 2, 3).</div></div></div>
+            <form id="carbon-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="building"></i> Facility</div>
+                <div class="form__grid">
+                  <div class="form-group"><label class="form-label">Facility Type</label>
+                    <select id="c-type" class="form-input form-select"><option value="health_center">Health Center</option><option value="hospital">Hospital</option><option value="clinic">Clinic</option><option value="school">School</option></select></div>
+                  <div class="form-group"><label class="form-label">Floor Area (m²)</label><input type="number" id="c-area" class="form-input" value="200" min="1" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="fuel"></i> Fuel Consumption (monthly)</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Diesel (liters)</label><input type="number" id="c-diesel" class="form-input" value="0" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Charcoal (kg)</label><input type="number" id="c-charcoal" class="form-input" value="0" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Kerosene (liters)</label><input type="number" id="c-kerosene" class="form-input" value="0" min="0" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="zap"></i> Electricity</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Grid Electricity (kWh)</label><input type="number" id="c-elec" class="form-input" value="150" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Generator Hours</label><input type="number" id="c-gen" class="form-input" value="40" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Solar kWh</label><input type="number" id="c-solar" class="form-input" value="0" min="0" /></div>
+                </div>
+                <label class="form-checkbox" style="margin-top:0.5rem"><input type="checkbox" id="c-has-solar" /> Has solar panels</label>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Estimate Carbon Footprint</button>
+            </form>
+            <div class="hidden mt-1" id="carbon-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Strategic Planning · Sierra Leone </p></footer>
+    </main>
+  </div>
+  <script src="strategic.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Early Warning — Real-time climate-health alerts, sensor assessment, and trigger management." />
+  <title>CHEWS — Early Warning Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section"><div class="nav-section__label">Overview</div><a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 1</div><a href="strategic.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 2</div><a href="early-warning.html" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 3</div><a href="healthcare.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 4</div><a href="point-of-care.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="pill"></i></span> Point-of-Care</a></div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone </span></div></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div><div class="topbar__title">Early Warning Center</div><div class="topbar__subtitle">Area 2 — Real-time Alerts & Sensor Assessment</div></div>
+        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+      </div>
+
+      <div class="page fade-in">
+        <h1 class="page-heading"><i data-lucide="zap"></i> Early Warning, Early Action</h1>
+        <p class="page-desc">Assess hyper-local environmental conditions and generate climate-health alerts for communities.</p>
+
+        <div class="grid-2">
+          <div class="card card--glow-amber">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="radio"></i> Comprehensive Assessment</div><div class="card__desc">Enter current environmental readings to evaluate all hazard types simultaneously.</div></div></div>
+            <form id="ew-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="map-pin"></i> Location & Atmosphere</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Location</label><input type="text" id="ew-loc" class="form-input" value="Freetown Community" /></div>
+                  <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" id="ew-temp" class="form-input" value="32" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Humidity (%)</label><input type="number" id="ew-hum" class="form-input" value="80" min="0" max="100" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="cloud-rain"></i> Rainfall & Terrain</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Rain Intensity (mm/hr)</label><input type="number" id="ew-rain-i" class="form-input" value="10" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Rain 24h (mm)</label><input type="number" id="ew-rain-24" class="form-input" value="60" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Elevation (m)</label><input type="number" id="ew-elev" class="form-input" value="30" min="0" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="wind"></i> Air Quality & UV</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">PM2.5 (μg/m³)</label><input type="number" id="ew-pm25" class="form-input" value="25" min="0" /></div>
+                  <div class="form-group"><label class="form-label">PM10 (μg/m³)</label><input type="number" id="ew-pm10" class="form-input" value="40" min="0" /></div>
+                  <div class="form-group"><label class="form-label">UV Index</label><input type="number" id="ew-uv" class="form-input" value="8" min="0" max="15" step="0.1" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Run Assessment & Generate Alerts</button>
+            </form>
+            <div class="hidden mt-1" id="ew-result"></div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <!-- Manual Trigger -->
+            <div class="card card--glow-red">
+              <div class="card__header"><div><div class="card__title"><i data-lucide="bell"></i> Manual Alert Trigger</div><div class="card__desc">Manually evaluate a sensor reading against alert thresholds.</div></div></div>
+              <form id="trigger-form" autocomplete="off">
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Hazard Type</label>
+                    <select id="tr-type" class="form-input form-select"><option value="flood">Flood</option><option value="heat">Heat</option><option value="air_quality">Air Quality</option><option value="malaria">Malaria</option><option value="disease_cases">Disease Cases</option></select></div>
+                  <div class="form-group"><label class="form-label">Current Value</label><input type="number" id="tr-value" class="form-input" value="0.6" step="0.01" /></div>
+                  <div class="form-group"><label class="form-label">Location</label><input type="text" id="tr-loc" class="form-input" value="Station Alpha" /></div>
+                </div>
+                <button type="submit" class="btn btn--danger btn--full mt-1">Trigger Alert Check</button>
+              </form>
+              <div class="hidden mt-1" id="trigger-result"></div>
+            </div>
+
+            <!-- Active Alerts -->
+            <div class="card">
+              <div class="card__header"><div><div class="card__title"><i data-lucide="alert-triangle"></i> Active Alert Feed</div></div>
+                <button class="btn btn--sm btn--ghost" onclick="loadAlerts()">Refresh</button>
+              </div>
+              <div class="alert-feed" id="alert-feed-ew">
+                <div style="text-align:center;padding:1.5rem 0;color:var(--text-dim);font-size:0.82rem">No alerts yet. Run an assessment to generate alerts.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Early Warning Center · Sierra Leone </p></footer>
+    </main>
+  </div>
+  <script src="early-warning.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

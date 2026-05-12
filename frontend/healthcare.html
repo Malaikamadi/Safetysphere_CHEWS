@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Healthcare Readiness — Disease forecasting, anomaly detection, and surge planning." />
+  <title>CHEWS — Healthcare Readiness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section"><div class="nav-section__label">Overview</div><a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 1</div><a href="strategic.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 2</div><a href="early-warning.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 3</div><a href="healthcare.html" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness</a></div>
+        <div class="nav-section"><div class="nav-section__label">Area 4</div><a href="point-of-care.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="pill"></i></span> Point-of-Care</a></div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone </span></div></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div><div class="topbar__title">Healthcare Readiness</div><div class="topbar__subtitle">Area 3 — Forecasting, Anomaly Detection & Surge Planning</div></div>
+        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+      </div>
+
+      <div class="page fade-in">
+        <h1 class="page-heading"><i data-lucide="hospital"></i> Healthcare Readiness</h1>
+        <p class="page-desc">Forecast disease outbreaks, detect environmental anomalies, and plan for healthcare surges.</p>
+
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="forecast" onclick="switchTab('forecast')"><i data-lucide="trending-up"></i> Disease Forecast</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="anomaly" onclick="switchTab('anomaly')"><i data-lucide="search"></i> Anomaly Detection</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="surge" onclick="switchTab('surge')"><i data-lucide="hospital"></i> Surge Planning</button>
+        </div>
+
+        <!-- FORECAST TAB -->
+        <div id="tab-forecast" class="tab-content">
+          <div class="card card--glow-blue">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="trending-up"></i> Disease Risk Forecast</div><div class="card__desc">Seasonal-climatological forecast model. Predicts disease onset, surge probability, and peak windows.</div></div></div>
+            <form id="forecast-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="virus"></i> Disease & Season</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Disease</label>
+                    <select id="f-disease" class="form-input form-select"><option value="malaria">Malaria</option><option value="dengue">Dengue</option><option value="cholera">Cholera</option><option value="respiratory">Respiratory</option></select></div>
+                  <div class="form-group"><label class="form-label">Current Month</label>
+                    <select id="f-month" class="form-input form-select"><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7" selected>July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select></div>
+                  <div class="form-group"><label class="form-label">AQI (for respiratory)</label><input type="number" id="f-aqi" class="form-input" value="50" min="0" max="500" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="globe"></i> Climate Conditions</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Rainfall (mm)</label><input type="number" id="f-rain" class="form-input" value="150" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" id="f-temp" class="form-input" value="28" /></div>
+                  <div class="form-group"><label class="form-label">Humidity (%)</label><input type="number" id="f-hum" class="form-input" value="75" min="0" max="100" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="bar-chart-2"></i> Case Data</div>
+                <div class="form__grid">
+                  <div class="form-group"><label class="form-label">Current Period Cases</label><input type="number" id="f-current" class="form-input" value="15" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Previous Period Cases</label><input type="number" id="f-prev" class="form-input" value="10" min="0" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Generate Forecast</button>
+            </form>
+            <div class="hidden mt-1" id="forecast-result"></div>
+          </div>
+        </div>
+
+        <!-- ANOMALY TAB -->
+        <div id="tab-anomaly" class="tab-content hidden">
+          <div class="card card--glow-amber">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="search"></i> Environmental Anomaly Detection</div><div class="card__desc">Compare observed pollution/weather readings against expected baselines to detect anomalies.</div></div></div>
+            <form id="anomaly-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="bar-chart-2"></i> Observed vs. Expected</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">PM2.5 Observed</label><input type="number" id="a-pm25" class="form-input" value="80" min="0" /></div>
+                  <div class="form-group"><label class="form-label">PM2.5 Expected</label><input type="number" id="a-pm25-exp" class="form-input" value="20" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Location</label><input type="text" id="a-loc" class="form-input" value="Monitoring Station" /></div>
+                  <div class="form-group"><label class="form-label">PM10 Observed</label><input type="number" id="a-pm10" class="form-input" value="120" min="0" /></div>
+                  <div class="form-group"><label class="form-label">PM10 Expected</label><input type="number" id="a-pm10-exp" class="form-input" value="40" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Temp Observed (°C)</label><input type="number" id="a-temp" class="form-input" value="38" /></div>
+                  <div class="form-group"><label class="form-label">Temp Expected (°C)</label><input type="number" id="a-temp-exp" class="form-input" value="30" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Detect Anomalies</button>
+            </form>
+            <div class="hidden mt-1" id="anomaly-result"></div>
+          </div>
+        </div>
+
+        <!-- SURGE TAB -->
+        <div id="tab-surge" class="tab-content hidden">
+          <div class="card card--glow-green">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="hospital"></i> Surge Planning</div><div class="card__desc">Assess healthcare facility readiness for a forecasted disease surge.</div></div></div>
+            <form id="surge-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="clipboard-list"></i> Facility & Disease</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Disease</label>
+                    <select id="s-disease" class="form-input form-select"><option value="malaria">Malaria</option><option value="dengue">Dengue</option><option value="cholera">Cholera</option><option value="respiratory">Respiratory</option></select></div>
+                  <div class="form-group"><label class="form-label">Current Cases</label><input type="number" id="s-current" class="form-input" value="20" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Forecast Surge (%)</label><input type="number" id="s-surge" class="form-input" value="50" min="0" max="500" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="building"></i> Capacity</div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label">Bed Capacity</label><input type="number" id="s-beds" class="form-input" value="50" min="1" /></div>
+                  <div class="form-group"><label class="form-label">Staff Available</label><input type="number" id="s-staff" class="form-input" value="10" min="1" /></div>
+                  <div class="form-group"><label class="form-label">Supply Days</label><input type="number" id="s-supply" class="form-input" value="14" min="0" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Assess Readiness</button>
+            </form>
+            <div class="hidden mt-1" id="surge-result"></div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Healthcare Readiness · Sierra Leone </p></footer>
+    </main>
+  </div>
+  <script src="healthcare.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
