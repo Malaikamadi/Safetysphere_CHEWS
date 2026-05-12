@@ -153,3 +153,16 @@ async function loadAlerts() {
 loadAlerts();
 
 document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+
+// Tab Hash Routing
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash) {
+    const tabId = window.location.hash.substring(1);
+    if (typeof switchTab === 'function') switchTab(tabId);
+  }
+});
+
+window.addEventListener('hashchange', () => {
+  const tabId = window.location.hash.substring(1);
+  if (tabId && typeof switchTab === 'function') switchTab(tabId);
+});

@@ -123,3 +123,16 @@ document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener(
   const h = location.hash.slice(1);
   if (h && ["triage", "assistant"].includes(h)) switchTab(h);
 })();
+
+// Tab Hash Routing
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash) {
+    const tabId = window.location.hash.substring(1);
+    if (typeof switchTab === 'function') switchTab(tabId);
+  }
+});
+
+window.addEventListener('hashchange', () => {
+  const tabId = window.location.hash.substring(1);
+  if (tabId && typeof switchTab === 'function') switchTab(tabId);
+});
