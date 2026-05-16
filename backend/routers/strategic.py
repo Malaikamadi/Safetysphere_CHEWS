@@ -4,12 +4,13 @@ Strategic Planning Router — Area 1
 Endpoints for hazard mapping, vulnerability scoring, pollution hotspots, carbon accounting.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import Optional
 
+from data import sierra_leone as sl
 from models import air_quality, flood_risk, heat_stress, carbon_accounting
-from services import vulnerability
+from services import vulnerability, flood_dashboard
 
 router = APIRouter(prefix="/strategic", tags=["Area 1: Strategic Planning"])
 
@@ -137,6 +138,95 @@ async def assess_pollution(data: PollutionInput):
         "recommendations": result.recommendations,
     }
 
+
+# ---------------------------------------------------------------------
+# Flood Atlas — Sierra Leone
+# ---------------------------------------------------------------------
+
+class DistrictOverride(BaseModel):
+    rainfall_intensity_mult: Optional[float] = Field(default=None, ge=0, le=10)
+    rainfall_24h_mult: Optional[float] = Field(default=None, ge=0, le=10)
+    saturation_offset: Optional[float] = Field(default=None, ge=-100, le=100)
+
+
+class FloodForecastInput(BaseModel):
+    """Scenario inputs for the Flood Atlas 'what-if' simulator.
+
+    A flat block applies to every district. ``per_district`` lets the
+    UI pin overrides to specific districts (e.g. only soak Western
+    Area Urban while leaving Bo unchanged).
+    """
+    rainfall_intensity_mult: float = Field(default=1.0, ge=0, le=10)
+    rainfall_24h_mult: float = Field(default=1.0, ge=0, le=10)
+    saturation_offset: float = Field(default=0.0, ge=-100, le=100)
+    per_district: Optional[dict[str, DistrictOverride]] = None
+    seed: Optional[int] = None
+
+
+@router.get("/flood-zones")
+async def flood_zones():
+    """Return the static catalog of flood-prone communities in
+    Sierra Leone (real coordinates, elevation, drainage, history)."""
+    return {
+        "country": "Sierra Leone",
+        "bounds": sl.country_bounds(),
+        "districts": sl.list_districts(),
+        "zones": sl.list_zones(),
+    }
+
+
+@router.get("/flood-dashboard")
+async def flood_dashboard_view(seed: Optional[int] = Query(default=None)):
+    """Live Flood Atlas snapshot.
+
+    Combines per-district synthetic live signals (rainfall intensity,
+    24h rainfall, soil saturation, river stage, tide stage) with the
+    static catalog and runs the flood-risk model for every zone.
+    Returns aggregate KPIs, district signals, and per-zone
+    predictions ready to render on a map.
+
+    Pass ``seed`` to pin the snapshot for screenshots or tests.
+    """
+    return flood_dashboard.snapshot(seed=seed)
+
+
+@router.post("/flood-forecast")
+async def flood_forecast(scenario: FloodForecastInput):
+    """Re-run the Flood Atlas snapshot with scenario overrides.
+
+    Use this from the UI to answer questions like "if rainfall doubled
+    in Western Area Urban, who would tip into the Severe band?".
+    """
+    overrides: dict = {}
+    if scenario.per_district:
+        for did, ov in scenario.per_district.items():
+            if did not in sl.DISTRICTS:
+                raise HTTPException(status_code=400, detail=f"unknown district: {did}")
+            overrides[did] = {k: v for k, v in ov.model_dump().items() if v is not None}
+    if not overrides:
+        # Flat overrides — apply to all districts.
+        flat = {
+            "rainfall_intensity_mult": scenario.rainfall_intensity_mult,
+            "rainfall_24h_mult": scenario.rainfall_24h_mult,
+            "saturation_offset": scenario.saturation_offset,
+        }
+        overrides = flat
+    return flood_dashboard.snapshot(overrides=overrides, seed=scenario.seed)
+
+
+@router.get("/flood-zone/{zone_id}/forecast")
+async def flood_zone_forecast(zone_id: str, hours: int = Query(default=24, ge=1, le=72)):
+    """Return a per-zone hourly forecast strip for the next ``hours``
+    hours (default 24)."""
+    fc = flood_dashboard.zone_forecast(zone_id, hours=hours)
+    if fc.get("error"):
+        raise HTTPException(status_code=404, detail=fc["error"])
+    return fc
+
+
+# ---------------------------------------------------------------------
+# Carbon Footprint
+# ---------------------------------------------------------------------
 
 @router.post("/carbon-footprint")
 async def estimate_carbon(data: CarbonInput):
