@@ -158,20 +158,326 @@ document.getElementById("carbon-form").addEventListener("submit", e => {
 
 document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
 
+const FLOOD_TABS = ["atlas", "vulnerability", "hazard", "pollution", "carbon"];
+
 (function initFromHash() {
   const h = location.hash.slice(1);
-  if (h && ["vulnerability", "hazard", "pollution", "carbon"].includes(h)) switchTab(h);
+  if (h && FLOOD_TABS.includes(h)) switchTab(h);
 })();
-
-// Tab Hash Routing
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.location.hash) {
-    const tabId = window.location.hash.substring(1);
-    if (typeof switchTab === 'function') switchTab(tabId);
-  }
-});
 
 window.addEventListener('hashchange', () => {
   const tabId = window.location.hash.substring(1);
-  if (tabId && typeof switchTab === 'function') switchTab(tabId);
+  if (tabId && FLOOD_TABS.includes(tabId)) switchTab(tabId);
 });
+
+
+// =====================================================================
+// Flood Atlas — Sierra Leone
+// =====================================================================
+//
+// Boots a Leaflet map of Sierra Leone, polls the live dashboard endpoint,
+// renders one circle marker per flood-prone community colored by risk
+// level, and wires up the scenario simulator + top-10 risk table +
+// per-zone 24h forecast detail panel.
+// =====================================================================
+
+const FLOOD_LEVEL_COLOR = {
+  Low:      "#22c55e",
+  Moderate: "#fbbf24",
+  High:     "#f97316",
+  Severe:   "#ef4444",
+  Extreme:  "#b91c1c",
+};
+
+const FloodAtlas = {
+  map: null,
+  layer: null,            // L.layerGroup of circle markers
+  zonesById: {},          // last snapshot keyed by zone id
+  baselineKpis: null,     // first non-scenario snapshot, used for delta display
+  selectedId: null,
+  refreshTimer: null,
+  scenarioActive: false,
+
+  fmtInt(n) {
+    return (n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  },
+
+  riskColor(level) {
+    return FLOOD_LEVEL_COLOR[level] || "#94a3b8";
+  },
+
+  riskRadius(score) {
+    return 8 + score * 18;   // 8px..26px
+  },
+
+  init() {
+    if (this.map || !window.L) return;
+    const el = document.getElementById("flood-map");
+    if (!el) return;
+
+    this.map = L.map(el, {
+      center: [8.46, -11.78],
+      zoom: 7,
+      minZoom: 6,
+      maxZoom: 13,
+      zoomControl: true,
+      attributionControl: true,
+    });
+
+    // Carto Dark Matter tiles to match the dark UI.
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19,
+      }
+    ).addTo(this.map);
+
+    this.layer = L.layerGroup().addTo(this.map);
+
+    // Wire up controls (idempotent, safe to call before first render).
+    document.getElementById("atlas-refresh")?.addEventListener("click", () => this.refresh());
+
+    const sc = (id) => document.getElementById(id);
+    sc("sc-rain")?.addEventListener("input",  (e) => sc("sc-rain-val").textContent  = (+e.target.value).toFixed(1));
+    sc("sc-rain24")?.addEventListener("input", (e) => sc("sc-rain24-val").textContent = (+e.target.value).toFixed(1));
+    sc("sc-sat")?.addEventListener("input",   (e) => sc("sc-sat-val").textContent    = (e.target.value > 0 ? "+" : "") + e.target.value);
+    sc("sc-run")?.addEventListener("click", () => this.runScenario());
+    sc("sc-reset")?.addEventListener("click", () => {
+      sc("sc-rain").value = 1.0;       sc("sc-rain-val").textContent = "1.0";
+      sc("sc-rain24").value = 1.0;     sc("sc-rain24-val").textContent = "1.0";
+      sc("sc-sat").value = 0;          sc("sc-sat-val").textContent = "+0";
+      this.scenarioActive = false;
+      this.refresh();
+    });
+
+    // Auto-refresh while the Atlas tab is visible.
+    this.refresh();
+    this.refreshTimer = setInterval(() => {
+      if (!this.scenarioActive && document.getElementById("tab-atlas") &&
+          !document.getElementById("tab-atlas").classList.contains("hidden")) {
+        this.refresh();
+      }
+    }, 30000);
+  },
+
+  async refresh() {
+    try {
+      const res = await fetch(`${API}/strategic/flood-dashboard`);
+      if (!res.ok) throw new Error(`Server ${res.status}`);
+      const snap = await res.json();
+      if (!this.baselineKpis) this.baselineKpis = snap.kpis;
+      this.scenarioActive = false;
+      document.getElementById("sc-delta").innerHTML = "";
+      this.render(snap);
+    } catch (e) {
+      console.warn("flood dashboard unreachable", e);
+      const updated = document.getElementById("atlas-updated");
+      if (updated) updated.textContent = "Backend offline — start uvicorn on :8000";
+    }
+  },
+
+  async runScenario() {
+    const body = {
+      rainfall_intensity_mult: +document.getElementById("sc-rain").value,
+      rainfall_24h_mult:       +document.getElementById("sc-rain24").value,
+      saturation_offset:       +document.getElementById("sc-sat").value,
+    };
+    try {
+      const res = await fetch(`${API}/strategic/flood-forecast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`Server ${res.status}`);
+      const snap = await res.json();
+      this.scenarioActive = true;
+      this.render(snap, body);
+    } catch (e) {
+      alert("Scenario request failed: " + e.message);
+    }
+  },
+
+  render(snap, scenarioBody) {
+    this.zonesById = {};
+    snap.zones.forEach(z => this.zonesById[z.id] = z);
+
+    // KPI cards
+    const k = snap.kpis;
+    document.getElementById("kpi-zones").textContent = this.fmtInt(k.zones_monitored);
+    document.getElementById("kpi-districts").textContent = `across ${k.districts_monitored} districts`;
+    document.getElementById("kpi-pop-risk").textContent = this.fmtInt(k.population_at_risk);
+    document.getElementById("kpi-high").textContent = this.fmtInt(k.high_risk_zones);
+    document.getElementById("kpi-severe").textContent = `${k.severe_zones} severe / mean risk ${k.mean_zone_risk.toFixed(2)}`;
+    document.getElementById("kpi-rain").textContent = `${k.avg_rainfall_intensity_mm_h.toFixed(1)} mm/h`;
+    document.getElementById("kpi-rain-24").textContent = (snap.districts.reduce((a, d) => a + d.rainfall_24h_mm, 0) / snap.districts.length).toFixed(0);
+    document.getElementById("kpi-sat").textContent = `${k.avg_soil_saturation_pct.toFixed(0)}%`;
+    document.getElementById("kpi-river").textContent = `${k.avg_river_stage_pct_bankfull.toFixed(0)}%`;
+
+    const updated = document.getElementById("atlas-updated");
+    if (updated) {
+      const ts = new Date(snap.generated_at);
+      const tag = this.scenarioActive ? "scenario" : "live";
+      updated.textContent = `Updated ${ts.toLocaleTimeString()} · ${tag}`;
+    }
+
+    // Map markers
+    if (this.layer) this.layer.clearLayers();
+    snap.zones.forEach(z => {
+      const color = this.riskColor(z.prediction.risk_level);
+      const m = L.circleMarker([z.lat, z.lng], {
+        radius: this.riskRadius(z.prediction.risk_score),
+        color: color,
+        weight: 2,
+        opacity: 0.9,
+        fillColor: color,
+        fillOpacity: 0.55,
+      });
+      m.bindTooltip(`<strong>${z.name}</strong><br>${z.prediction.risk_level} · ${z.prediction.risk_score.toFixed(2)}`, { sticky: true });
+      m.on("click", () => this.selectZone(z.id));
+      m.addTo(this.layer);
+    });
+
+    if (snap.bounds && this.map && !this._fitted) {
+      this.map.fitBounds([snap.bounds.south_west, snap.bounds.north_east], { padding: [20, 20] });
+      this._fitted = true;
+    }
+
+    // Top-10 table
+    this.renderTable(snap.zones);
+
+    // Scenario delta block
+    if (scenarioBody && this.baselineKpis) {
+      const dHigh = k.high_risk_zones - this.baselineKpis.high_risk_zones;
+      const dPop  = k.population_at_risk - this.baselineKpis.population_at_risk;
+      const dMean = k.mean_zone_risk - this.baselineKpis.mean_zone_risk;
+      const sign = (n) => n > 0 ? `+${n}` : `${n}`;
+      document.getElementById("sc-delta").innerHTML = `
+        <div class="scenario__delta-row"><span>Δ high-risk zones</span><strong class="${dHigh > 0 ? 'text-danger' : 'text-success'}">${sign(dHigh)}</strong></div>
+        <div class="scenario__delta-row"><span>Δ population at risk</span><strong class="${dPop > 0 ? 'text-danger' : 'text-success'}">${sign(this.fmtInt(dPop))}</strong></div>
+        <div class="scenario__delta-row"><span>Δ mean risk</span><strong class="${dMean > 0 ? 'text-danger' : 'text-success'}">${dMean >= 0 ? '+' : ''}${dMean.toFixed(3)}</strong></div>`;
+    }
+
+    // Refresh selected zone if one was open.
+    if (this.selectedId && this.zonesById[this.selectedId]) {
+      this.renderZoneDetail(this.zonesById[this.selectedId]);
+    }
+
+    if (window.lucide) lucide.createIcons();
+  },
+
+  renderTable(zones) {
+    const top = [...zones].sort((a, b) => b.prediction.risk_score - a.prediction.risk_score).slice(0, 10);
+    const tbody = document.getElementById("zone-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = top.map((z, i) => {
+      const drivers = z.prediction.factors.slice(0, 2).join(" · ");
+      const color = this.riskColor(z.prediction.risk_level);
+      return `<tr data-zone="${z.id}">
+        <td>${i + 1}</td>
+        <td><strong>${z.name}</strong></td>
+        <td>${z.district_name}</td>
+        <td><span class="risk-pill" style="--risk-c:${color}">${z.prediction.risk_score.toFixed(2)}</span></td>
+        <td>${z.prediction.risk_level}</td>
+        <td>${this.fmtInt(z.population)}</td>
+        <td class="text-dim">${drivers || "—"}</td>
+      </tr>`;
+    }).join("");
+    tbody.querySelectorAll("tr[data-zone]").forEach(tr => {
+      tr.addEventListener("click", () => this.selectZone(tr.dataset.zone));
+    });
+  },
+
+  async selectZone(id) {
+    const z = this.zonesById[id];
+    if (!z || !this.map) return;
+    this.selectedId = id;
+    this.map.flyTo([z.lat, z.lng], Math.max(this.map.getZoom(), 11), { duration: 0.6 });
+    this.renderZoneDetail(z);
+    try {
+      const res = await fetch(`${API}/strategic/flood-zone/${id}/forecast?hours=24`);
+      if (!res.ok) return;
+      const fc = await res.json();
+      this.renderForecast(fc);
+    } catch (_) {}
+  },
+
+  renderZoneDetail(z) {
+    document.getElementById("zone-detail-hint").textContent = `${z.name}, ${z.district_name}`;
+    const detail = document.getElementById("zone-detail");
+    detail.style.display = "";
+    const p = z.prediction;
+    const color = this.riskColor(p.risk_level);
+    detail.innerHTML = `
+      <div class="zone-detail__head">
+        <div>
+          <div class="zone-detail__name">${z.name}</div>
+          <div class="zone-detail__meta">${z.urban_type.replace(/_/g, " ")} · ${z.water_body}</div>
+        </div>
+        <div class="risk-badge" style="background:${color}22;color:${color};border:1px solid ${color}55">${p.risk_level} · ${p.risk_score.toFixed(2)}</div>
+      </div>
+      <div class="zone-detail__metrics">
+        <div><div class="metric__label">Elevation</div><div class="metric__value">${z.elevation_m.toFixed(0)} m</div></div>
+        <div><div class="metric__label">Drainage</div><div class="metric__value">${z.drainage_quality}</div></div>
+        <div><div class="metric__label">Water dist.</div><div class="metric__value">${z.distance_to_water_km < 1 ? (z.distance_to_water_km*1000).toFixed(0)+' m' : z.distance_to_water_km.toFixed(1)+' km'}</div></div>
+        <div><div class="metric__label">Population</div><div class="metric__value">${this.fmtInt(z.population)}</div></div>
+        <div><div class="metric__label">Rain now</div><div class="metric__value">${z.signal.rainfall_intensity_mm_h.toFixed(1)} mm/h</div></div>
+        <div><div class="metric__label">Saturation</div><div class="metric__value">${z.signal.soil_saturation_pct.toFixed(0)}%</div></div>
+      </div>
+      <div class="zone-detail__bars">
+        ${["rainfall","terrain","drainage","proximity","saturation"].map(k => `
+          <div class="contrib"><span class="contrib__lbl">${k}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(p.contributions[k]*100).toFixed(0)}%;background:${color}"></div></div><span class="contrib__val">${(p.contributions[k]*100).toFixed(0)}%</span></div>
+        `).join("")}
+      </div>
+      <div class="zone-detail__rec">
+        <div class="section-heading"><i data-lucide="check-circle"></i> Recommendations</div>
+        <ul class="result-list result-list--success">${p.recommendations.map(r => `<li>${r}</li>`).join("")}</ul>
+      </div>
+      <div class="zone-detail__forecast" id="zone-forecast"></div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  },
+
+  renderForecast(fc) {
+    const el = document.getElementById("zone-forecast");
+    if (!el) return;
+    const rows = fc.hourly.map(h => {
+      const c = this.riskColor(h.risk_level);
+      const heightPct = Math.max(8, h.risk_score * 100);
+      return `<div class="forecast-bar" title="+${h.hour_offset}h · ${h.risk_level} ${h.risk_score.toFixed(2)} · ${h.rainfall_intensity_mm_h.toFixed(1)} mm/h">
+        <div class="forecast-bar__fill" style="height:${heightPct}%;background:${c}"></div>
+        <span class="forecast-bar__label">+${h.hour_offset}</span>
+      </div>`;
+    }).join("");
+    el.innerHTML = `
+      <div class="section-heading"><i data-lucide="trending-up"></i> 24h forecast (hourly)</div>
+      <div class="forecast-strip">${rows}</div>
+    `;
+    if (window.lucide) lucide.createIcons();
+  },
+};
+
+// Boot the atlas the first time its tab becomes active.
+function maybeBootAtlas() {
+  if (!document.getElementById("tab-atlas")) return;
+  if (document.getElementById("tab-atlas").classList.contains("hidden")) return;
+  FloodAtlas.init();
+  // Leaflet sometimes lays out wrong if the container was hidden — nudge it.
+  setTimeout(() => FloodAtlas.map?.invalidateSize(), 50);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash) {
+    const tabId = window.location.hash.substring(1);
+    if (FLOOD_TABS.includes(tabId)) switchTab(tabId);
+  }
+  maybeBootAtlas();
+});
+
+const _origSwitchTab = switchTab;
+switchTab = function (tab) {
+  _origSwitchTab(tab);
+  if (tab === "atlas") maybeBootAtlas();
+};

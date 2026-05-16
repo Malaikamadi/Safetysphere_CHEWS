@@ -1343,3 +1343,187 @@ body {
   .model-grid { grid-template-columns: 1fr; }
   .model-card__meta { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   Flood Atlas — Sierra Leone (Strategic Planning page)
+   ============================================================ */
+
+.atlas-kpis {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.atlas-kpi {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+.atlas-kpi::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(var(--accent), var(--accent-2));
+  opacity: 0.85;
+}
+.atlas-kpi--warning::before { background: var(--warning); }
+.atlas-kpi--danger::before  { background: var(--danger); }
+.atlas-kpi--info::before    { background: var(--accent-2); }
+.atlas-kpi__label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+.atlas-kpi__value { font-size: 1.45rem; font-weight: 800; color: var(--text-bright); margin-top: 0.15rem; line-height: 1.1; }
+.atlas-kpi__sub   { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.15rem; }
+
+.atlas-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+.atlas-map-card { padding-bottom: 0; }
+.flood-map {
+  width: 100%;
+  height: 540px;
+  border-radius: calc(var(--radius) - 4px);
+  overflow: hidden;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+  background: #0b1426;
+}
+.atlas-legend {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 0.85rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.74rem; color: var(--text-dim);
+}
+.atlas-legend__title { font-weight: 600; color: var(--text); margin-right: 0.4rem; }
+.atlas-legend__chip  { display: inline-flex; align-items: center; gap: 0.35rem; }
+.atlas-legend__dot   { width: 10px; height: 10px; border-radius: 50%; }
+
+.atlas-side { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Leaflet popups/tooltips on dark theme */
+.leaflet-tooltip {
+  background: rgba(11, 20, 38, 0.92);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 6px;
+  font-size: 0.74rem;
+  padding: 4px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before, .leaflet-tooltip-right:before { border-color: transparent; }
+.leaflet-control-attribution { background: rgba(11, 20, 38, 0.7) !important; color: #94a3b8 !important; font-size: 10px !important; }
+.leaflet-control-attribution a { color: #34d399 !important; }
+.leaflet-bar a, .leaflet-bar a:hover {
+  background: rgba(11, 20, 38, 0.95);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+/* Scenario simulator */
+.scenario { display: flex; flex-direction: column; gap: 0.75rem; padding-top: 0.5rem; }
+.scenario__row { display: flex; flex-direction: column; gap: 0.35rem; }
+.scenario__label { font-size: 0.78rem; color: var(--text); display: flex; justify-content: space-between; }
+.scenario__label span { font-weight: 700; color: var(--accent); }
+.scenario__slider {
+  width: 100%;
+  appearance: none;
+  background: rgba(148, 163, 184, 0.12);
+  height: 6px;
+  border-radius: 3px;
+}
+.scenario__slider::-webkit-slider-thumb {
+  appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  cursor: pointer; box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
+}
+.scenario__slider::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; border: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  cursor: pointer; box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
+}
+.scenario__actions { display: flex; gap: 0.5rem; }
+.scenario__delta {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+  font-size: 0.78rem;
+}
+.scenario__delta-row { display: flex; justify-content: space-between; }
+.scenario__delta-row strong { font-variant-numeric: tabular-nums; }
+
+/* Zone detail panel */
+.zone-detail { display: flex; flex-direction: column; gap: 0.85rem; padding-top: 0.5rem; }
+.zone-detail__head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.zone-detail__name { font-size: 1rem; font-weight: 700; color: var(--text-bright); }
+.zone-detail__meta { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.15rem; }
+.zone-detail__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.zone-detail__metrics > div {
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+}
+.zone-detail__bars { display: flex; flex-direction: column; gap: 0.35rem; }
+.contrib { display: grid; grid-template-columns: 80px 1fr 36px; align-items: center; gap: 0.45rem; font-size: 0.72rem; }
+.contrib__lbl { color: var(--text-dim); text-transform: capitalize; }
+.contrib__track { height: 6px; background: rgba(148, 163, 184, 0.12); border-radius: 3px; overflow: hidden; }
+.contrib__fill  { height: 100%; transition: width 0.4s ease; }
+.contrib__val   { color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* 24h forecast strip */
+.forecast-strip {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 2px;
+  align-items: end;
+  height: 80px;
+  padding: 6px;
+  background: rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.forecast-bar { position: relative; height: 100%; display: flex; flex-direction: column-reverse; }
+.forecast-bar__fill { width: 100%; border-radius: 2px; transition: height 0.4s ease; }
+.forecast-bar__label { position: absolute; bottom: -14px; left: 0; right: 0; font-size: 9px; text-align: center; color: var(--text-dim); }
+
+/* Top-10 zone table */
+.zone-table-wrap { overflow-x: auto; }
+.zone-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.zone-table thead th { text-align: left; font-weight: 600; color: var(--text-dim); padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+.zone-table tbody td { padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--border); }
+.zone-table tbody tr { cursor: pointer; transition: background 0.15s; }
+.zone-table tbody tr:hover { background: rgba(52, 211, 153, 0.05); }
+.zone-table .text-dim { color: var(--text-dim); font-size: 0.74rem; }
+
+.risk-pill {
+  display: inline-block;
+  background: color-mix(in oklab, var(--risk-c) 18%, transparent);
+  color: var(--risk-c);
+  border: 1px solid color-mix(in oklab, var(--risk-c) 35%, transparent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 1100px) {
+  .atlas-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .atlas-grid { grid-template-columns: 1fr; }
+  .flood-map  { height: 420px; }
+}
+@media (max-width: 600px) {
+  .atlas-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .zone-detail__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flood-map  { height: 340px; }
+}

@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 <body>
   <div class="bg-animation" aria-hidden="true">
@@ -107,14 +109,92 @@
 
         <!-- Tabs -->
         <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
-          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="vulnerability" onclick="switchTab('vulnerability')"><i data-lucide="hospital"></i> Vulnerability Score</button>
+          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="atlas" onclick="switchTab('atlas')"><i data-lucide="map-pinned"></i> Flood Atlas</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="vulnerability" onclick="switchTab('vulnerability')"><i data-lucide="hospital"></i> Vulnerability Score</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="hazard" onclick="switchTab('hazard')"><i data-lucide="map"></i> Hazard Map</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="pollution" onclick="switchTab('pollution')"><i data-lucide="wind"></i> Pollution Hotspot</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="carbon" onclick="switchTab('carbon')"><i data-lucide="leaf"></i> Carbon Footprint</button>
         </div>
 
+        <!-- FLOOD ATLAS TAB -->
+        <div id="tab-atlas" class="tab-content">
+          <!-- Live KPI dashboard -->
+          <div class="atlas-kpis">
+            <div class="atlas-kpi"><div class="atlas-kpi__label">Communities monitored</div><div class="atlas-kpi__value" id="kpi-zones">—</div><div class="atlas-kpi__sub" id="kpi-districts">—</div></div>
+            <div class="atlas-kpi atlas-kpi--warning"><div class="atlas-kpi__label">Population at risk</div><div class="atlas-kpi__value" id="kpi-pop-risk">—</div><div class="atlas-kpi__sub">in zones at Moderate+ risk</div></div>
+            <div class="atlas-kpi atlas-kpi--danger"><div class="atlas-kpi__label">High &amp; severe zones</div><div class="atlas-kpi__value" id="kpi-high">—</div><div class="atlas-kpi__sub" id="kpi-severe">—</div></div>
+            <div class="atlas-kpi atlas-kpi--info"><div class="atlas-kpi__label">Avg rainfall now</div><div class="atlas-kpi__value" id="kpi-rain">—</div><div class="atlas-kpi__sub">mm/hr · 24h: <span id="kpi-rain-24">—</span> mm</div></div>
+            <div class="atlas-kpi atlas-kpi--info"><div class="atlas-kpi__label">Soil saturation</div><div class="atlas-kpi__value" id="kpi-sat">—</div><div class="atlas-kpi__sub">avg across districts</div></div>
+            <div class="atlas-kpi"><div class="atlas-kpi__label">River stage</div><div class="atlas-kpi__value" id="kpi-river">—</div><div class="atlas-kpi__sub">% of bankfull</div></div>
+          </div>
+
+          <div class="atlas-grid">
+            <!-- Map -->
+            <div class="card card--glow-blue atlas-map-card">
+              <div class="card__header">
+                <div>
+                  <div class="card__title"><i data-lucide="map"></i> Sierra Leone Flood Atlas</div>
+                  <div class="card__desc">Live per-community flood risk derived from district rainfall, soil saturation, elevation and drainage. <span id="atlas-updated" class="text-dim">—</span></div>
+                </div>
+                <button class="btn btn--sm btn--ghost" id="atlas-refresh"><i data-lucide="refresh-cw"></i> Refresh</button>
+              </div>
+              <div id="flood-map" class="flood-map"></div>
+              <div class="atlas-legend">
+                <span class="atlas-legend__title">Risk level</span>
+                <span class="atlas-legend__chip" data-level="Low"><span class="atlas-legend__dot" style="background:#22c55e"></span>Low</span>
+                <span class="atlas-legend__chip" data-level="Moderate"><span class="atlas-legend__dot" style="background:#fbbf24"></span>Moderate</span>
+                <span class="atlas-legend__chip" data-level="High"><span class="atlas-legend__dot" style="background:#f97316"></span>High</span>
+                <span class="atlas-legend__chip" data-level="Severe"><span class="atlas-legend__dot" style="background:#ef4444"></span>Severe</span>
+                <span class="atlas-legend__chip" data-level="Extreme"><span class="atlas-legend__dot" style="background:#b91c1c"></span>Extreme</span>
+              </div>
+            </div>
+
+            <!-- Side panel: scenario + selected zone -->
+            <div class="atlas-side">
+              <div class="card card--glow-amber">
+                <div class="card__header"><div><div class="card__title"><i data-lucide="sliders-horizontal"></i> Scenario simulator</div><div class="card__desc">Push the dashboard signals and watch every zone re-predict.</div></div></div>
+                <div class="scenario">
+                  <div class="scenario__row">
+                    <label class="scenario__label">Rainfall intensity ×<span id="sc-rain-val">1.0</span></label>
+                    <input type="range" id="sc-rain" class="scenario__slider" min="0" max="5" step="0.1" value="1.0" />
+                  </div>
+                  <div class="scenario__row">
+                    <label class="scenario__label">24h rainfall ×<span id="sc-rain24-val">1.0</span></label>
+                    <input type="range" id="sc-rain24" class="scenario__slider" min="0" max="5" step="0.1" value="1.0" />
+                  </div>
+                  <div class="scenario__row">
+                    <label class="scenario__label">Saturation offset <span id="sc-sat-val">+0</span>%</label>
+                    <input type="range" id="sc-sat" class="scenario__slider" min="-50" max="50" step="1" value="0" />
+                  </div>
+                  <div class="scenario__actions">
+                    <button class="btn btn--primary btn--sm" id="sc-run"><i data-lucide="play"></i> Run scenario</button>
+                    <button class="btn btn--ghost btn--sm" id="sc-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                  </div>
+                  <div class="scenario__delta" id="sc-delta"></div>
+                </div>
+              </div>
+
+              <div class="card" id="zone-detail-card">
+                <div class="card__header"><div><div class="card__title"><i data-lucide="info"></i> Zone detail</div><div class="card__desc" id="zone-detail-hint">Click any community on the map.</div></div></div>
+                <div class="zone-detail" id="zone-detail" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top-10 highest risk zones -->
+          <div class="card mt-1">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="alert-triangle"></i> Top 10 highest-risk communities right now</div><div class="card__desc">Click a row to focus the map and load its 24h forecast.</div></div></div>
+            <div class="zone-table-wrap">
+              <table class="zone-table" id="zone-table">
+                <thead><tr><th>#</th><th>Community</th><th>District</th><th>Risk</th><th>Level</th><th>Population</th><th>Drivers</th></tr></thead>
+                <tbody id="zone-table-body"><tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:2rem">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- VULNERABILITY TAB -->
-        <div id="tab-vulnerability" class="tab-content">
+        <div id="tab-vulnerability" class="tab-content hidden">
           <div class="card card--glow-green">
             <div class="card__header"><div><div class="card__title"><i data-lucide="hospital"></i> Facility Vulnerability Score</div><div class="card__desc">Composite vulnerability assessment combining hazard exposure, population sensitivity, and adaptive capacity.</div></div></div>
             <form id="vuln-form" autocomplete="off">
@@ -255,6 +335,8 @@
       <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Strategic Planning · Sierra Leone </p></footer>
     </main>
   </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="strategic.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
