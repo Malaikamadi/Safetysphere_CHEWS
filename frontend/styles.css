@@ -1527,3 +1527,50 @@ body {
   .zone-detail__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .flood-map  { height: 340px; }
 }
+
+/* Flood Atlas — readability + cross-navigation */
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+.atlas-meta { font-size: 0.72rem; line-height: 1.35; max-width: 52rem; border-left: 2px solid var(--accent-2); padding-left: 0.65rem; }
+.atlas-guide {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(148, 163, 184, 0.04);
+  padding: 0 0.85rem;
+}
+.atlas-guide__sum {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--text-bright);
+}
+.atlas-guide__sum::-webkit-details-marker { display: none; }
+.atlas-guide__chev { display: inline-flex; transition: transform 0.2s ease; color: var(--accent); }
+.atlas-guide[open] .atlas-guide__chev { transform: rotate(90deg); }
+.atlas-guide__body {
+  padding: 0 0 0.95rem 1.6rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+.atlas-guide__body p + p { margin-top: 0.45rem; }
+.cross-link-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: rgba(52, 211, 153, 0.06);
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.cross-link-banner strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}

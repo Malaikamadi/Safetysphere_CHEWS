@@ -9,9 +9,9 @@ Responsibilities
 ----------------
 1. **Synthesise district-level live signals** — current rainfall
    intensity, rainfall in the last 24 hours, soil saturation, river
-   stage and tide stage. The values follow the Sierra Leone rainy-
-   season climatology (May–October peak, August driest in Bo/Kenema
-   on the coast pattern, deep wet season for Kambia / Bonthe). They
+   stage and tide stage. Values follow Sierra Leone rainy-season
+   climatology (peak May–October, typically wettest mid-season;
+   inland vs coastal totals differ per district catalogue). These
    wobble per-call so the dashboard "ticks" without a real sensor
    feed, but stay inside plausible ranges.
 2. **Run the flood-risk model per zone** — combines each zone's
@@ -277,6 +277,14 @@ def snapshot(overrides: Optional[dict] = None, seed: Optional[int] = None) -> di
     return {
         "generated_at": now.isoformat(),
         "country": "Sierra Leone",
+        "meta": {
+            "signals_source": "synthetic_climatology_anchor",
+            "risk_model": "models.flood_risk.predict",
+            "catalog_notes": (
+                "Static communities from NDMA/IFRC-aligned catalog; signals are "
+                "plausible placeholders until wired to satellite or station feeds."
+            ),
+        },
         "bounds": sl.country_bounds(),
         "kpis": {
             "zones_monitored": len(zones),

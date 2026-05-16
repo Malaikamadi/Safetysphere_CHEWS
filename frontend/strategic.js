@@ -160,16 +160,28 @@ document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener(
 
 const FLOOD_TABS = ["atlas", "vulnerability", "hazard", "pollution", "carbon"];
 
-(function initFromHash() {
-  const h = location.hash.slice(1);
-  if (h && FLOOD_TABS.includes(h)) switchTab(h);
-})();
+/** Parse hashes like `#atlas`, `#atlas/kroo_bay`, `#hazard`. */
+function parsePlanningHash(hash) {
+  const raw = (hash || "").replace(/^#/, "");
+  if (!raw) return { tab: null, zoneId: null };
+  const i = raw.indexOf("/");
+  if (i === -1)
+    return { tab: FLOOD_TABS.includes(raw) ? raw : null, zoneId: null };
+  const tab = raw.slice(0, i);
+  const zoneId = raw.slice(i + 1).trim();
+  if (!FLOOD_TABS.includes(tab)) return { tab: null, zoneId: null };
+  return { tab, zoneId: decodeURIComponent(zoneId) || null };
+}
 
-window.addEventListener('hashchange', () => {
-  const tabId = window.location.hash.substring(1);
-  if (tabId && FLOOD_TABS.includes(tabId)) switchTab(tabId);
-});
-
+function syncAtlasHash(zoneIdOrNull) {
+  const hash = zoneIdOrNull ? `#atlas/${encodeURIComponent(zoneIdOrNull)}` : "#atlas";
+  const base = `${location.pathname}${location.search}`;
+  try {
+    history.replaceState(null, "", `${base}${hash}`);
+  } catch (_) {
+    location.hash = hash;
+  }
+}
 
 // =====================================================================
 // Flood Atlas — Sierra Leone
@@ -195,6 +207,8 @@ const FloodAtlas = {
   zonesById: {},          // last snapshot keyed by zone id
   baselineKpis: null,     // first non-scenario snapshot, used for delta display
   selectedId: null,
+  /** Set from URL `#atlas/zone_id`; consumed once after dashboard render. */
+  _pendingZoneSelection: null,
   refreshTimer: null,
   scenarioActive: false,
 
@@ -345,6 +359,12 @@ const FloodAtlas = {
       this._fitted = true;
     }
 
+    const metaEl = document.getElementById("atlas-meta");
+    if (metaEl && snap.meta) {
+      metaEl.style.display = "block";
+      metaEl.textContent = `${snap.meta.signals_source}: ${snap.meta.catalog_notes}`;
+    }
+
     // Top-10 table
     this.renderTable(snap.zones);
 
@@ -363,6 +383,12 @@ const FloodAtlas = {
     // Refresh selected zone if one was open.
     if (this.selectedId && this.zonesById[this.selectedId]) {
       this.renderZoneDetail(this.zonesById[this.selectedId]);
+    }
+
+    if (this._pendingZoneSelection && this.zonesById[this._pendingZoneSelection]) {
+      const pid = this._pendingZoneSelection;
+      this._pendingZoneSelection = null;
+      void this.selectZone(pid, true);
     }
 
     if (window.lucide) lucide.createIcons();
@@ -390,10 +416,11 @@ const FloodAtlas = {
     });
   },
 
-  async selectZone(id) {
+  async selectZone(id, skipHashSync) {
     const z = this.zonesById[id];
     if (!z || !this.map) return;
     this.selectedId = id;
+    if (!skipHashSync) syncAtlasHash(id);
     this.map.flyTo([z.lat, z.lng], Math.max(this.map.getZoom(), 11), { duration: 0.6 });
     this.renderZoneDetail(z);
     try {
@@ -468,16 +495,28 @@ function maybeBootAtlas() {
   setTimeout(() => FloodAtlas.map?.invalidateSize(), 50);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.location.hash) {
-    const tabId = window.location.hash.substring(1);
-    if (FLOOD_TABS.includes(tabId)) switchTab(tabId);
-  }
+function applyPlanningHashFromUrl() {
+  const { tab, zoneId } = parsePlanningHash(location.hash);
+  FloodAtlas._pendingZoneSelection = tab === "atlas" && zoneId ? zoneId : null;
+  if (tab) switchTab(tab);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  applyPlanningHashFromUrl();
   maybeBootAtlas();
+});
+
+window.addEventListener("hashchange", () => {
+  applyPlanningHashFromUrl();
+  if (parsePlanningHash(location.hash).tab === "atlas") maybeBootAtlas();
 });
 
 const _origSwitchTab = switchTab;
 switchTab = function (tab) {
   _origSwitchTab(tab);
-  if (tab === "atlas") maybeBootAtlas();
+  if (tab === "atlas") {
+    maybeBootAtlas();
+    if (!parsePlanningHash(location.hash).zoneId)
+      syncAtlasHash(null);
+  }
 };

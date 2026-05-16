@@ -32,6 +32,7 @@
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
+              <a href="strategic.html#atlas" class="nav-sublink">Flood Atlas</a>
               <a href="strategic.html#vulnerability" class="nav-sublink">Vulnerability Score</a>
               <a href="strategic.html#hazard" class="nav-sublink">Hazard Map</a>
               <a href="strategic.html#pollution" class="nav-sublink">Pollution Hotspot</a>
@@ -128,6 +129,17 @@
             <div class="atlas-kpi"><div class="atlas-kpi__label">River stage</div><div class="atlas-kpi__value" id="kpi-river">—</div><div class="atlas-kpi__sub">% of bankfull</div></div>
           </div>
 
+          <details class="atlas-guide mb-1">
+            <summary class="atlas-guide__sum"><span class="atlas-guide__chev"><i data-lucide="chevron-right"></i></span><strong>How to read this dashboard</strong></summary>
+            <div class="atlas-guide__body">
+              <p><strong>Top KPI strip</strong> — rolling counts from every catalogued community plus district-level rainfall, soil saturation and river-stage proxies. Population at risk includes anyone in a zone scoring at least Moderate (≥0.40 composite).</p>
+              <p><strong>Map bubbles</strong> — larger = higher numeric risk; colour maps to CHEWS severity band (legend below the map).</p>
+              <p><strong>Scenario sliders</strong> — multiply modeled rainfall or nudge saturation, then Run scenario. The delta block compares KPIs against your first baseline load since opening the tab (hit Reset baseline by refreshing).</p>
+              <p><strong>24h stripes</strong> — simple decay curve from the flood model (not calibrated weather-scale precision). Use it for tabletop exercises, not operational evacuation maths.</p>
+              <p class="text-dim" style="font-size:0.78rem">Deep link example: <code class="mono">strategic.html#atlas/kroo_bay</code> opens this tab and selects Kroo Bay (slug matches the catalogue id).</p>
+            </div>
+          </details>
+
           <div class="atlas-grid">
             <!-- Map -->
             <div class="card card--glow-blue atlas-map-card">
@@ -135,6 +147,7 @@
                 <div>
                   <div class="card__title"><i data-lucide="map"></i> Sierra Leone Flood Atlas</div>
                   <div class="card__desc">Live per-community flood risk derived from district rainfall, soil saturation, elevation and drainage. <span id="atlas-updated" class="text-dim">—</span></div>
+                  <p id="atlas-meta" class="atlas-meta text-dim" style="margin-top:0.45rem;display:none;"></p>
                 </div>
                 <button class="btn btn--sm btn--ghost" id="atlas-refresh"><i data-lucide="refresh-cw"></i> Refresh</button>
               </div>
