@@ -1,47 +1,22 @@
-"""
-CHEWS v3.0 — Climate-Health Early Warning System
-===================================================
-Comprehensive multi-hazard, multi-disease climate-health intelligence platform.
 
-4 Operational Areas:
-    Area 1: Strategic Planning    — hazard mapping, vulnerability, pollution, carbon
-    Area 2: Early Warning         — real-time alerts, sensor data, triggers
-    Area 3: Healthcare Readiness  — disease forecasting, anomaly detection, surge planning
-    Area 4: Point-of-Care         — multilingual triage, health assistant
-
-Architecture:
-    ┌─────────────────────────────────────────────────────────────┐
-    │                    FastAPI Application                       │
-    ├──────────┬──────────┬──────────────┬────────────────────────┤
-    │ Strategic │  Early   │  Healthcare  │   Point-of-Care        │
-    │ Planning  │  Warning │  Readiness   │   Support              │
-    ├──────────┴──────────┴──────────────┴────────────────────────┤
-    │                    Service Layer                             │
-    │  risk_engine | alert_engine | forecast_engine | triage      │
-    ├─────────────────────────────────────────────────────────────┤
-    │                    Model Layer                               │
-    │  environmental | epidemiological | exposure | air_quality    │
-    │  flood_risk | heat_stress | carbon_accounting               │
-    └─────────────────────────────────────────────────────────────┘
-"""
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from enum import Enum
 
-from models import environmental
-from models import risk_engine
+from models import risk_engine, environmental
 from routers import strategic, early_warning, healthcare, point_of_care
 
 # ========================== App Initialisation =============================
 
 app = FastAPI(
-    title="CHEWS v3.0 — Climate-Health Intelligence Platform",
+    title="CHEWS — Climate-Health Intelligence System",
     description=(
-        "Comprehensive multi-hazard, multi-disease climate-health early warning system. "
-        "Covers strategic planning, early warning, healthcare readiness, and point-of-care support."
+        "Multi-layer AI-powered climate-health intelligence for NGOs and "
+        "public health organisations in low-resource settings. Combines "
+        "environmental, epidemiological, exposure, hazard and readiness "
+        "models with a real-time flood atlas for Sierra Leone."
     ),
     version="3.0.0",
 )
@@ -54,8 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ========================== Register Routers ===============================
-
+# Mount domain routers (Strategic Planning, Early Warning, Healthcare
+# Readiness, Point-of-Care). Without this the frontend Strategic and
+# Early Warning pages would only see 404s for /strategic/* and
+# /early-warning/* requests.
 app.include_router(strategic.router)
 app.include_router(early_warning.router)
 app.include_router(healthcare.router)
@@ -68,8 +45,7 @@ app.include_router(point_of_care.router)
 async def startup():
     """Initialise ML models at server start."""
     environmental.initialize()
-    print("[CHEWS v3.0] All models initialised. Platform ready.")
-    print("[CHEWS v3.0] Areas: Strategic Planning | Early Warning | Healthcare Readiness | Point-of-Care")
+    print("[CHEWS] All models initialised. System ready.")
 
 
 # ========================== Data Models ====================================
@@ -143,37 +119,37 @@ class AskInput(BaseModel):
     )
 
 
-# ========================== Core Endpoints =================================
+# ========================== API Endpoints ==================================
 
 @app.get("/health", tags=["System"])
 async def health_check():
     """System health check."""
     return {
         "status": "ok",
-        "service": "CHEWS Climate-Health Intelligence Platform",
+        "service": "CHEWS Climate-Health Intelligence System",
         "version": "3.0.0",
-        "areas": [
-            "Strategic Planning",
-            "Early Warning",
-            "Healthcare Readiness",
-            "Point-of-Care",
-        ],
         "models": [
-            "environmental", "epidemiological", "exposure",
-            "air_quality", "flood_risk", "heat_stress", "carbon_accounting",
+            "environmental", "epidemiological", "exposure", "risk_engine",
+            "flood_risk", "heat_stress", "air_quality", "carbon_accounting",
         ],
-        "services": [
-            "risk_engine", "alert_engine", "forecast_engine",
-            "vulnerability", "triage_assistant",
+        "routers": [
+            "/strategic", "/early-warning", "/healthcare", "/poc",
         ],
     }
 
 
-@app.post("/predict", response_model=PredictionOutput, tags=["Malaria Risk"])
+@app.post("/predict", response_model=PredictionOutput, tags=["Prediction"])
 async def predict_risk(data: PredictionInput):
     """
-    Run the full multi-layer malaria risk assessment pipeline.
-    (Legacy endpoint — maintained for backward compatibility)
+    Run the full multi-layer risk assessment pipeline.
+
+    Combines three specialised models:
+    1. **Environmental** — climate suitability for transmission
+    2. **Epidemiological** — disease spread probability from surveillance
+    3. **Exposure** — population vulnerability assessment
+
+    Returns a composite risk score, breakdown, natural-language explanation,
+    and actionable recommendations.
     """
     result = risk_engine.assess(
         rainfall=data.rainfall,
@@ -197,7 +173,10 @@ async def predict_risk(data: PredictionInput):
 
 @app.post("/ask", tags=["Assistant"])
 async def ask_assistant(data: AskInput):
-    """Simple health assistant endpoint."""
+    """
+    Simple health assistant endpoint.
+    Answers common questions about malaria, prevention, and risk.
+    """
     question = data.question.lower()
 
     responses = {
