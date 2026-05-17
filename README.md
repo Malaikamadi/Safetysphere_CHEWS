@@ -102,7 +102,7 @@ python3 -m http.server 3000
 ##  Tech Stack
 
 - **Backend:** Python 3.10+, FastAPI, Pydantic, NumPy
-- **ML (optional):** scikit-learn Logistic Regression
+- **ML:** scikit-learn Logistic Regression
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **No database required** — stateless API
 
