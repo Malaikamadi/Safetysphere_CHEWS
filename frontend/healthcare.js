@@ -212,9 +212,180 @@ function renderSurge(data) {
 
 document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
 
+// ═══════════════════════════════════════════════════════════════════
+// ML Prediction Forms
+// ═══════════════════════════════════════════════════════════════════
+
+// --- Malaria Case Predictor ---
+document.getElementById("ml-malaria-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch(`${API}/healthcare/ml/malaria-predict`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        district: document.getElementById("ml-m-district").value,
+        rainfall_mm: +document.getElementById("ml-m-rain").value,
+        temperature_c: +document.getElementById("ml-m-temp").value,
+        humidity_percent: +document.getElementById("ml-m-hum").value,
+        water_stagnation_index: +document.getElementById("ml-m-stag").value,
+        mosquito_breeding_sites: +document.getElementById("ml-m-breed").value,
+        reported_fever_cases: +document.getElementById("ml-m-fever").value,
+        population_density: +document.getElementById("ml-m-pop").value,
+      }),
+    });
+    if (!res.ok) throw new Error(`Server error (${res.status})`);
+    renderMalariaResult(await res.json());
+  } catch (err) { alert("Error: " + err.message); }
+});
+
+function renderMalariaResult(data) {
+  const el = document.getElementById("ml-malaria-result");
+  el.classList.remove("hidden"); el.classList.add("slide-up");
+  const lvlColors = { Low: "var(--success)", Moderate: "var(--warning)", High: "var(--orange)", Critical: "var(--danger)" };
+  const lvlColor = lvlColors[data.risk_level] || "var(--text)";
+  const lvlClass = data.risk_level.toLowerCase();
+
+  let contribHtml = "";
+  if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
+    const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--accent-2)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      `</div>`;
+  }
+
+  el.innerHTML = `
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim)">PREDICTED MALARIA CASES</div>
+      <div style="font-size:3rem;font-weight:800;color:${lvlColor}">${data.predicted_cases}</div>
+      <div class="risk-badge risk-badge--${lvlClass === 'critical' ? 'high' : lvlClass}" style="font-size:0.85rem;padding:0.4rem 1.2rem">${data.risk_level} Risk</div>
+    </div>
+    <div class="mb-1"><div class="section-heading"><i data-lucide="zap"></i> Contributing Factors</div>
+      <ul class="result-list result-list--warning">${data.confidence_factors.map(f => `<li>${f}</li>`).join("")}</ul>
+    </div>
+    ${contribHtml ? `<div class="section-heading"><i data-lucide="bar-chart-2"></i> Feature Importances</div>${contribHtml}` : ""}
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+// --- Healthcare Readiness Predictor ---
+document.getElementById("ml-readiness-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch(`${API}/healthcare/ml/readiness-predict`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        district: document.getElementById("ml-r-district").value,
+        facility_type: document.getElementById("ml-r-type").value,
+        beds_available: +document.getElementById("ml-r-beds").value,
+        health_workers: +document.getElementById("ml-r-workers").value,
+        malaria_medicine_stock: +document.getElementById("ml-r-medicine").value,
+        power_availability: +document.getElementById("ml-r-power").value,
+        water_availability: +document.getElementById("ml-r-water").value,
+        patient_load: +document.getElementById("ml-r-load").value,
+      }),
+    });
+    if (!res.ok) throw new Error(`Server error (${res.status})`);
+    renderReadinessResult(await res.json());
+  } catch (err) { alert("Error: " + err.message); }
+});
+
+function renderReadinessResult(data) {
+  const el = document.getElementById("ml-readiness-result");
+  el.classList.remove("hidden"); el.classList.add("slide-up");
+  const lvlColors = { Ready: "var(--success)", "Partially Ready": "var(--warning)", "Under-prepared": "var(--orange)", Critical: "var(--danger)" };
+  const lvlColor = lvlColors[data.readiness_level] || "var(--text)";
+  const pct = (data.readiness_score * 100).toFixed(0);
+
+  let contribHtml = "";
+  if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
+    const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--success)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      `</div>`;
+  }
+
+  el.innerHTML = `
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim)">READINESS SCORE</div>
+      <div style="font-size:3rem;font-weight:800;color:${lvlColor}">${pct}%</div>
+      <div class="risk-badge risk-badge--${data.readiness_level === 'Ready' ? 'low' : data.readiness_level === 'Partially Ready' ? 'moderate' : 'high'}" style="font-size:0.85rem;padding:0.4rem 1.2rem">${data.readiness_level}</div>
+    </div>
+    <div class="progress-bar mb-1"><div class="progress-bar__fill" style="width:${pct}%;background:linear-gradient(90deg,var(--danger),var(--warning),var(--success))"></div></div>
+    <div class="result-panel result-panel--info mb-1" style="text-align:center"><p style="font-size:0.85rem;margin:0">${data.capacity_assessment}</p></div>
+    <div class="mb-1"><div class="section-heading"><i data-lucide="alert-triangle"></i> Key Gaps</div>
+      <ul class="result-list result-list--danger">${data.key_gaps.map(g => `<li>${g}</li>`).join("")}</ul>
+    </div>
+    ${contribHtml ? `<div class="section-heading"><i data-lucide="bar-chart-2"></i> Feature Importances</div>${contribHtml}` : ""}
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+// --- Community Flood Classifier ---
+document.getElementById("ml-flood-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch(`${API}/healthcare/ml/community-flood`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        district: document.getElementById("ml-f-district").value,
+        community: document.getElementById("ml-f-community").value,
+        standing_water: +document.getElementById("ml-f-water").value,
+        fever_reports: +document.getElementById("ml-f-fever").value,
+        damaged_houses: +document.getElementById("ml-f-houses").value,
+        displaced_households: +document.getElementById("ml-f-displaced").value,
+        water_contamination: +document.getElementById("ml-f-contam").value,
+      }),
+    });
+    if (!res.ok) throw new Error(`Server error (${res.status})`);
+    renderFloodResult(await res.json());
+  } catch (err) { alert("Error: " + err.message); }
+});
+
+function renderFloodResult(data) {
+  const el = document.getElementById("ml-flood-result");
+  el.classList.remove("hidden"); el.classList.add("slide-up");
+  const alertColors = { Critical: "var(--danger)", Warning: "var(--orange)", Watch: "var(--warning)", Normal: "var(--success)" };
+  const alertColor = alertColors[data.alert_level] || "var(--text)";
+  const probPct = (data.flood_probability * 100).toFixed(0);
+
+  let contribHtml = "";
+  if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
+    const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--warning)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      `</div>`;
+  }
+
+  el.innerHTML = `
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim)">FLOOD CLASSIFICATION</div>
+      <div style="font-size:2.5rem;font-weight:800;color:${alertColor}">${data.flood_predicted ? "⚠️ FLOOD LIKELY" : "✅ NO FLOOD"}</div>
+      <div class="risk-badge risk-badge--${data.alert_level === 'Critical' || data.alert_level === 'Warning' ? 'high' : data.alert_level === 'Watch' ? 'moderate' : 'low'}" style="font-size:0.85rem;padding:0.4rem 1.2rem">${data.alert_level}</div>
+    </div>
+    <div class="grid-2 mb-1">
+      <div class="metric">
+        <div class="metric__icon"><i data-lucide="percent"></i></div>
+        <div class="metric__label">Flood Probability</div>
+        <div class="metric__value" style="font-size:1.5rem;color:${alertColor}">${probPct}%</div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:${probPct}%;background:linear-gradient(90deg,var(--success),var(--warning),var(--danger))"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric__icon"><i data-lucide="shield-alert"></i></div>
+        <div class="metric__label">Alert Level</div>
+        <div class="metric__value" style="font-size:1.5rem;color:${alertColor}">${data.alert_level}</div>
+      </div>
+    </div>
+    <div class="mb-1"><div class="section-heading"><i data-lucide="zap"></i> Contributing Factors</div>
+      <ul class="result-list result-list--warning">${data.contributing_factors.map(f => `<li>${f}</li>`).join("")}</ul>
+    </div>
+    ${contribHtml ? `<div class="section-heading"><i data-lucide="bar-chart-2"></i> Feature Importances</div>${contribHtml}` : ""}
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
 (function initFromHash() {
   const h = location.hash.slice(1);
-  if (h && ["forecast", "anomaly", "surge"].includes(h)) switchTab(h);
+  if (h && ["forecast", "anomaly", "surge", "ml-predictions"].includes(h)) switchTab(h);
 })();
 
 // Tab Hash Routing

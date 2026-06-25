@@ -5,14 +5,27 @@
   <meta name="description" content="CHEWS Healthcare Readiness — Disease forecasting, anomaly detection, and surge planning." />
   <title>CHEWS — Healthcare Readiness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute(
+          "data-theme",
+          v === "light" || v === "dark" ? v : "dark"
+        );
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
   <div class="app-layout">
         <aside class="sidebar" id="sidebar">
-      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate-health · Sierra Leone</div></div></a></div>
       <nav class="sidebar__nav">
         <div class="nav-section"><div class="nav-section__label">Overview</div>
           <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
@@ -95,7 +108,7 @@
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
         <div><div class="topbar__title">Healthcare Readiness</div><div class="topbar__subtitle">Forecasting, Anomaly Detection & Surge Planning</div></div>
-        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+        <div class="topbar__actions"><button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
       <div class="page fade-in">
@@ -106,6 +119,7 @@
           <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="forecast" onclick="switchTab('forecast')"><i data-lucide="trending-up"></i> Disease Forecast</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="anomaly" onclick="switchTab('anomaly')"><i data-lucide="search"></i> Anomaly Detection</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="surge" onclick="switchTab('surge')"><i data-lucide="hospital"></i> Surge Planning</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="ml-predictions" onclick="switchTab('ml-predictions')"><i data-lucide="brain-circuit"></i> ML Predictions</button>
         </div>
 
         <!-- FORECAST TAB -->
@@ -194,10 +208,100 @@
             <div class="hidden mt-1" id="surge-result"></div>
           </div>
         </div>
+        <!-- ML PREDICTIONS TAB -->
+        <div id="tab-ml-predictions" class="tab-content hidden">
+
+          <!-- Malaria Case Predictor -->
+          <div class="card card--glow-blue" style="margin-bottom:1.5rem">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="bug"></i> Malaria Case Predictor <span style="font-size:0.65rem;background:var(--accent-2);color:#000;padding:0.15rem 0.5rem;border-radius:999px;margin-left:0.5rem;font-weight:700">TRAINED ML</span></div><div class="card__desc">Predict malaria case counts using a GradientBoosting model trained on Sierra Leone data (R²=0.62, MAE=5.7 cases).</div></div></div>
+            <form id="ml-malaria-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="map-pin"></i> Location & Environment</div>
+                <div class="form__grid form__grid--4">
+                  <div class="form-group"><label class="form-label">District</label>
+                    <select id="ml-m-district" class="form-input form-select"><option value="Bo">Bo</option><option value="Bombali">Bombali</option><option value="Bonthe">Bonthe</option><option value="Kambia">Kambia</option><option value="Kenema">Kenema</option><option value="Kono">Kono</option><option value="Port Loko">Port Loko</option><option value="Tonkolili">Tonkolili</option><option value="Western Rural">Western Rural</option><option value="Western Urban">Western Urban</option></select></div>
+                  <div class="form-group"><label class="form-label">Rainfall (mm)</label><input type="number" id="ml-m-rain" class="form-input" value="150" min="0" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" id="ml-m-temp" class="form-input" value="28" step="0.1" /></div>
+                  <div class="form-group"><label class="form-label">Humidity (%)</label><input type="number" id="ml-m-hum" class="form-input" value="75" min="0" max="100" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="droplets"></i> Risk Factors</div>
+                <div class="form__grid form__grid--4">
+                  <div class="form-group"><label class="form-label">Water Stagnation (0–1)</label><input type="number" id="ml-m-stag" class="form-input" value="0.5" min="0" max="1" step="0.01" /></div>
+                  <div class="form-group"><label class="form-label">Breeding Sites</label><input type="number" id="ml-m-breed" class="form-input" value="10" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Fever Reports</label><input type="number" id="ml-m-fever" class="form-input" value="50" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Population Density</label><input type="number" id="ml-m-pop" class="form-input" value="5000" min="0" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full"><i data-lucide="brain-circuit"></i> Predict Malaria Cases</button>
+            </form>
+            <div class="hidden mt-1" id="ml-malaria-result"></div>
+          </div>
+
+          <!-- Healthcare Readiness Predictor -->
+          <div class="card card--glow-green" style="margin-bottom:1.5rem">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="hospital"></i> Facility Readiness Predictor <span style="font-size:0.65rem;background:var(--success);color:#000;padding:0.15rem 0.5rem;border-radius:999px;margin-left:0.5rem;font-weight:700">TRAINED ML</span></div><div class="card__desc">Predict facility readiness score using a RandomForest model trained on 200 facilities (R²=0.88).</div></div></div>
+            <form id="ml-readiness-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="building"></i> Facility Details</div>
+                <div class="form__grid form__grid--4">
+                  <div class="form-group"><label class="form-label">District</label>
+                    <select id="ml-r-district" class="form-input form-select"><option value="Bo">Bo</option><option value="Bombali">Bombali</option><option value="Bonthe">Bonthe</option><option value="Kambia">Kambia</option><option value="Kenema">Kenema</option><option value="Kono">Kono</option><option value="Port Loko">Port Loko</option><option value="Tonkolili">Tonkolili</option><option value="Western Rural">Western Rural</option><option value="Western Urban">Western Urban</option></select></div>
+                  <div class="form-group"><label class="form-label">Facility Type</label>
+                    <select id="ml-r-type" class="form-input form-select"><option value="CHC">CHC</option><option value="MCHP">MCHP</option><option value="Primary">Primary</option><option value="Secondary">Secondary</option><option value="Tertiary" selected>Tertiary</option></select></div>
+                  <div class="form-group"><label class="form-label">Beds Available</label><input type="number" id="ml-r-beds" class="form-input" value="200" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Health Workers</label><input type="number" id="ml-r-workers" class="form-input" value="80" min="0" /></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="package"></i> Resources & Load</div>
+                <div class="form__grid form__grid--4">
+                  <div class="form-group"><label class="form-label">Medicine Stock (0–1)</label><input type="number" id="ml-r-medicine" class="form-input" value="0.7" min="0" max="1" step="0.01" /></div>
+                  <div class="form-group"><label class="form-label">Power Available</label><select id="ml-r-power" class="form-input form-select"><option value="1" selected>Yes</option><option value="0">No</option></select></div>
+                  <div class="form-group"><label class="form-label">Water Available</label><select id="ml-r-water" class="form-input form-select"><option value="1" selected>Yes</option><option value="0">No</option></select></div>
+                  <div class="form-group"><label class="form-label">Patient Load</label><input type="number" id="ml-r-load" class="form-input" value="150" min="0" /></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full"><i data-lucide="brain-circuit"></i> Predict Readiness</button>
+            </form>
+            <div class="hidden mt-1" id="ml-readiness-result"></div>
+          </div>
+
+          <!-- Community Flood Classifier -->
+          <div class="card card--glow-amber">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="waves"></i> Community Flood Classifier <span style="font-size:0.65rem;background:var(--warning);color:#000;padding:0.15rem 0.5rem;border-radius:999px;margin-left:0.5rem;font-weight:700">TRAINED ML</span></div><div class="card__desc">Classify flood risk from community reports using a RandomForest model (ROC-AUC=1.00).</div></div></div>
+            <form id="ml-flood-form" autocomplete="off">
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="map-pin"></i> Location</div>
+                <div class="form__grid form__grid--2">
+                  <div class="form-group"><label class="form-label">District</label>
+                    <select id="ml-f-district" class="form-input form-select"><option value="Bo">Bo</option><option value="Bombali">Bombali</option><option value="Bonthe">Bonthe</option><option value="Kambia">Kambia</option><option value="Kenema">Kenema</option><option value="Kono">Kono</option><option value="Port Loko">Port Loko</option><option value="Tonkolili">Tonkolili</option><option value="Western Rural">Western Rural</option><option value="Western Urban">Western Urban</option></select></div>
+                  <div class="form-group"><label class="form-label">Community</label>
+                    <select id="ml-f-community" class="form-input form-select"><option value="Aberdeen">Aberdeen</option><option value="Calaba">Calaba</option><option value="Cline Town">Cline Town</option><option value="Dworzark">Dworzark</option><option value="Kissy" selected>Kissy</option><option value="Kroo Bay">Kroo Bay</option><option value="Mambolo">Mambolo</option><option value="Moyamba Junction">Moyamba Junction</option><option value="Regent">Regent</option><option value="Susan's Bay">Susan's Bay</option><option value="Tikonko">Tikonko</option><option value="Waterloo">Waterloo</option></select></div>
+                </div>
+              </div>
+              <div class="form__section">
+                <div class="form__section-title"><i data-lucide="clipboard-list"></i> Community Reports</div>
+                <div class="form__grid form__grid--5">
+                  <div class="form-group"><label class="form-label">Standing Water</label><select id="ml-f-water" class="form-input form-select"><option value="0">No</option><option value="1">Yes</option></select></div>
+                  <div class="form-group"><label class="form-label">Fever Reports</label><input type="number" id="ml-f-fever" class="form-input" value="20" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Damaged Houses</label><input type="number" id="ml-f-houses" class="form-input" value="15" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Displaced HH</label><input type="number" id="ml-f-displaced" class="form-input" value="5" min="0" /></div>
+                  <div class="form-group"><label class="form-label">Water Contam.</label><select id="ml-f-contam" class="form-input form-select"><option value="0">No</option><option value="1">Yes</option></select></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full"><i data-lucide="brain-circuit"></i> Classify Flood Risk</button>
+            </form>
+            <div class="hidden mt-1" id="ml-flood-result"></div>
+          </div>
+
+        </div>
       </div>
       <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Healthcare Readiness · Sierra Leone </p></footer>
     </main>
   </div>
+  <script src="theme.js"></script>
   <script src="healthcare.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
