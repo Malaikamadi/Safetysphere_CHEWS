@@ -1,14 +1,16 @@
 """
 Healthcare Readiness Router — Area 3
 =======================================
-Endpoints for disease forecasting, anomaly detection, and surge planning.
+Endpoints for disease forecasting, anomaly detection, surge planning,
+and trained ML model predictions.
 """
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
+from typing import Optional
 
 from services import forecast_engine
-from models import air_quality
+from models import air_quality, malaria_predictor, healthcare_readiness, community_reports
 
 router = APIRouter(prefix="/healthcare", tags=["Area 3: Healthcare Readiness"])
 
@@ -167,4 +169,104 @@ async def surge_planning(data: SurgePlanInput):
         "supply_days_remaining": data.supply_days,
         "gaps": gaps,
         "recommendations": recs,
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Trained ML Model Endpoints
+# ═══════════════════════════════════════════════════════════════════
+
+class MalariaPredictInput(BaseModel):
+    district: str = Field(default="Bo")
+    rainfall_mm: float = Field(default=150, ge=0)
+    temperature_c: float = Field(default=28, ge=-10, le=55)
+    humidity_percent: float = Field(default=75, ge=0, le=100)
+    water_stagnation_index: float = Field(default=0.5, ge=0, le=1)
+    mosquito_breeding_sites: int = Field(default=10, ge=0)
+    reported_fever_cases: int = Field(default=0, ge=0)
+    population_density: int = Field(default=5000, ge=0)
+
+
+class ReadinessInput(BaseModel):
+    district: str = Field(default="Kenema")
+    facility_type: str = Field(default="Tertiary")
+    beds_available: int = Field(default=100, ge=0)
+    health_workers: int = Field(default=50, ge=0)
+    malaria_medicine_stock: float = Field(default=0.5, ge=0, le=1)
+    power_availability: int = Field(default=1, ge=0, le=1)
+    water_availability: int = Field(default=1, ge=0, le=1)
+    patient_load: int = Field(default=100, ge=0)
+
+
+class CommunityFloodInput(BaseModel):
+    district: str = Field(default="Bo")
+    community: str = Field(default="Kissy")
+    standing_water: int = Field(default=0, ge=0, le=1)
+    fever_reports: int = Field(default=10, ge=0)
+    damaged_houses: int = Field(default=5, ge=0)
+    displaced_households: int = Field(default=2, ge=0)
+    water_contamination: int = Field(default=0, ge=0, le=1)
+
+
+@router.post("/ml/malaria-predict")
+async def ml_malaria_predict(data: MalariaPredictInput):
+    """Predict malaria case count using trained GradientBoosting model."""
+    result = malaria_predictor.predict(
+        district=data.district,
+        rainfall_mm=data.rainfall_mm,
+        temperature_c=data.temperature_c,
+        humidity_percent=data.humidity_percent,
+        water_stagnation_index=data.water_stagnation_index,
+        mosquito_breeding_sites=data.mosquito_breeding_sites,
+        reported_fever_cases=data.reported_fever_cases,
+        population_density=data.population_density,
+    )
+    return {
+        "predicted_cases": result.predicted_cases,
+        "risk_level": result.risk_level,
+        "confidence_factors": result.confidence_factors,
+        "feature_contributions": result.feature_contributions,
+    }
+
+
+@router.post("/ml/readiness-predict")
+async def ml_readiness_predict(data: ReadinessInput):
+    """Predict healthcare facility readiness using trained RandomForest model."""
+    result = healthcare_readiness.predict(
+        district=data.district,
+        facility_type=data.facility_type,
+        beds_available=data.beds_available,
+        health_workers=data.health_workers,
+        malaria_medicine_stock=data.malaria_medicine_stock,
+        power_availability=data.power_availability,
+        water_availability=data.water_availability,
+        patient_load=data.patient_load,
+    )
+    return {
+        "readiness_score": result.readiness_score,
+        "readiness_level": result.readiness_level,
+        "capacity_assessment": result.capacity_assessment,
+        "key_gaps": result.key_gaps,
+        "feature_contributions": result.feature_contributions,
+    }
+
+
+@router.post("/ml/community-flood")
+async def ml_community_flood(data: CommunityFloodInput):
+    """Classify flood occurrence from community reports using trained RandomForest model."""
+    result = community_reports.predict(
+        district=data.district,
+        community=data.community,
+        standing_water=data.standing_water,
+        fever_reports=data.fever_reports,
+        damaged_houses=data.damaged_houses,
+        displaced_households=data.displaced_households,
+        water_contamination=data.water_contamination,
+    )
+    return {
+        "flood_predicted": result.flood_predicted,
+        "flood_probability": result.flood_probability,
+        "alert_level": result.alert_level,
+        "contributing_factors": result.contributing_factors,
+        "feature_contributions": result.feature_contributions,
     }

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from enum import Enum
 
-from models import risk_engine, environmental
+from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
 from routers import strategic, early_warning, healthcare, point_of_care
 
 # ========================== App Initialisation =============================
@@ -45,6 +45,10 @@ app.include_router(point_of_care.router)
 async def startup():
     """Initialise ML models at server start."""
     environmental.initialize()
+    flood_risk.initialize()
+    malaria_predictor.initialize()
+    healthcare_readiness.initialize()
+    community_reports.initialize()
     print("[CHEWS] All models initialised. System ready.")
 
 
