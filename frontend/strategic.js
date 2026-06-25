@@ -1,6 +1,4 @@
-/**
- * CHEWS v3.0 — Strategic Planning Logic
- */
+
 const API = "http://127.0.0.1:8000";
 
 // Mobile menu
@@ -32,7 +30,7 @@ function renderResult(containerId, data, title) {
       <div class="metric"><div class="metric__label">Adaptive Capacity</div><div class="metric__value text-accent">${data.adaptive_capacity.toFixed(2)}</div></div>
     </div>`;
     html += `<div style="text-align:center;font-size:2rem;font-weight:800;color:var(--text-bright);margin-bottom:0.5rem">${data.composite_score.toFixed(2)}</div>`;
-    html += `<div class="progress-bar mb-1"><div class="progress-bar__fill" style="width:${data.composite_score*100}%;background:linear-gradient(90deg,var(--success),var(--warning),var(--danger))"></div></div>`;
+    html += `<div class="progress-bar mb-1"><div class="progress-bar__fill" style="width:${data.composite_score * 100}%;background:linear-gradient(90deg,var(--success),var(--warning),var(--danger))"></div></div>`;
   }
 
   if (data.hazard_layers) {
@@ -269,14 +267,14 @@ const FloodAtlas = {
     document.getElementById("atlas-refresh")?.addEventListener("click", () => this.refresh());
 
     const sc = (id) => document.getElementById(id);
-    sc("sc-rain")?.addEventListener("input",  (e) => sc("sc-rain-val").textContent  = (+e.target.value).toFixed(1));
+    sc("sc-rain")?.addEventListener("input", (e) => sc("sc-rain-val").textContent = (+e.target.value).toFixed(1));
     sc("sc-rain24")?.addEventListener("input", (e) => sc("sc-rain24-val").textContent = (+e.target.value).toFixed(1));
-    sc("sc-sat")?.addEventListener("input",   (e) => sc("sc-sat-val").textContent    = (e.target.value > 0 ? "+" : "") + e.target.value);
+    sc("sc-sat")?.addEventListener("input", (e) => sc("sc-sat-val").textContent = (e.target.value > 0 ? "+" : "") + e.target.value);
     sc("sc-run")?.addEventListener("click", () => this.runScenario());
     sc("sc-reset")?.addEventListener("click", () => {
-      sc("sc-rain").value = 1.0;       sc("sc-rain-val").textContent = "1.0";
-      sc("sc-rain24").value = 1.0;     sc("sc-rain24-val").textContent = "1.0";
-      sc("sc-sat").value = 0;          sc("sc-sat-val").textContent = "+0";
+      sc("sc-rain").value = 1.0; sc("sc-rain-val").textContent = "1.0";
+      sc("sc-rain24").value = 1.0; sc("sc-rain24-val").textContent = "1.0";
+      sc("sc-sat").value = 0; sc("sc-sat-val").textContent = "+0";
       this.scenarioActive = false;
       this.refresh();
     });
@@ -285,7 +283,7 @@ const FloodAtlas = {
     this.refresh();
     this.refreshTimer = setInterval(() => {
       if (!this.scenarioActive && document.getElementById("tab-atlas") &&
-          !document.getElementById("tab-atlas").classList.contains("hidden")) {
+        !document.getElementById("tab-atlas").classList.contains("hidden")) {
         this.refresh();
       }
     }, 30000);
@@ -310,8 +308,8 @@ const FloodAtlas = {
   async runScenario() {
     const body = {
       rainfall_intensity_mult: +document.getElementById("sc-rain").value,
-      rainfall_24h_mult:       +document.getElementById("sc-rain24").value,
-      saturation_offset:       +document.getElementById("sc-sat").value,
+      rainfall_24h_mult: +document.getElementById("sc-rain24").value,
+      saturation_offset: +document.getElementById("sc-sat").value,
     };
     try {
       const res = await fetch(`${API}/strategic/flood-forecast`, {
@@ -385,7 +383,7 @@ const FloodAtlas = {
     // Scenario delta block
     if (scenarioBody && this.baselineKpis) {
       const dHigh = k.high_risk_zones - this.baselineKpis.high_risk_zones;
-      const dPop  = k.population_at_risk - this.baselineKpis.population_at_risk;
+      const dPop = k.population_at_risk - this.baselineKpis.population_at_risk;
       const dMean = k.mean_zone_risk - this.baselineKpis.mean_zone_risk;
       const sign = (n) => n > 0 ? `+${n}` : `${n}`;
       document.getElementById("sc-delta").innerHTML = `
@@ -442,7 +440,7 @@ const FloodAtlas = {
       if (!res.ok) return;
       const fc = await res.json();
       this.renderForecast(fc);
-    } catch (_) {}
+    } catch (_) { }
   },
 
   renderZoneDetail(z) {
@@ -462,14 +460,14 @@ const FloodAtlas = {
       <div class="zone-detail__metrics">
         <div><div class="metric__label">Elevation</div><div class="metric__value">${z.elevation_m.toFixed(0)} m</div></div>
         <div><div class="metric__label">Drainage</div><div class="metric__value">${z.drainage_quality}</div></div>
-        <div><div class="metric__label">Water dist.</div><div class="metric__value">${z.distance_to_water_km < 1 ? (z.distance_to_water_km*1000).toFixed(0)+' m' : z.distance_to_water_km.toFixed(1)+' km'}</div></div>
+        <div><div class="metric__label">Water dist.</div><div class="metric__value">${z.distance_to_water_km < 1 ? (z.distance_to_water_km * 1000).toFixed(0) + ' m' : z.distance_to_water_km.toFixed(1) + ' km'}</div></div>
         <div><div class="metric__label">Population</div><div class="metric__value">${this.fmtInt(z.population)}</div></div>
         <div><div class="metric__label">Rain now</div><div class="metric__value">${z.signal.rainfall_intensity_mm_h.toFixed(1)} mm/h</div></div>
         <div><div class="metric__label">Saturation</div><div class="metric__value">${z.signal.soil_saturation_pct.toFixed(0)}%</div></div>
       </div>
       <div class="zone-detail__bars">
-        ${["rainfall","terrain","drainage","proximity","saturation"].map(k => `
-          <div class="contrib"><span class="contrib__lbl">${k}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(p.contributions[k]*100).toFixed(0)}%;background:${color}"></div></div><span class="contrib__val">${(p.contributions[k]*100).toFixed(0)}%</span></div>
+        ${["rainfall", "terrain", "drainage", "proximity", "saturation"].map(k => `
+          <div class="contrib"><span class="contrib__lbl">${k}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(p.contributions[k] * 100).toFixed(0)}%;background:${color}"></div></div><span class="contrib__val">${(p.contributions[k] * 100).toFixed(0)}%</span></div>
         `).join("")}
       </div>
       <div class="zone-detail__rec">
