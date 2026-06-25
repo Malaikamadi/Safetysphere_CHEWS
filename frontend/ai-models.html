@@ -7,8 +7,21 @@
   <title>CHEWS — AI Models</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute(
+          "data-theme",
+          v === "light" || v === "dark" ? v : "dark"
+        );
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="bg-animation" aria-hidden="true">
@@ -16,7 +29,7 @@
   </div>
   <div class="app-layout">
             <aside class="sidebar" id="sidebar">
-      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate-health · Sierra Leone</div></div></a></div>
       <nav class="sidebar__nav">
         <div class="nav-section"><div class="nav-section__label">Overview</div>
           <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
@@ -82,7 +95,7 @@
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
         <div><div class="topbar__title">AI Models</div><div class="topbar__subtitle">The predictive intelligence powering CHEWS</div></div>
-        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+        <div class="topbar__actions"><button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
       <div class="page fade-in">
@@ -687,6 +700,7 @@
       <footer class="footer"><p>CHEWS v3.0 · SafetySphere · AI Models · Sierra Leone </p></footer>
     </main>
   </div>
+  <script src="theme.js"></script>
   <script src="ai-models.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>

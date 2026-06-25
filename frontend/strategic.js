@@ -193,12 +193,21 @@ function syncAtlasHash(zoneIdOrNull) {
 // per-zone 24h forecast detail panel.
 // =====================================================================
 
-const FLOOD_LEVEL_COLOR = {
-  Low:      "#22c55e",
-  Moderate: "#fbbf24",
-  High:     "#f97316",
-  Severe:   "#ef4444",
-  Extreme:  "#b91c1c",
+/** Matches --risk-band-* in styles.css (read at runtime so legend & markers stay aligned). */
+const FLOOD_LEVEL_CSS_VAR = {
+  Low: "--risk-band-low",
+  Moderate: "--risk-band-moderate",
+  High: "--risk-band-high",
+  Severe: "--risk-band-severe",
+  Extreme: "--risk-band-extreme",
+};
+
+const FLOOD_LEVEL_COLOR_FALLBACK = {
+  Low: "#6b986f",
+  Moderate: "#c9a963",
+  High: "#c8875c",
+  Severe: "#c75c54",
+  Extreme: "#943d3a",
 };
 
 const FloodAtlas = {
@@ -217,7 +226,12 @@ const FloodAtlas = {
   },
 
   riskColor(level) {
-    return FLOOD_LEVEL_COLOR[level] || "#94a3b8";
+    const vn = FLOOD_LEVEL_CSS_VAR[level];
+    if (vn) {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(vn).trim();
+      if (raw) return raw;
+    }
+    return FLOOD_LEVEL_COLOR_FALLBACK[level] || "#908980";
   },
 
   riskRadius(score) {

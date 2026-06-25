@@ -7,10 +7,23 @@
   <title>CHEWS — Strategic Planning</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute(
+          "data-theme",
+          v === "light" || v === "dark" ? v : "dark"
+        );
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="bg-animation" aria-hidden="true">
@@ -18,7 +31,7 @@
   </div>
   <div class="app-layout">
         <aside class="sidebar" id="sidebar">
-      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">v3.0 · Intelligence Platform</div></div></a></div>
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate-health · Sierra Leone</div></div></a></div>
       <nav class="sidebar__nav">
         <div class="nav-section"><div class="nav-section__label">Overview</div>
           <a href="index.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
@@ -101,7 +114,7 @@
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
         <div><div class="topbar__title">Strategic Planning</div><div class="topbar__subtitle">Hazard Mapping & Vulnerability Assessment</div></div>
-        <div class="topbar__actions"><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
+        <div class="topbar__actions"><button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
       <div class="page fade-in">
@@ -154,11 +167,11 @@
               <div id="flood-map" class="flood-map"></div>
               <div class="atlas-legend">
                 <span class="atlas-legend__title">Risk level</span>
-                <span class="atlas-legend__chip" data-level="Low"><span class="atlas-legend__dot" style="background:#22c55e"></span>Low</span>
-                <span class="atlas-legend__chip" data-level="Moderate"><span class="atlas-legend__dot" style="background:#fbbf24"></span>Moderate</span>
-                <span class="atlas-legend__chip" data-level="High"><span class="atlas-legend__dot" style="background:#f97316"></span>High</span>
-                <span class="atlas-legend__chip" data-level="Severe"><span class="atlas-legend__dot" style="background:#ef4444"></span>Severe</span>
-                <span class="atlas-legend__chip" data-level="Extreme"><span class="atlas-legend__dot" style="background:#b91c1c"></span>Extreme</span>
+                <span class="atlas-legend__chip" data-level="Low"><span class="atlas-legend__dot"></span>Low</span>
+                <span class="atlas-legend__chip" data-level="Moderate"><span class="atlas-legend__dot"></span>Moderate</span>
+                <span class="atlas-legend__chip" data-level="High"><span class="atlas-legend__dot"></span>High</span>
+                <span class="atlas-legend__chip" data-level="Severe"><span class="atlas-legend__dot"></span>Severe</span>
+                <span class="atlas-legend__chip" data-level="Extreme"><span class="atlas-legend__dot"></span>Extreme</span>
               </div>
             </div>
 
@@ -348,6 +361,7 @@
       <footer class="footer"><p>CHEWS v3.0 · SafetySphere · Strategic Planning · Sierra Leone </p></footer>
     </main>
   </div>
+  <script src="theme.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="strategic.js"></script>

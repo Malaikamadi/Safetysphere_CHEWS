@@ -4,7 +4,6 @@
 
 A fast MVP prototype that takes environmental and community health inputs, predicts malaria risk levels (Low / Medium / High), and returns actionable advice for mothers and caregivers.
 
----
 
 ##  Project Structure
 
