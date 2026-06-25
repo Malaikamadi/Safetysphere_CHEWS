@@ -3,11 +3,20 @@ Flood Risk Model
 =================
 Predicts flood risk for communities and health facilities.
 Uses multi-factor scoring: rainfall, elevation, drainage, proximity to water, soil saturation.
+Supports both rule-based and trained ML model predictions.
 """
 
 from __future__ import annotations
 import numpy as np
+import json
+from pathlib import Path
 from typing import NamedTuple
+
+try:
+    import joblib
+    JOBLIB_AVAILABLE = True
+except ImportError:
+    JOBLIB_AVAILABLE = False
 
 
 class FloodRiskResult(NamedTuple):
@@ -110,3 +119,72 @@ def predict(
         factors=factors, recommendations=RECS.get(level, RECS["Moderate"]),
         estimated_impact=IMPACTS.get(level, IMPACTS["Moderate"]),
     )
+
+
+# ---------------------------------------------------------------------------
+# Trained ML Model Support
+# ---------------------------------------------------------------------------
+_BASE_DIR = Path(__file__).resolve().parent.parent
+_MODEL_DIR = _BASE_DIR / "data" / "trained_models"
+_MODEL_PATH = _MODEL_DIR / "flood_model.joblib"
+_CONFIG_PATH = _MODEL_DIR / "feature_config.json"
+
+_trained_model = None
+_feature_config = None
+
+
+def initialize():
+    """Load the trained flood model at startup."""
+    global _trained_model, _feature_config
+    if not JOBLIB_AVAILABLE or not _MODEL_PATH.exists():
+        print("[CHEWS] Flood ML model not found — using rule-based only.")
+        return False
+
+    _trained_model = joblib.load(_MODEL_PATH)
+    with open(_CONFIG_PATH) as f:
+        _feature_config = json.load(f)
+    print(f"[CHEWS] Flood ML model loaded — {type(_trained_model).__name__}")
+    return True
+
+
+def predict_ml(
+    rainfall_mm_24h: float = 0.0,
+    temperature_c: float = 28.0,
+    humidity_percent: float = 70.0,
+    elevation_m: float = 50.0,
+    water_level_m: float = 1.0,
+    drainage_quality: str = "moderate",
+    soil_saturation: float = 0.5,
+    community_reports: int = 10,
+) -> dict | None:
+    """
+    Predict flood risk using the trained ML model.
+    Returns None if the trained model is not available.
+    """
+    if _trained_model is None:
+        return None
+
+    drainage_map = {"poor": 0, "moderate": 1, "good": 2}
+    drainage_encoded = drainage_map.get(drainage_quality.lower().strip(), 1)
+
+    # Interaction features (must match training)
+    rain_x_saturation = rainfall_mm_24h * soil_saturation
+    rain_x_drainage = rainfall_mm_24h * (2 - drainage_encoded)
+    low_elevation_flag = 1 if elevation_m < 50 else 0
+
+    features = np.array([[
+        rainfall_mm_24h, temperature_c, humidity_percent,
+        elevation_m, water_level_m, drainage_encoded,
+        soil_saturation, community_reports,
+        rain_x_saturation, rain_x_drainage, low_elevation_flag
+    ]])
+
+    prediction = int(_trained_model.predict(features)[0])
+    probability = float(_trained_model.predict_proba(features)[0][1])
+
+    return {
+        "flood_predicted": bool(prediction),
+        "flood_probability": round(probability, 4),
+        "model_type": "trained_ml",
+    }
+
