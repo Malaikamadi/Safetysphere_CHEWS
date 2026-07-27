@@ -4,7 +4,7 @@
  * Talks to the multilingual /poc/ask endpoint.
  */
 (function () {
-  const API = (typeof window !== "undefined" && window.CHEWS_API) || "http://127.0.0.1:8000";
+  const API = (typeof window !== "undefined" && window.CHEWS_API) || "/api";
 
   const SUGGESTIONS = [
     "How to prevent malaria?",

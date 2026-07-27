@@ -2,7 +2,7 @@
  * CHEWS v3.0 — AI Models catalog page
  * Filter chips, expandable model cards, live model count from backend /health.
  */
-const API = (typeof window !== "undefined" && window.CHEWS_API) || "http://127.0.0.1:8000";
+const API = (typeof window !== "undefined" && window.CHEWS_API) || "/api";
 
 // Mobile menu
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");

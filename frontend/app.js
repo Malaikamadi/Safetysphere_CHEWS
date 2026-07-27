@@ -3,7 +3,7 @@
  * Handles command center, malaria prediction, health assistant, system status, navigation.
  */
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "/api";
 
 // ==================== DOM References ====================
 const predictForm   = document.getElementById("predict-form");

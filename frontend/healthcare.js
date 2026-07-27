@@ -1,7 +1,7 @@
 /**
  * CHEWS v3.0 — Healthcare Readiness Logic
  */
-const API = "http://127.0.0.1:8000";
+const API = "/api";
 
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");
 if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar--open")); }
