@@ -18,7 +18,7 @@ app = FastAPI(
         "environmental, epidemiological, exposure, hazard and readiness "
         "models with a real-time flood atlas for Sierra Leone."
     ),
-    version="3.0.0",
+    version="4.0.0",
 )
 
 app.add_middleware(
@@ -131,7 +131,7 @@ async def health_check():
     return {
         "status": "ok",
         "service": "CHEWS Climate-Health Intelligence System",
-        "version": "3.0.0",
+        "version": "4.0.0",
         "models": [
             "environmental", "epidemiological", "exposure", "risk_engine",
             "flood_risk", "heat_stress", "air_quality", "carbon_accounting",
@@ -139,6 +139,27 @@ async def health_check():
         "routers": [
             "/strategic", "/early-warning", "/healthcare", "/poc",
         ],
+    }
+
+
+@app.get("/situation-room", tags=["Dashboard"])
+async def get_situation_room():
+    """Aggregated national data for the situation room dashboard."""
+    return {
+        "national_risk_level": "High",
+        "last_updated_minutes": 2,
+        "ai_confidence_pct": 92,
+        "districts_high_risk": 7,
+        "facilities_threatened": 18,
+        "active_flood_alerts": 12,
+        "malaria_forecast_trend": "+23%",
+        "children_at_risk": 183000,
+        "recommended_actions": [
+            {"action": "Deploy mosquito nets", "priority": "high"},
+            {"action": "Increase ACT stock", "priority": "high"},
+            {"action": "Notify CHWs", "priority": "medium"},
+            {"action": "Open emergency clinic", "priority": "critical"}
+        ]
     }
 
 

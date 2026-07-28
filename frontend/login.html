@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS 4.0 — Role Selection" />
+  <title>CHEWS 4.0 — Welcome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="auth.js"></script>
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute(
+          "data-theme",
+          v === "light" || v === "dark" ? v : "dark"
+        );
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .login-title {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--text-bright);
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    
+    .login-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .login-architecture {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-top: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+    
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .role-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .role-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .role-card:hover::before {
+      opacity: 1;
+    }
+    
+    .role-card.role-admin::before { background: var(--warning); }
+    .role-card.role-district::before { background: var(--accent); }
+    .role-card.role-worker::before { background: var(--accent-2); }
+    .role-card.role-partner::before { background: var(--purple); }
+    
+    .role-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    
+    .role-admin .role-icon { background: rgba(201, 163, 92, 0.15); color: var(--warning); }
+    .role-district .role-icon { background: rgba(125, 159, 134, 0.15); color: var(--accent); }
+    .role-worker .role-icon { background: rgba(111, 143, 170, 0.15); color: var(--accent-2); }
+    .role-partner .role-icon { background: rgba(156, 127, 143, 0.15); color: var(--purple); }
+    
+    .role-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+    
+    .role-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    
+    .role-users {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      background: var(--surface-muted);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      width: 100%;
+    }
+
+    /* Modal for District Selection */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-header slide-up">
+      <div class="login-title">CHEWS 4.0</div>
+      <div class="login-subtitle">AI Climate-Health Operating System for Low-Resource Countries</div>
+      <div class="login-architecture">One platform. Four intelligence layers. One decision engine.</div>
+    </div>
+    
+    <div class="role-grid slide-up" style="animation-delay: 0.1s;">
+      
+      <!-- National Admin -->
+      <div class="role-card role-admin" onclick="setRole('admin')">
+        <div class="role-icon"><i data-lucide="globe"></i></div>
+        <div class="role-title">National Administrator</div>
+        <div class="role-desc">Executive dashboard. View the national map, all districts, reports, and alerts.</div>
+        <div class="role-users">Ministry of Health, NDMA, National Health Hub</div>
+      </div>
+      
+      <!-- District Officer -->
+      <div class="role-card role-district" onclick="openDistrictModal()">
+        <div class="role-icon"><i data-lucide="map"></i></div>
+        <div class="role-title">District Health Officer</div>
+        <div class="role-desc">View your district's healthcare readiness, disease forecasts, and community reports.</div>
+        <div class="role-users">DHMT, Surveillance Officers, Local Planners</div>
+      </div>
+      
+      <!-- Health Worker -->
+      <div class="role-card role-worker" onclick="setRole('worker')">
+        <div class="role-icon"><i data-lucide="activity"></i></div>
+        <div class="role-title">Health Facility / CHW</div>
+        <div class="role-desc">Submit community reports, run multilingual triage, receive alerts, view local forecasts.</div>
+        <div class="role-users">Hospitals, PHUs, CHWs, Nurses</div>
+      </div>
+      
+      <!-- Partner -->
+      <div class="role-card role-partner" onclick="setRole('partner')">
+        <div class="role-icon"><i data-lucide="bar-chart"></i></div>
+        <div class="role-title">Partner Dashboard</div>
+        <div class="role-desc">View impact metrics, export reports, and access model performance data.</div>
+        <div class="role-users">UNICEF, WHO, NGOs, Researchers</div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- District Selection Modal -->
+  <div class="modal-overlay" id="district-modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Select District</h3>
+      <p style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.9rem;">Please select the district you are responsible for.</p>
+      
+      <div class="form-group">
+        <select id="district-select" class="form-input form-select" style="margin-bottom: 1.5rem;">
+          <option value="Western Area Urban">Western Area Urban</option>
+          <option value="Western Area Rural">Western Area Rural</option>
+          <option value="Bo">Bo</option>
+          <option value="Pujehun">Pujehun</option>
+          <option value="Bonthe">Bonthe</option>
+          <option value="Kenema">Kenema</option>
+          <option value="Port Loko">Port Loko</option>
+          <option value="Kambia">Kambia</option>
+          <option value="Tonkolili">Tonkolili</option>
+          <option value="Moyamba">Moyamba</option>
+        </select>
+      </div>
+      
+      <div style="display: flex; gap: 1rem;">
+        <button class="btn btn--ghost" style="flex: 1;" onclick="closeDistrictModal()">Cancel</button>
+        <button class="btn btn--primary" style="flex: 1;" onclick="confirmDistrict()">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+
+    // Clear any existing role on the login page
+    localStorage.removeItem('chews-role');
+    localStorage.removeItem('chews-district');
+
+    const modal = document.getElementById('district-modal');
+    
+    function openDistrictModal() {
+      modal.classList.add('active');
+    }
+    
+    function closeDistrictModal() {
+      modal.classList.remove('active');
+    }
+    
+    function confirmDistrict() {
+      const district = document.getElementById('district-select').value;
+      setRole('district', district);
+    }
+  </script>
+</body>
+</html>

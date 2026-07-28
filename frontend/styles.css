@@ -1242,7 +1242,222 @@ body {
     bottom: 5rem;
     width: auto;
     max-width: none;
-  }
+}
+
+/* ============================================================
+   CHEWS 4.0 — National Situation Room & Role Styles
+   ============================================================ */
+
+/* Role Badge in Topbar */
+.topbar__role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 1rem;
+}
+
+.topbar__role-badge i {
+  width: 14px;
+  height: 14px;
+}
+
+/* Situation Room Hero */
+.situation-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 3rem 1rem;
+  background: radial-gradient(circle at top, rgba(200, 135, 92, 0.08), transparent 70%);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.situation-hero__title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 0.5rem;
+}
+
+.situation-hero__subtitle {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+}
+
+.situation-risk-badge {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  padding: 1rem 3rem;
+  border-radius: 100px;
+  background: rgba(199, 92, 84, 0.15);
+  color: var(--danger);
+  border: 2px solid rgba(199, 92, 84, 0.3);
+  text-shadow: 0 0 20px rgba(199, 92, 84, 0.4);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 40px rgba(199, 92, 84, 0.1);
+  animation: pulse-danger 3s infinite;
+}
+
+.situation-hero__meta {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.situation-hero__meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.situation-hero__meta strong {
+  color: var(--text-bright);
+}
+
+@keyframes pulse-danger {
+  0% { box-shadow: 0 0 0 0 rgba(199, 92, 84, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(199, 92, 84, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(199, 92, 84, 0); }
+}
+
+/* Action Cards */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: var(--transition);
+}
+
+.action-card:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-muted);
+}
+
+.action-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-card--critical .action-card__icon { background: rgba(199, 92, 84, 0.2); color: var(--danger); }
+.action-card--high .action-card__icon { background: rgba(201, 163, 92, 0.2); color: var(--warning); }
+.action-card--medium .action-card__icon { background: rgba(125, 159, 134, 0.2); color: var(--accent); }
+
+.action-card__content {
+  flex: 1;
+}
+
+.action-card__title {
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.action-card__priority {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.action-card--critical .action-card__priority { color: var(--danger); }
+.action-card--high .action-card__priority { color: var(--warning); }
+.action-card--medium .action-card__priority { color: var(--accent); }
+
+/* Quick Access Grid */
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.qa-card {
+  display: block;
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.qa-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow);
+}
+
+.qa-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.qa-card__icon {
+  color: var(--text-dim);
+}
+
+.qa-card__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.qa-card__stat {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-bright);
+  font-family: var(--font-display);
+}
+
+.qa-card__stat-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+/* Metric Adjustments */
+.metric__value--large {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0.5rem 0;
+  line-height: 1;
 }
 
 /* ============================================================

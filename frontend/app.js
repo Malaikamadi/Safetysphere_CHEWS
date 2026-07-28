@@ -5,6 +5,10 @@
 
 const API_BASE = "/api";
 
+document.addEventListener('DOMContentLoaded', () => {
+  loadSituationRoom();
+});
+
 // ==================== DOM References ====================
 const predictForm   = document.getElementById("predict-form");
 const btnPredict    = document.getElementById("btn-predict");
@@ -168,15 +172,83 @@ function renderModelCards(breakdown) {
   });
 }
 
-function animateCounter(el, from, to, duration) {
+function animateCounter(el, from, to, duration, decimals=2) {
   const start = performance.now();
   function tick(now) {
     const p = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = (from + (to - from) * eased).toFixed(2);
+    el.textContent = (from + (to - from) * eased).toFixed(decimals);
     if (p < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+}
+
+// ==================== Situation Room ====================
+async function loadSituationRoom() {
+  const roleDetails = typeof getRoleDetails !== 'undefined' ? getRoleDetails() : null;
+  if (roleDetails) {
+    const greetingEl = document.getElementById("topbar-greeting");
+    if (greetingEl) {
+      let text = roleDetails.name;
+      const district = typeof getDistrict !== 'undefined' ? getDistrict() : null;
+      if (district) text += ` — ${district} District`;
+      greetingEl.textContent = `Welcome, ${text}`;
+    }
+    
+    const roleBadgeEl = document.getElementById("topbar-role");
+    if (roleBadgeEl) {
+      roleBadgeEl.querySelector('span').textContent = roleDetails.name;
+    }
+  }
+
+  const srRiskLevel = document.getElementById("sr-risk-level");
+  if (!srRiskLevel) return; // Not on the situation room page
+
+  try {
+    const res = await fetch(`${API_BASE}/situation-room`);
+    const data = await res.json();
+
+    srRiskLevel.textContent = data.national_risk_level;
+    const rlClass = data.national_risk_level.toLowerCase();
+    
+    document.getElementById("sr-updated").textContent = `${data.last_updated_minutes} minutes ago`;
+    document.getElementById("sr-confidence").textContent = `${data.ai_confidence_pct}%`;
+    
+    animateCounter(document.getElementById("sr-districts"), 0, data.districts_high_risk, 1000, 0);
+    animateCounter(document.getElementById("sr-facilities"), 0, data.facilities_threatened, 1000, 0);
+    animateCounter(document.getElementById("sr-floods"), 0, data.active_flood_alerts, 1000, 0);
+    
+    document.getElementById("sr-malaria").textContent = data.malaria_forecast_trend;
+    
+    const childrenStr = data.children_at_risk.toLocaleString();
+    const qaChildren = document.getElementById("qa-children");
+    if (qaChildren) qaChildren.textContent = childrenStr;
+
+    const actionsContainer = document.getElementById("sr-actions");
+    actionsContainer.innerHTML = "";
+    data.recommended_actions.forEach(act => {
+      const el = document.createElement("div");
+      el.className = `action-card action-card--${act.priority}`;
+      
+      let icon = "alert-circle";
+      if (act.priority === "critical") icon = "alert-triangle";
+      if (act.priority === "high") icon = "alert-octagon";
+      
+      el.innerHTML = `
+        <div class="action-card__icon"><i data-lucide="${icon}"></i></div>
+        <div class="action-card__content">
+          <div class="action-card__title">${act.action}</div>
+          <div class="action-card__priority">${act.priority} Priority</div>
+        </div>
+      `;
+      actionsContainer.appendChild(el);
+    });
+    
+    if (window.lucide) lucide.createIcons();
+
+  } catch (err) {
+    console.error("Failed to load situation room data", err);
+  }
 }
 
 function updateMetric(id, value) {
