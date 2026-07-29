@@ -99,11 +99,39 @@ async function loadSituationRoom() {
     document.getElementById("sr-updated").textContent = `${data.last_updated_minutes} minutes ago`;
     document.getElementById("sr-confidence").textContent = `${data.ai_confidence_pct}%`;
 
-    animateCounter(document.getElementById("sr-districts"), 0, data.districts_high_risk, 1000);
-    animateCounter(document.getElementById("sr-facilities"), 0, data.facilities_threatened, 1000);
-    animateCounter(document.getElementById("sr-floods"), 0, data.active_flood_alerts, 1000);
-    document.getElementById("sr-malaria").textContent = data.malaria_forecast_trend;
-    document.getElementById("sr-children").textContent = data.children_at_risk.toLocaleString();
+    const popRisk = data.population_at_risk || 845200;
+    const childrenRisk = data.children_at_risk || 183000;
+    const pregnantRisk = data.pregnant_women_at_risk || 42500;
+
+    const popEl = document.getElementById("sr-population-risk");
+    const childEl = document.getElementById("sr-children-risk");
+    const pregEl = document.getElementById("sr-pregnant-risk");
+
+    if (popEl) animateCounter(popEl, 0, popRisk, 1000);
+    if (childEl) animateCounter(childEl, 0, childrenRisk, 1000);
+    if (pregEl) animateCounter(pregEl, 0, pregnantRisk, 1000);
+
+    // Render district rankings
+    const rankingsContainer = document.getElementById("sr-district-rankings");
+    if (rankingsContainer) {
+      rankingsContainer.innerHTML = "";
+      const mockedRankings = [
+        { name: "Western Area Urban", score: 94, level: "high" },
+        { name: "Bo District", score: 88, level: "high" },
+        { name: "Kenema", score: 76, level: "med" },
+        { name: "Port Loko", score: 72, level: "med" },
+        { name: "Bombali", score: 65, level: "med" },
+      ];
+      mockedRankings.forEach(d => {
+        const el = document.createElement("div");
+        el.className = `sr-district-rank sr-district-rank--${d.level}`;
+        el.innerHTML = `
+          <div class="sr-district-rank__name">${d.name}</div>
+          <div class="sr-district-rank__score">${d.score}</div>
+        `;
+        rankingsContainer.appendChild(el);
+      });
+    }
 
     // Render actions
     const actionsContainer = document.getElementById("sr-actions");

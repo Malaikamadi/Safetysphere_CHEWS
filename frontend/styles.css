@@ -1960,10 +1960,67 @@ body {
 /* ── Metrics Strip ── */
 .sr-metrics-strip {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
+
+/* ── Overview Grid ── */
+.sr-overview-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+.sr-overview-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sr-overview-center {
+  background: rgba(22, 20, 18, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.sr-district-rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sr-district-rank {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(22, 20, 18, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.sr-district-rank:hover {
+  background: rgba(42, 38, 34, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+.sr-district-rank__name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+.sr-district-rank__score {
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--danger);
+}
+.sr-district-rank--high .sr-district-rank__score { color: var(--danger); }
+.sr-district-rank--med .sr-district-rank__score { color: var(--warning); }
 .sr-metric-card {
   background: rgba(22, 20, 18, 0.4);
   backdrop-filter: blur(24px);

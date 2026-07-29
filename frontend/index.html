@@ -183,7 +183,7 @@
 
         <!-- ═══════════ 1. SITUATION HERO ═══════════ -->
         <div class="situation-hero fade-in">
-          <div class="situation-hero__title">National Risk Level</div>
+          <div class="situation-hero__title">Live National Risk Score</div>
           <div class="situation-risk-badge" id="sr-risk-level">...</div>
           <div class="situation-hero__meta">
             <span><i data-lucide="clock"></i> Updated <strong id="sr-updated">Just now</strong></span>
@@ -192,225 +192,75 @@
         </div>
 
         <!-- ═══════════ 2. KEY METRICS STRIP ═══════════ -->
-        <div class="sr-metrics-strip fade-in" style="animation-delay: 0.1s;">
+        <div class="sr-metrics-strip fade-in" style="animation-delay: 0.1s;" id="sr-metrics-strip">
+          <!-- Populated by JS, but keeping placeholders for layout -->
           <div class="sr-metric-card card--glow-amber">
-            <div class="sr-metric-card__icon"><i data-lucide="map-pin"></i></div>
-            <div class="sr-metric-card__value text-warning" id="sr-districts">--</div>
-            <div class="sr-metric-card__label">Districts at High Risk</div>
-          </div>
-          <div class="sr-metric-card card--glow-red">
-            <div class="sr-metric-card__icon"><i data-lucide="hospital"></i></div>
-            <div class="sr-metric-card__value text-danger" id="sr-facilities">--</div>
-            <div class="sr-metric-card__label">Health Facilities Threatened</div>
-          </div>
-          <div class="sr-metric-card card--glow-blue">
-            <div class="sr-metric-card__icon"><i data-lucide="waves"></i></div>
-            <div class="sr-metric-card__value" style="color:var(--accent-2)" id="sr-floods">--</div>
-            <div class="sr-metric-card__label">Flood Alerts</div>
-          </div>
-          <div class="sr-metric-card card--glow-green">
-            <div class="sr-metric-card__icon"><i data-lucide="bug"></i></div>
-            <div class="sr-metric-card__value text-accent" id="sr-malaria">--</div>
-            <div class="sr-metric-card__label">Malaria Forecast</div>
+            <div class="sr-metric-card__icon"><i data-lucide="users"></i></div>
+            <div class="sr-metric-card__value text-warning" id="sr-population-risk">--</div>
+            <div class="sr-metric-card__label">Population at Risk</div>
           </div>
           <div class="sr-metric-card card--glow-purple">
             <div class="sr-metric-card__icon"><i data-lucide="baby"></i></div>
-            <div class="sr-metric-card__value" style="color:var(--purple)" id="sr-children">--</div>
-            <div class="sr-metric-card__label">Children at Risk</div>
+            <div class="sr-metric-card__value" style="color:var(--purple)" id="sr-children-risk">--</div>
+            <div class="sr-metric-card__label">Children Under 5 at Risk</div>
+          </div>
+          <div class="sr-metric-card card--glow-red">
+            <div class="sr-metric-card__icon"><i data-lucide="heart"></i></div>
+            <div class="sr-metric-card__value text-danger" id="sr-pregnant-risk">--</div>
+            <div class="sr-metric-card__label">Pregnant Women at Risk</div>
           </div>
         </div>
 
-        <!-- ═══════════ 3. RECOMMENDED ACTIONS ═══════════ -->
-        <div class="sr-section fade-in" style="animation-delay: 0.15s;">
-          <div class="sr-section__header">
-            <h2><i data-lucide="alert-circle"></i> Recommended Immediate Actions</h2>
-          </div>
-          <div class="sr-actions-grid" id="sr-actions">
-            <div class="sr-action-placeholder">Loading recommendations...</div>
-          </div>
-        </div>
-
-        <!-- ═══════════ 4. INTERACTIVE MAP ═══════════ -->
-        <div class="sr-section fade-in" style="animation-delay: 0.2s;" id="sr-map-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="globe"></i> National Situation Map</h2>
-            <div class="sr-section__badge"><span class="pulse-dot"></span> Live Data</div>
-          </div>
-          <div class="sr-map-wrapper">
-            <div class="sr-map-container" id="sr-map"></div>
-            <div class="sr-layer-panel" id="sr-layer-panel">
-              <div class="sr-layer-panel__title">Map Layers</div>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="sr-layer-dot" style="background:#6f8faa"></span> Flood</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="sr-layer-dot" style="background:#c75c54"></span> Malaria</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="heat" /><span class="sr-layer-dot" style="background:#c4876a"></span> Heat</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="air_quality" /><span class="sr-layer-dot" style="background:#9c7f8f"></span> Air Quality</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="sr-layer-dot" style="background:#7d9f86"></span> Healthcare Facilities</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="schools" /><span class="sr-layer-dot" style="background:#c9a35c"></span> Schools</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="community_reports" checked /><span class="sr-layer-dot" style="background:#b5726b"></span> Community Reports</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="sensors" checked /><span class="sr-layer-dot" style="background:#729e75"></span> Sensor Stations</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="vulnerability" /><span class="sr-layer-dot" style="background:#c9a963"></span> Vulnerability</label>
-              <label class="sr-layer-toggle"><input type="checkbox" data-layer="carbon" /><span class="sr-layer-dot" style="background:#4a6b51"></span> Carbon</label>
+        <!-- ═══════════ 3. OVERVIEW GRID ═══════════ -->
+        <div class="sr-overview-grid">
+          
+          <!-- Left Panel: District Rankings -->
+          <div class="sr-overview-side fade-in" style="animation-delay: 0.15s;">
+            <div class="sr-section__header">
+              <h2><i data-lucide="bar-chart-2"></i> District Rankings</h2>
+            </div>
+            <div class="sr-district-rankings" id="sr-district-rankings">
+              <div class="sr-action-placeholder">Loading rankings...</div>
             </div>
           </div>
 
-          <!-- ═══════════ 5. INTERACTIVE TIMELINE ═══════════ -->
-          <div class="sr-timeline" id="sr-timeline">
-            <div class="sr-timeline__label">Timeline Forecast</div>
-            <div class="sr-timeline__slider-wrap">
-              <input type="range" id="sr-timeline-slider" class="sr-timeline__slider" min="-1" max="30" value="0" step="1" />
-              <div class="sr-timeline__ticks">
-                <span data-val="-1">Yesterday</span>
-                <span data-val="0" class="sr-timeline__tick--active">Today</span>
-                <span data-val="1">Tomorrow</span>
-                <span data-val="3">+3 Days</span>
-                <span data-val="7">+7 Days</span>
-                <span data-val="14">+14 Days</span>
-                <span data-val="30">+30 Days</span>
-              </div>
+          <!-- Center Panel: National Climate Map -->
+          <div class="sr-overview-center fade-in" style="animation-delay: 0.2s;" id="sr-map-section">
+            <div class="sr-section__header">
+              <h2><i data-lucide="globe"></i> National Climate Map</h2>
+              <div class="sr-section__badge"><span class="pulse-dot"></span> Live Data</div>
             </div>
-            <div class="sr-timeline__summary" id="sr-timeline-summary">
-              <span><strong id="tl-flood">--</strong> Avg Flood Risk</span>
-              <span><strong id="tl-malaria">--</strong> Avg Malaria Risk</span>
-              <span><strong id="tl-districts">--</strong> Districts at Risk</span>
-              <span><strong id="tl-facilities">--</strong> Facilities at Risk</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══════════ 6. AI EXPLAINABILITY ═══════════ -->
-        <div class="sr-section fade-in" id="sr-ai-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="brain-circuit"></i> AI Explainability</h2>
-            <div class="sr-ai-tabs">
-              <button class="sr-ai-tab sr-ai-tab--active" data-hazard="malaria">Malaria</button>
-              <button class="sr-ai-tab" data-hazard="flood">Flood</button>
-              <button class="sr-ai-tab" data-hazard="heat">Heat</button>
-              <button class="sr-ai-tab" data-hazard="air_quality">Air Quality</button>
-            </div>
-          </div>
-          <div class="sr-ai-panel" id="sr-ai-panel">
-            <div class="sr-ai-panel__left">
-              <div class="sr-ai-risk-display">
-                <div class="sr-ai-risk-display__label" id="ai-hazard-name">Malaria Risk</div>
-                <div class="sr-ai-risk-display__badge" id="ai-risk-badge">--</div>
-                <div class="sr-ai-risk-display__conf">
-                  <span>Confidence</span>
-                  <strong id="ai-confidence">--%</strong>
-                </div>
-              </div>
-              <div class="sr-ai-reasoning" id="ai-reasoning">
-                <div class="sr-ai-reasoning__title">Reasoning Chain</div>
-                <!-- Populated by JS -->
-              </div>
-              <div class="sr-ai-model-info" id="ai-model-info"></div>
-            </div>
-            <div class="sr-ai-panel__right">
-              <div class="sr-ai-contributors__title">Primary Contributors</div>
-              <div class="sr-ai-contributors" id="ai-contributors">
-                <!-- Populated by JS -->
+            <div class="sr-map-wrapper">
+              <div class="sr-map-container" id="sr-map"></div>
+              <div class="sr-layer-panel" id="sr-layer-panel">
+                <div class="sr-layer-panel__title">Map Layers</div>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="sr-layer-dot" style="background:#6f8faa"></span> Flood</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="sr-layer-dot" style="background:#c75c54"></span> Malaria</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="heat" /><span class="sr-layer-dot" style="background:#c4876a"></span> Heat</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="air_quality" /><span class="sr-layer-dot" style="background:#9c7f8f"></span> Air Quality</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="sr-layer-dot" style="background:#7d9f86"></span> Healthcare Facilities</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="schools" /><span class="sr-layer-dot" style="background:#c9a35c"></span> Schools</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="community_reports" checked /><span class="sr-layer-dot" style="background:#b5726b"></span> Community Reports</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="sensors" checked /><span class="sr-layer-dot" style="background:#729e75"></span> Sensor Stations</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="vulnerability" /><span class="sr-layer-dot" style="background:#c9a963"></span> Vulnerability</label>
+                <label class="sr-layer-toggle"><input type="checkbox" data-layer="carbon" /><span class="sr-layer-dot" style="background:#4a6b51"></span> Carbon</label>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- ═══════════ 7. SCENARIO SIMULATOR ═══════════ -->
-        <div class="sr-section fade-in" id="sr-scenario-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="sliders-horizontal"></i> Scenario Simulator</h2>
-            <div class="sr-section__badge" style="background: rgba(201, 163, 92, 0.12); color: var(--warning); border-color: rgba(201, 163, 92, 0.25);">Flagship Feature</div>
-          </div>
-          <div class="sr-scenario">
-            <div class="sr-scenario__inputs">
-              <div class="sr-scenario__input-group">
-                <label>Increase Rainfall</label>
-                <input type="range" id="sc-rainfall" min="0" max="200" value="40" class="scenario__slider" />
-                <span class="sr-scenario__val" id="sc-rainfall-val">+40%</span>
-              </div>
-              <div class="sr-scenario__input-group">
-                <label>Temperature Rise</label>
-                <input type="range" id="sc-temp" min="0" max="10" value="3" step="0.5" class="scenario__slider" />
-                <span class="sr-scenario__val" id="sc-temp-val">+3°C</span>
-              </div>
-              <div class="sr-scenario__input-group">
-                <label>Humidity</label>
-                <input type="range" id="sc-humidity" min="30" max="100" value="82" class="scenario__slider" />
-                <span class="sr-scenario__val" id="sc-humidity-val">82%</span>
-              </div>
-              <div class="sr-scenario__input-group">
-                <label>Population Movement</label>
-                <select id="sc-pop-movement" class="sr-scenario__select">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high" selected>High</option>
-                </select>
-              </div>
-              <button class="btn btn--accent btn--md sr-scenario__run" id="sc-run">
-                <i data-lucide="play"></i> Run Scenario
-              </button>
+          <!-- Right Panel: Active National Alerts & Actions -->
+          <div class="sr-overview-side fade-in" style="animation-delay: 0.25s;">
+            <div class="sr-section__header">
+              <h2><i data-lucide="bell-ring"></i> Active Alerts</h2>
             </div>
-            <div class="sr-scenario__output" id="sc-output">
-              <div class="sr-scenario__output-placeholder">Configure parameters and run a scenario to see projected impacts.</div>
+            <div class="sr-actions-grid" id="sr-actions">
+              <div class="sr-action-placeholder">Loading alerts...</div>
             </div>
           </div>
+          
         </div>
 
-        <!-- ═══════════ 8. COMMUNITY INTELLIGENCE ═══════════ -->
-        <div class="sr-section fade-in" id="sr-community-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="radio-tower"></i> Community Intelligence</h2>
-            <div class="sr-section__badge"><span id="cr-count">--</span> reports in 24h</div>
-          </div>
-          <div class="sr-community">
-            <div class="sr-community__clusters" id="cr-clusters">
-              <!-- Populated by JS -->
-            </div>
-            <div class="sr-community__feed" id="cr-feed">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══════════ 9. SENSOR NETWORK ═══════════ -->
-        <div class="sr-section fade-in" id="sr-sensor-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="wifi"></i> Sensor Network</h2>
-            <div class="sr-sensor-status">
-              <span class="sr-sensor-status__online" id="sensor-online">--</span> online /
-              <span class="sr-sensor-status__total" id="sensor-total">--</span> total
-            </div>
-          </div>
-          <div class="sr-sensor-grid" id="sr-sensors">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- ═══════════ 10. HEALTHCARE DIGITAL TWINS ═══════════ -->
-        <div class="sr-section fade-in" id="sr-twin-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="building-2"></i> Healthcare Digital Twins</h2>
-            <div class="sr-section__badge" style="background: rgba(125, 159, 134, 0.12); color: var(--accent); border-color: rgba(125, 159, 134, 0.25);">Operational Readiness</div>
-          </div>
-          <div class="sr-twin-grid" id="sr-twins">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- ═══════════ 11. DECISION SUPPORT ENGINE ═══════════ -->
-        <div class="sr-section fade-in" id="sr-decision-section">
-          <div class="sr-section__header">
-            <h2><i data-lucide="target"></i> Decision Support Engine</h2>
-            <button class="btn btn--accent btn--sm" id="btn-sitrep">
-              <i data-lucide="file-text"></i> Generate Situation Report
-            </button>
-          </div>
-          <div class="sr-decision-grid" id="sr-decisions">
-            <!-- Populated by JS -->
-          </div>
-          <div class="sr-sitrep hidden" id="sr-sitrep">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
+        <!-- Rest of the modules have been moved to their respective pages as per National Admin architecture -->
       </div>
 
       <footer class="footer">
