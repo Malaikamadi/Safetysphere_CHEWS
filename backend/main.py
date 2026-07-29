@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from enum import Enum
 
 from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
-from routers import strategic, early_warning, healthcare, point_of_care
+from routers import strategic, early_warning, healthcare, point_of_care, situation_room
 
 # ========================== App Initialisation =============================
 
@@ -37,6 +37,7 @@ app.include_router(strategic.router)
 app.include_router(early_warning.router)
 app.include_router(healthcare.router)
 app.include_router(point_of_care.router)
+app.include_router(situation_room.router)
 
 
 # ========================== Startup Event ==================================
@@ -142,25 +143,7 @@ async def health_check():
     }
 
 
-@app.get("/situation-room", tags=["Dashboard"])
-async def get_situation_room():
-    """Aggregated national data for the situation room dashboard."""
-    return {
-        "national_risk_level": "High",
-        "last_updated_minutes": 2,
-        "ai_confidence_pct": 92,
-        "districts_high_risk": 7,
-        "facilities_threatened": 18,
-        "active_flood_alerts": 12,
-        "malaria_forecast_trend": "+23%",
-        "children_at_risk": 183000,
-        "recommended_actions": [
-            {"action": "Deploy mosquito nets", "priority": "high"},
-            {"action": "Increase ACT stock", "priority": "high"},
-            {"action": "Notify CHWs", "priority": "medium"},
-            {"action": "Open emergency clinic", "priority": "critical"}
-        ]
-    }
+# NOTE: /situation-room endpoints now handled by routers/situation_room.py
 
 
 @app.post("/predict", response_model=PredictionOutput, tags=["Prediction"])
