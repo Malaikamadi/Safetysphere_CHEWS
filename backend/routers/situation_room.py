@@ -381,9 +381,28 @@ async def run_scenario(data: ScenarioInput):
         facility_impacts.append({
             "id": f["id"],
             "name": f["name"],
+            "lat": f["lat"],
+            "lng": f["lng"],
             "baseline_preparedness": round(base_prep * 100),
             "projected_preparedness": round(new_prep * 100),
             "change": round((new_prep - base_prep) * 100),
+        })
+
+    # District-level impact
+    district_impacts = []
+    for d in DISTRICTS:
+        base_flood = random.uniform(0.2, 0.7)
+        base_malaria = random.uniform(0.3, 0.7)
+        d_flood_risk = _clamp(base_flood * rain_mult * humidity_mult)
+        d_malaria_risk = _clamp(base_malaria * rain_mult * temp_mult * humidity_mult)
+        district_impacts.append({
+            "name": d["name"],
+            "lat": d["lat"],
+            "lng": d["lng"],
+            "flood_risk": round(d_flood_risk, 2),
+            "malaria_risk": round(d_malaria_risk, 2),
+            "flood_color": _risk_color(d_flood_risk),
+            "malaria_color": _risk_color(d_malaria_risk),
         })
 
     suggestions = []
@@ -413,6 +432,7 @@ async def run_scenario(data: ScenarioInput):
             "roads_blocked": roads_blocked,
             "population_exposed": population_exposed,
         },
+        "district_impacts": district_impacts,
         "facility_impacts": facility_impacts,
         "suggested_actions": suggestions,
     }

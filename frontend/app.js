@@ -509,10 +509,103 @@ async function runScenario() {
       ` : ""}
     `;
 
+    // -- Wow Moment Map Integration --
+    if (srMap) {
+      // Rain Overlay
+      const rainVal = parseFloat(document.getElementById("sc-rainfall").value);
+      const mapWrapper = document.querySelector(".sr-map-wrapper");
+      if (mapWrapper) {
+        let overlay = mapWrapper.querySelector(".weather-overlay");
+        if (!overlay) {
+          overlay = document.createElement("div");
+          overlay.className = "weather-overlay weather-overlay--rain";
+          mapWrapper.appendChild(overlay);
+        }
+        overlay.style.opacity = rainVal > 20 ? "1" : "0";
+      }
+
+      // District Impacts (Glow and Expand)
+      if (data.district_impacts) {
+        if (mapLayers.flood) {
+          srMap.removeLayer(mapLayers.flood);
+          const floodFeatures = data.district_impacts.map(d => ({
+            type: "Feature",
+            properties: { name: d.name, layer: "flood", score: d.flood_risk, risk_level: "", color: d.flood_color },
+            geometry: { type: "Point", coordinates: [d.lng, d.lat] },
+          }));
+          mapLayers.flood = renderHeatCircles(floodFeatures, "#6f8faa", 28);
+          mapLayers.flood.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties.score > 0.6) {
+              if (layer._path) layer._path.classList.add("layer-glow");
+            }
+          });
+          const floodCheckbox = document.querySelector('input[data-layer="flood"]');
+          if (floodCheckbox && floodCheckbox.checked) mapLayers.flood.addTo(srMap);
+        }
+
+        if (mapLayers.malaria) {
+          srMap.removeLayer(mapLayers.malaria);
+          const malariaFeatures = data.district_impacts.map(d => ({
+            type: "Feature",
+            properties: { name: d.name, layer: "malaria", score: d.malaria_risk, risk_level: "", color: d.malaria_color },
+            geometry: { type: "Point", coordinates: [d.lng, d.lat] },
+          }));
+          mapLayers.malaria = renderHeatCircles(malariaFeatures, "#c75c54", 28);
+          mapLayers.malaria.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties.score > 0.6) {
+              if (layer._path) layer._path.classList.add("layer-glow");
+            }
+          });
+          const malariaCheckbox = document.querySelector('input[data-layer="malaria"]');
+          if (malariaCheckbox && malariaCheckbox.checked) mapLayers.malaria.addTo(srMap);
+        }
+      }
+
+      // Facility Impact Markers
+      if (data.facility_impacts && mapLayers.facilities) {
+        srMap.removeLayer(mapLayers.facilities);
+        const fGroup = L.layerGroup();
+        data.facility_impacts.forEach(f => {
+          const color = f.projected_preparedness > 75 ? "#7d9f86" : (f.projected_preparedness > 50 ? "#c9a35c" : "#943d3a");
+          const marker = L.circleMarker([f.lat, f.lng], {
+            radius: 8, fillColor: color, color: "#fff", fillOpacity: 0.9, weight: 2
+          });
+          marker.bindTooltip(`<strong>${f.name}</strong><br/>Projected Preparedness: ${f.projected_preparedness}%`, { direction: "top" });
+          fGroup.addLayer(marker);
+        });
+        mapLayers.facilities = fGroup;
+        const facCheckbox = document.querySelector('input[data-layer="facilities"]');
+        if (facCheckbox && facCheckbox.checked) mapLayers.facilities.addTo(srMap);
+      }
+    }
+
     if (window.lucide) lucide.createIcons();
   } catch (err) {
     outputEl.innerHTML = `<div class="sr-scenario__output-placeholder">Error running scenario. Is the backend running?</div>`;
   }
+}
+
+// ==================== Live Ping Simulation ====================
+function startCommunityPings() {
+  if (!srMap || !mapLayers.community_reports) return;
+  
+  setInterval(() => {
+    const lat = 8.46 + (Math.random() - 0.5) * 1.5;
+    const lng = -11.78 + (Math.random() - 0.5) * 1.5;
+    
+    const ping = L.circleMarker([lat, lng], {
+      radius: 5,
+      fillColor: "#c75c54",
+      color: "#c75c54",
+      fillOpacity: 0.8,
+      weight: 1,
+      className: "ping-ring"
+    }).addTo(srMap);
+    
+    setTimeout(() => {
+      srMap.removeLayer(ping);
+    }, 1500);
+  }, 4000);
 }
 
 // ==================== 6. Community Intelligence ====================
@@ -737,6 +830,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initAIExplain();
   initScenario();
   await loadCommunityIntel();
+  startCommunityPings();
   await loadSensors();
   await loadDigitalTwins();
   await loadDecisionSupport();
