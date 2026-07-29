@@ -7,7 +7,7 @@
  * and Decision Support Engine.
  */
 
-const API_BASE = "/api";
+const API_BASE = "http://localhost:8000";
 
 // ==================== Utilities ====================
 
