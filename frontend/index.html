@@ -40,20 +40,23 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate-health · Sierra Leone</div></div></a></div>
       <nav class="sidebar__nav">
-        <div class="nav-section"><div class="nav-section__label">Situation Room</div>
-          <a href="#sr-top" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="crosshair"></i></span> Command Center</a>
-          <a href="#sr-map-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Map</a>
-          <a href="#sr-ai-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="brain-circuit"></i></span> AI Insights</a>
-          <a href="#sr-scenario-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="sliders-horizontal"></i></span> Scenario Simulator</a>
-          <a href="#sr-community-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="radio-tower"></i></span> Community Intel</a>
-          <a href="#sr-sensor-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="wifi"></i></span> Sensor Network</a>
-          <a href="#sr-twin-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Digital Twins</a>
-          <a href="#sr-decision-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="target"></i></span> Decision Support</a>
+        <!-- 1. Dashboard (Situation Room) -->
+        <div class="nav-section">
+          <div class="nav-section__label">Dashboard</div>
+          <a href="#sr-top" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="layout-dashboard"></i></span> National Situation Overview</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="activity"></i></span> Live National Risk Score</a>
+          <a href="#sr-map-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Climate Map</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="users"></i></span> Population at Risk</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="baby"></i></span> Children Under 5 at Risk</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="heart"></i></span> Pregnant Women at Risk</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="bar-chart-2"></i></span> District Rankings</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="bell-ring"></i></span> Active National Alerts</a>
         </div>
 
         <div class="nav-section">
           <div class="nav-section__label">Modules</div>
-
+          
+          <!-- 2. Strategic Planning -->
           <div class="nav-group ">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="map"></i></span>
@@ -61,14 +64,17 @@
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="strategic.html#atlas" class="nav-sublink">Flood Atlas</a>
-              <a href="strategic.html#vulnerability" class="nav-sublink">Vulnerability Score</a>
-              <a href="strategic.html#hazard" class="nav-sublink">Hazard Map</a>
-              <a href="strategic.html#pollution" class="nav-sublink">Pollution Hotspot</a>
-              <a href="strategic.html#carbon" class="nav-sublink">Carbon Footprint</a>
+              <a href="javascript:void(0)" class="nav-sublink">National Flood Atlas</a>
+              <a href="javascript:void(0)" class="nav-sublink">Healthcare Facility Vulnerability Map</a>
+              <a href="javascript:void(0)" class="nav-sublink">Pollution Hotspots</a>
+              <a href="javascript:void(0)" class="nav-sublink">Carbon Accounting Dashboard</a>
+              <a href="javascript:void(0)" class="nav-sublink">Hazard Layer Builder</a>
+              <a href="#sr-scenario-section" class="nav-sublink">Climate Scenario Simulator</a>
+              <a href="javascript:void(0)" class="nav-sublink">Infrastructure Risk Assessment</a>
             </div>
           </div>
 
+          <!-- 3. Early Warning -->
           <div class="nav-group ">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="zap"></i></span>
@@ -76,10 +82,17 @@
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="early-warning.html" class="nav-sublink">Warning Center</a>
+              <a href="early-warning.html" class="nav-sublink">National Alert Center</a>
+              <a href="javascript:void(0)" class="nav-sublink">Flood Prediction</a>
+              <a href="javascript:void(0)" class="nav-sublink">Heatwave Prediction</a>
+              <a href="javascript:void(0)" class="nav-sublink">Air Quality Alerts</a>
+              <a href="javascript:void(0)" class="nav-sublink">Disease Outbreak Prediction</a>
+              <a href="javascript:void(0)" class="nav-sublink">Alert Approval & Broadcasting</a>
+              <a href="javascript:void(0)" class="nav-sublink">SMS/WhatsApp Alert Management</a>
             </div>
           </div>
 
+          <!-- 4. Healthcare Readiness -->
           <div class="nav-group ">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="hospital"></i></span>
@@ -87,12 +100,16 @@
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="healthcare.html#forecast" class="nav-sublink">Disease Forecast</a>
-              <a href="healthcare.html#anomaly" class="nav-sublink">Anomaly Detection</a>
-              <a href="healthcare.html#surge" class="nav-sublink">Surge Planning</a>
+              <a href="healthcare.html" class="nav-sublink">National Disease Forecast</a>
+              <a href="javascript:void(0)" class="nav-sublink">Healthcare Capacity Dashboard</a>
+              <a href="javascript:void(0)" class="nav-sublink">Medicine Stock Monitoring</a>
+              <a href="javascript:void(0)" class="nav-sublink">Surge Planning</a>
+              <a href="javascript:void(0)" class="nav-sublink">Workforce Readiness</a>
+              <a href="javascript:void(0)" class="nav-sublink">Emergency Supply Allocation</a>
             </div>
           </div>
 
+          <!-- 5. Point-of-Care -->
           <div class="nav-group ">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="pill"></i></span>
@@ -100,25 +117,44 @@
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="point-of-care.html#triage" class="nav-sublink">Multilingual Triage</a>
-              <a href="point-of-care.html#assistant" class="nav-sublink">Health Assistant</a>
+              <a href="javascript:void(0)" class="nav-sublink">National CHW Activity</a>
+              <a href="javascript:void(0)" class="nav-sublink">AI Assistant Analytics</a>
+              <a href="javascript:void(0)" class="nav-sublink">Triage Statistics</a>
+              <a href="javascript:void(0)" class="nav-sublink">Referral Dashboard</a>
             </div>
           </div>
 
+          <!-- 6. Reports -->
           <div class="nav-group ">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
-              <span class="nav-link__icon"><i data-lucide="brain-circuit"></i></span>
-              <span class="nav-link__text">AI Models</span>
+              <span class="nav-link__icon"><i data-lucide="file-text"></i></span>
+              <span class="nav-link__text">Reports</span>
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="ai-models.html" class="nav-sublink">Catalog Overview</a>
-              <a href="ai-models.html#env-model" class="nav-sublink">Environmental Risk</a>
-              <a href="ai-models.html#epi-model" class="nav-sublink">Epidemiological Forecast</a>
-              <a href="ai-models.html#vuln-model" class="nav-sublink">Vulnerability Engine</a>
-              <a href="ai-models.html#readiness-model" class="nav-sublink">Healthcare Readiness</a>
-              <a href="ai-models.html#fusion-model" class="nav-sublink">Final Risk Engine</a>
-              <a href="ai-models.html#explainability" class="nav-sublink">Explainability Layer</a>
+              <a href="javascript:void(0)" class="nav-sublink">National Situation Report</a>
+              <a href="javascript:void(0)" class="nav-sublink">UNICEF Report</a>
+              <a href="javascript:void(0)" class="nav-sublink">WHO Report</a>
+              <a href="javascript:void(0)" class="nav-sublink">Weekly Climate Bulletin</a>
+              <a href="javascript:void(0)" class="nav-sublink">Monthly Disease Forecast</a>
+            </div>
+          </div>
+          
+          <!-- 7. Administration -->
+          <div class="nav-group ">
+            <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
+              <span class="nav-link__icon"><i data-lucide="settings"></i></span>
+              <span class="nav-link__text">Administration</span>
+              <i data-lucide="chevron-down" class="nav-group__chevron"></i>
+            </button>
+            <div class="nav-group__content">
+              <a href="javascript:void(0)" class="nav-sublink">User Management</a>
+              <a href="javascript:void(0)" class="nav-sublink">District Management</a>
+              <a href="javascript:void(0)" class="nav-sublink">Facility Management</a>
+              <a href="javascript:void(0)" class="nav-sublink">Role Management</a>
+              <a href="javascript:void(0)" class="nav-sublink">API Settings</a>
+              <a href="javascript:void(0)" class="nav-sublink">DHIS2 Integration</a>
+              <a href="javascript:void(0)" class="nav-sublink">Sensor Management</a>
             </div>
           </div>
         </div>
