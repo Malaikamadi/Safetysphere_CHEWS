@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="CHEWS CHW Dashboard — Community health worker mobile interface." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>CHEWS — Health Worker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="auth.js"></script>
+  <script>requireRole();</script>
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute("data-theme", v === "light" || v === "dark" ? v : "dark");
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+    })();
+  </script>
+</head>
+<body class="chw-body">
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div>
+  </div>
+
+  <div class="chw-app">
+    <!-- ===== TOP BAR ===== -->
+    <header class="chw-topbar">
+      <div class="chw-topbar__left">
+        <div class="chw-topbar__brand">
+          <i data-lucide="globe"></i>
+          <span>CHEWS</span>
+        </div>
+      </div>
+      <div class="chw-topbar__right">
+        <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme">
+          <span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span>
+          <span class="theme-toggle__when-light"><i data-lucide="moon"></i></span>
+        </button>
+        <div class="chw-topbar__avatar" id="chw-avatar">MM</div>
+      </div>
+    </header>
+
+    <!-- ===== TAB CONTENT ===== -->
+    <div class="chw-content">
+
+      <!-- HOME TAB -->
+      <div class="chw-tab-content chw-tab-content--active" id="chw-tab-home">
+        <div class="chw-greeting">
+          <div class="chw-greeting__hello">Good morning, <span id="chw-name">Mariama</span> 👋</div>
+          <div class="chw-greeting__role">Community Health Worker · <span id="chw-location">Kamabai</span></div>
+        </div>
+
+        <div class="chw-section-title">Today's Tasks</div>
+        <div class="chw-task-grid">
+          <div class="chw-task-card chw-task-card--blue">
+            <div class="chw-task-card__value">18</div>
+            <div class="chw-task-card__label">Household visits</div>
+          </div>
+          <div class="chw-task-card chw-task-card--green">
+            <div class="chw-task-card__value">6</div>
+            <div class="chw-task-card__label">New Reports</div>
+          </div>
+          <div class="chw-task-card chw-task-card--amber">
+            <div class="chw-task-card__value">3</div>
+            <div class="chw-task-card__label">Standing Water</div>
+          </div>
+          <div class="chw-task-card chw-task-card--red">
+            <div class="chw-task-card__value">2</div>
+            <div class="chw-task-card__label">Fever Cases</div>
+          </div>
+          <div class="chw-task-card chw-task-card--purple">
+            <div class="chw-task-card__value">3</div>
+            <div class="chw-task-card__label">Pregnant women</div>
+          </div>
+          <div class="chw-task-card chw-task-card--orange">
+            <div class="chw-task-card__value">2</div>
+            <div class="chw-task-card__label">Active alerts</div>
+          </div>
+        </div>
+
+        <div class="chw-section-title">Active Alerts Near You</div>
+        <div class="chw-alerts">
+          <div class="chw-alert-card chw-alert-card--high">
+            <div class="chw-alert-card__icon"><i data-lucide="waves"></i></div>
+            <div class="chw-alert-card__content">
+              <div class="chw-alert-card__title">Flood risk in Kamabai</div>
+              <div class="chw-alert-card__meta">High risk · Tidal precautions</div>
+            </div>
+          </div>
+          <div class="chw-alert-card chw-alert-card--medium">
+            <div class="chw-alert-card__icon"><i data-lucide="bug"></i></div>
+            <div class="chw-alert-card__content">
+              <div class="chw-alert-card__title">Malaria surge expected</div>
+              <div class="chw-alert-card__meta">Medium risk · Net distribution needed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS TAB -->
+      <div class="chw-tab-content" id="chw-tab-reports">
+        <div class="chw-page-header">
+          <h2>Submit Community Report</h2>
+          <div class="chw-toggle-group">
+            <button class="chw-toggle chw-toggle--active" data-rtype="quick">Quick Report</button>
+            <button class="chw-toggle" data-rtype="detailed">Detailed</button>
+          </div>
+        </div>
+
+        <form id="chw-report-form" class="chw-form">
+          <div class="chw-section-title">Report Category</div>
+          <div class="chw-category-grid">
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="flood" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="waves"></i>
+                <span>Flood</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="standing_water" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="droplets"></i>
+                <span>Standing Water</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="mosquito" checked />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="bug"></i>
+                <span>Mosquito Breeding</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="water_contamination" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="flask-conical"></i>
+                <span>Water Contamination</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="medicine" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="pill"></i>
+                <span>Medicine Shortage</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="facility" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="hospital"></i>
+                <span>Facility Damage</span>
+              </div>
+            </label>
+            <label class="chw-category-btn">
+              <input type="radio" name="category" value="other" />
+              <div class="chw-category-btn__inner">
+                <i data-lucide="more-horizontal"></i>
+                <span>Other</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="chw-form-group">
+            <label class="chw-form-label">Description</label>
+            <textarea class="chw-form-input chw-textarea" placeholder="Describe what you observed..." rows="3"></textarea>
+          </div>
+
+          <button type="button" class="chw-photo-btn">
+            <i data-lucide="camera"></i> Add Photo & Location
+          </button>
+
+          <button type="submit" class="chw-submit-btn">
+            <i data-lucide="send"></i> Submit Report
+          </button>
+        </form>
+      </div>
+
+      <!-- TRIAGE TAB -->
+      <div class="chw-tab-content" id="chw-tab-triage">
+        <div class="chw-page-header">
+          <h2>Patient Triage</h2>
+          <button class="chw-toggle chw-toggle--active">+ Save / New Patient</button>
+        </div>
+
+        <form id="chw-triage-form" class="chw-form">
+          <div class="chw-section-title">Patient Information</div>
+          <div class="chw-form-row">
+            <div class="chw-form-group chw-form-group--half">
+              <label class="chw-form-label">Age</label>
+              <input type="number" class="chw-form-input" placeholder="4 years" id="ct-age" />
+            </div>
+            <div class="chw-form-group chw-form-group--half">
+              <label class="chw-form-label">Gender</label>
+              <select class="chw-form-input" id="ct-gender">
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chw-section-title">Symptoms (select all)</div>
+          <div class="chw-symptom-grid">
+            <label class="chw-symptom-chip chw-symptom-chip--danger"><input type="checkbox" name="symptom" value="fever" checked /><span>🔥 Fever</span></label>
+            <label class="chw-symptom-chip"><input type="checkbox" name="symptom" value="cough" checked /><span>Cough</span></label>
+            <label class="chw-symptom-chip chw-symptom-chip--danger"><input type="checkbox" name="symptom" value="diarrhea" /><span>Diarrhea</span></label>
+            <label class="chw-symptom-chip"><input type="checkbox" name="symptom" value="vomiting" /><span>Vomiting</span></label>
+            <label class="chw-symptom-chip"><input type="checkbox" name="symptom" value="difficulty_breathing" /><span>Difficulty breathing</span></label>
+          </div>
+
+          <button type="submit" class="chw-submit-btn chw-submit-btn--triage">
+            <i data-lucide="search"></i> Analyze Symptoms
+          </button>
+        </form>
+
+        <!-- AI Recommendation (visible after submit) -->
+        <div class="chw-ai-result" id="chw-triage-result">
+          <div class="chw-ai-result__header">
+            <div class="chw-ai-result__badge chw-ai-result__badge--warning">AI Recommendation</div>
+          </div>
+          <div class="chw-ai-result__diagnosis">
+            <div class="chw-ai-result__label">Likely:</div>
+            <div class="chw-ai-result__disease">Malaria</div>
+          </div>
+          <div class="chw-ai-result__info">
+            High risk due to current climate conditions:
+          </div>
+          <ul class="chw-ai-result__list">
+            <li>Give RDT if available</li>
+            <li>Start ACT if positive</li>
+            <li>Educate families on prevention</li>
+            <li>Report unusual increases in cases</li>
+            <li>Refer if severe symptoms</li>
+          </ul>
+          <div class="chw-quick-actions">
+            <button class="chw-action-btn"><i data-lucide="book-open"></i> Malaria Guidelines</button>
+            <button class="chw-action-btn"><i data-lucide="hospital"></i> Nearest Referral Facility</button>
+            <button class="chw-action-btn chw-action-btn--danger"><i data-lucide="alert-triangle"></i> Report Outbreak</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSISTANT TAB -->
+      <div class="chw-tab-content" id="chw-tab-assistant">
+        <div class="chw-page-header">
+          <h2>Health Assistant</h2>
+          <div class="chw-offline-badge"><i data-lucide="wifi-off"></i> Offline mode</div>
+        </div>
+
+        <div class="chw-chat" id="chw-chat-body">
+          <div class="chw-chat-msg chw-chat-msg--bot">
+            <div class="chw-chat-msg__avatar"><i data-lucide="sparkles"></i></div>
+            <div class="chw-chat-msg__bubble">
+              Hi Mariama! I'm your CHEWS Health Assistant. I can help with climate-health questions, malaria prevention, flood safety, and more. What would you like to know?
+              <div class="chw-chat-suggestions">
+                <button class="chw-suggestion-chip" data-q="What should I do if malaria risk is high?">What should I do if malaria risk is high?</button>
+                <button class="chw-suggestion-chip" data-q="How to check for standing water?">Check for standing water</button>
+                <button class="chw-suggestion-chip" data-q="Flood safety tips">Flood safety tips</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="chw-chat-input" id="chw-chat-form">
+          <input type="text" class="chw-chat-input__field" id="chw-chat-input" placeholder="Ask a question..." />
+          <button type="submit" class="chw-chat-input__send"><i data-lucide="send"></i></button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ===== BOTTOM TAB BAR ===== -->
+    <nav class="chw-tabbar">
+      <button class="chw-tabbar__item chw-tabbar__item--active" data-tab="home">
+        <i data-lucide="home"></i>
+        <span>Home</span>
+      </button>
+      <button class="chw-tabbar__item" data-tab="reports">
+        <i data-lucide="file-text"></i>
+        <span>Reports</span>
+      </button>
+      <button class="chw-tabbar__item" data-tab="triage">
+        <i data-lucide="stethoscope"></i>
+        <span>Triage</span>
+      </button>
+      <button class="chw-tabbar__item" data-tab="assistant">
+        <i data-lucide="message-square"></i>
+        <span>Assistant</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="theme.js"></script>
+  <script src="chw.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

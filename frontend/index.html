@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CHEWS National Situation Room — Multi-hazard Climate-Health Intelligence Platform for Sierra Leone. Real-time monitoring, AI predictions, and decision support." />
-  <title>CHEWS — Climate-Health Situation Room</title>
+  <meta name="description"
+    content="CHEWS National Overview — Multi-hazard Climate-Health Intelligence Platform for Sierra Leone. Real-time monitoring, AI predictions, and decision support." />
+  <title>CHEWS — National Overview</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="auth.js"></script>
   <script>requireRole();</script>
   <script>
@@ -27,6 +31,7 @@
     })();
   </script>
 </head>
+
 <body>
   <div class="bg-animation" aria-hidden="true">
     <div class="bg-orb bg-orb--1"></div>
@@ -38,44 +43,33 @@
   <div class="app-layout">
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar__header"><a href="index.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate-health · Sierra Leone</div></div></a></div>
+      <div class="sidebar__header"><a href="index.html" class="sidebar__brand">
+          <div class="sidebar__icon"><i data-lucide="globe"></i></div>
+          <div>
+            <div class="sidebar__title">CHEWS</div>
+            <div class="sidebar__version">Climate-Health Intelligence</div>
+          </div>
+        </a></div>
       <nav class="sidebar__nav">
-        <!-- 1. Dashboard (Situation Room) -->
         <div class="nav-section">
-          <div class="nav-section__label">Dashboard</div>
-          <a href="#sr-top" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="layout-dashboard"></i></span> National Situation Overview</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="activity"></i></span> Live National Risk Score</a>
-          <a href="#sr-map-section" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Climate Map</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="users"></i></span> Population at Risk</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="baby"></i></span> Children Under 5 at Risk</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="heart"></i></span> Pregnant Women at Risk</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="bar-chart-2"></i></span> District Rankings</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="bell-ring"></i></span> Active National Alerts</a>
+          <a href="#" class="nav-link nav-link--active"><span class="nav-link__icon"><i
+                data-lucide="layout-dashboard"></i></span> Dashboard</a>
         </div>
-
         <div class="nav-section">
-          <div class="nav-section__label">Modules</div>
-          
-          <!-- 2. Strategic Planning -->
-          <div class="nav-group ">
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="map"></i></span>
               <span class="nav-link__text">Strategic Planning</span>
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="javascript:void(0)" class="nav-sublink">National Flood Atlas</a>
-              <a href="javascript:void(0)" class="nav-sublink">Healthcare Facility Vulnerability Map</a>
-              <a href="javascript:void(0)" class="nav-sublink">Pollution Hotspots</a>
-              <a href="javascript:void(0)" class="nav-sublink">Carbon Accounting Dashboard</a>
-              <a href="javascript:void(0)" class="nav-sublink">Hazard Layer Builder</a>
-              <a href="#sr-scenario-section" class="nav-sublink">Climate Scenario Simulator</a>
-              <a href="javascript:void(0)" class="nav-sublink">Infrastructure Risk Assessment</a>
+              <a href="strategic.html" class="nav-sublink">National Flood Atlas</a>
+              <a href="strategic.html#vulnerability" class="nav-sublink">Vulnerability Map</a>
+              <a href="strategic.html#pollution" class="nav-sublink">Pollution Hotspots</a>
             </div>
           </div>
 
-          <!-- 3. Early Warning -->
-          <div class="nav-group ">
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="zap"></i></span>
               <span class="nav-link__text">Early Warning</span>
@@ -84,48 +78,35 @@
             <div class="nav-group__content">
               <a href="early-warning.html" class="nav-sublink">National Alert Center</a>
               <a href="javascript:void(0)" class="nav-sublink">Flood Prediction</a>
-              <a href="javascript:void(0)" class="nav-sublink">Heatwave Prediction</a>
-              <a href="javascript:void(0)" class="nav-sublink">Air Quality Alerts</a>
-              <a href="javascript:void(0)" class="nav-sublink">Disease Outbreak Prediction</a>
-              <a href="javascript:void(0)" class="nav-sublink">Alert Approval & Broadcasting</a>
-              <a href="javascript:void(0)" class="nav-sublink">SMS/WhatsApp Alert Management</a>
+              <a href="javascript:void(0)" class="nav-sublink">Disease Outbreak</a>
             </div>
           </div>
 
-          <!-- 4. Healthcare Readiness -->
-          <div class="nav-group ">
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="hospital"></i></span>
               <span class="nav-link__text">Healthcare Readiness</span>
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="healthcare.html" class="nav-sublink">National Disease Forecast</a>
-              <a href="javascript:void(0)" class="nav-sublink">Healthcare Capacity Dashboard</a>
-              <a href="javascript:void(0)" class="nav-sublink">Medicine Stock Monitoring</a>
-              <a href="javascript:void(0)" class="nav-sublink">Surge Planning</a>
-              <a href="javascript:void(0)" class="nav-sublink">Workforce Readiness</a>
-              <a href="javascript:void(0)" class="nav-sublink">Emergency Supply Allocation</a>
+              <a href="healthcare.html" class="nav-sublink">Disease Forecast</a>
+              <a href="javascript:void(0)" class="nav-sublink">Capacity Dashboard</a>
+              <a href="javascript:void(0)" class="nav-sublink">Medicine Stock</a>
             </div>
           </div>
 
-          <!-- 5. Point-of-Care -->
-          <div class="nav-group ">
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="pill"></i></span>
               <span class="nav-link__text">Point-of-Care</span>
               <i data-lucide="chevron-down" class="nav-group__chevron"></i>
             </button>
             <div class="nav-group__content">
-              <a href="javascript:void(0)" class="nav-sublink">National CHW Activity</a>
-              <a href="javascript:void(0)" class="nav-sublink">AI Assistant Analytics</a>
-              <a href="javascript:void(0)" class="nav-sublink">Triage Statistics</a>
-              <a href="javascript:void(0)" class="nav-sublink">Referral Dashboard</a>
+              <a href="point-of-care.html" class="nav-sublink">Triage & Assistant</a>
             </div>
           </div>
 
-          <!-- 6. Reports -->
-          <div class="nav-group ">
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="file-text"></i></span>
               <span class="nav-link__text">Reports</span>
@@ -135,13 +116,11 @@
               <a href="javascript:void(0)" class="nav-sublink">National Situation Report</a>
               <a href="javascript:void(0)" class="nav-sublink">UNICEF Report</a>
               <a href="javascript:void(0)" class="nav-sublink">WHO Report</a>
-              <a href="javascript:void(0)" class="nav-sublink">Weekly Climate Bulletin</a>
-              <a href="javascript:void(0)" class="nav-sublink">Monthly Disease Forecast</a>
+              <a href="javascript:void(0)" class="nav-sublink">Monthly Climate Bulletin</a>
             </div>
           </div>
-          
-          <!-- 7. Administration -->
-          <div class="nav-group ">
+
+          <div class="nav-group">
             <button class="nav-link nav-group__toggle" onclick="this.parentElement.classList.toggle('is-expanded')">
               <span class="nav-link__icon"><i data-lucide="settings"></i></span>
               <span class="nav-link__text">Administration</span>
@@ -150,131 +129,182 @@
             <div class="nav-group__content">
               <a href="javascript:void(0)" class="nav-sublink">User Management</a>
               <a href="javascript:void(0)" class="nav-sublink">District Management</a>
-              <a href="javascript:void(0)" class="nav-sublink">Facility Management</a>
-              <a href="javascript:void(0)" class="nav-sublink">Role Management</a>
               <a href="javascript:void(0)" class="nav-sublink">API Settings</a>
-              <a href="javascript:void(0)" class="nav-sublink">DHIS2 Integration</a>
-              <a href="javascript:void(0)" class="nav-sublink">Sensor Management</a>
             </div>
           </div>
         </div>
       </nav>
-      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
+      <div class="sidebar__footer">
+        <div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div>
+      </div>
     </aside>
 
     <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
+      <!-- Top Bar with Profile -->
       <div class="topbar">
         <div>
           <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
         </div>
         <div>
-          <div class="topbar__title">Climate-Health Situation Room</div>
-          <div class="topbar__subtitle" id="topbar-greeting">Welcome</div>
+          <div class="topbar__title">National Overview</div>
+          <div class="topbar__subtitle">Real-time climate, environmental and health intelligence for Sierra Leone</div>
         </div>
         <div class="topbar__actions">
-          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
+          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme"
+            title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span
+              class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
           <div class="topbar__badge"><span class="pulse-dot"></span> Live</div>
-          <div class="topbar__role-badge" id="topbar-role"><i data-lucide="user"></i> <span>Role</span></div>
+          <div class="topbar__timestamp" id="topbar-timestamp">Last updated: --</div>
+          <div class="topbar__profile" id="topbar-profile">
+            <div class="topbar__avatar" id="topbar-avatar">MO</div>
+            <div class="topbar__profile-info">
+              <div class="topbar__profile-name" id="topbar-name">Ministry of Health</div>
+              <div class="topbar__profile-role" id="topbar-role-label">National Administrator</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="page fade-in" id="sr-top">
 
-        <!-- ═══════════ 1. SITUATION HERO ═══════════ -->
-        <div class="situation-hero fade-in">
-          <div class="situation-hero__title">Live National Risk Score</div>
-          <div class="situation-risk-badge" id="sr-risk-level">...</div>
-          <div class="situation-hero__meta">
-            <span><i data-lucide="clock"></i> Updated <strong id="sr-updated">Just now</strong></span>
-            <span><i data-lucide="brain-circuit"></i> AI Confidence <strong id="sr-confidence">--%</strong></span>
+        <!-- ═══════════ 1. KPI METRICS STRIP ═══════════ -->
+        <div class="na-kpi-strip fade-in">
+          <div class="na-kpi-card na-kpi-card--risk">
+            <div class="na-kpi-card__label">National Risk Score</div>
+            <div class="na-kpi-card__row">
+              <div class="na-kpi-card__value na-kpi-card__value--xl" id="sr-risk-score">0.68</div>
+              <div class="na-kpi-card__badge na-kpi-card__badge--high" id="sr-risk-badge">High Risk</div>
+            </div>
+            <div class="na-kpi-card__trend" id="sr-risk-trend"><i data-lucide="trending-up"></i> +12% from last week
+            </div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Population at Risk</div>
+            <div class="na-kpi-card__value" id="sr-population-risk">1.2M</div>
+            <div class="na-kpi-card__sub">people</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Children Under 5</div>
+            <div class="na-kpi-card__value" id="sr-children-risk">412K</div>
+            <div class="na-kpi-card__sub">at risk</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Pregnant Women</div>
+            <div class="na-kpi-card__value" id="sr-pregnant-risk">89K</div>
+            <div class="na-kpi-card__sub">at risk</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Active Alerts</div>
+            <div class="na-kpi-card__value na-kpi-card__value--alerts" id="sr-alert-count">7</div>
+            <div class="na-kpi-card__sub" id="sr-alert-sub">3 require approval</div>
           </div>
         </div>
 
-        <!-- ═══════════ 2. KEY METRICS STRIP ═══════════ -->
-        <div class="sr-metrics-strip fade-in" style="animation-delay: 0.1s;" id="sr-metrics-strip">
-          <!-- Populated by JS, but keeping placeholders for layout -->
-          <div class="sr-metric-card card--glow-amber">
-            <div class="sr-metric-card__icon"><i data-lucide="users"></i></div>
-            <div class="sr-metric-card__value text-warning" id="sr-population-risk">--</div>
-            <div class="sr-metric-card__label">Population at Risk</div>
-          </div>
-          <div class="sr-metric-card card--glow-purple">
-            <div class="sr-metric-card__icon"><i data-lucide="baby"></i></div>
-            <div class="sr-metric-card__value" style="color:var(--purple)" id="sr-children-risk">--</div>
-            <div class="sr-metric-card__label">Children Under 5 at Risk</div>
-          </div>
-          <div class="sr-metric-card card--glow-red">
-            <div class="sr-metric-card__icon"><i data-lucide="heart"></i></div>
-            <div class="sr-metric-card__value text-danger" id="sr-pregnant-risk">--</div>
-            <div class="sr-metric-card__label">Pregnant Women at Risk</div>
-          </div>
-        </div>
+        <!-- ═══════════ 2. MAIN GRID: Map + Panels ═══════════ -->
+        <div class="na-main-grid fade-in" style="animation-delay: 0.1s;">
 
-        <!-- ═══════════ 3. OVERVIEW GRID ═══════════ -->
-        <div class="sr-overview-grid">
-          
-          <!-- Left Panel: District Rankings -->
-          <div class="sr-overview-side fade-in" style="animation-delay: 0.15s;">
-            <div class="sr-section__header">
-              <h2><i data-lucide="bar-chart-2"></i> District Rankings</h2>
+          <!-- National Climate Health Map -->
+          <div class="na-map-panel" id="sr-map-section">
+            <div class="na-panel-header">
+              <h2><i data-lucide="globe"></i> National Climate Health Map</h2>
+              <div class="na-panel-header__layers">
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span
+                    class="na-layer-dot" style="background:#6f8faa"></span> Flood Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span
+                    class="na-layer-dot" style="background:#c75c54"></span> Malaria Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="heat" /><span class="na-layer-dot"
+                    style="background:#c4876a"></span> Heat Stress</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="air_quality" /><span
+                    class="na-layer-dot" style="background:#9c7f8f"></span> Air Pollution</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span
+                    class="na-layer-dot" style="background:#7d9f86"></span> Facility Vulnerability</label>
+              </div>
             </div>
-            <div class="sr-district-rankings" id="sr-district-rankings">
-              <div class="sr-action-placeholder">Loading rankings...</div>
-            </div>
+            <div class="na-map-container" id="sr-map"></div>
           </div>
 
-          <!-- Center Panel: National Climate Map -->
-          <div class="sr-overview-center fade-in" style="animation-delay: 0.2s;" id="sr-map-section">
-            <div class="sr-section__header">
-              <h2><i data-lucide="globe"></i> National Climate Map</h2>
-              <div class="sr-section__badge"><span class="pulse-dot"></span> Live Data</div>
+          <!-- Right Column -->
+          <div class="na-right-col">
+            <!-- Top 5 High-Risk Districts -->
+            <div class="na-panel na-panel--districts">
+              <div class="na-panel-header">
+                <h2>Top 5 High-Risk Districts</h2>
+                <a href="javascript:void(0)" class="na-view-all">View All Districts</a>
+              </div>
+              <table class="na-district-table" id="sr-district-table">
+                <thead>
+                  <tr>
+                    <th>District</th>
+                    <th>Score</th>
+                    <th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody id="sr-district-rankings">
+                  <tr>
+                    <td colspan="3" class="na-loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="sr-map-wrapper">
-              <div class="sr-map-container" id="sr-map"></div>
-              <div class="sr-layer-panel" id="sr-layer-panel">
-                <div class="sr-layer-panel__title">Map Layers</div>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="sr-layer-dot" style="background:#6f8faa"></span> Flood</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="sr-layer-dot" style="background:#c75c54"></span> Malaria</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="heat" /><span class="sr-layer-dot" style="background:#c4876a"></span> Heat</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="air_quality" /><span class="sr-layer-dot" style="background:#9c7f8f"></span> Air Quality</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="sr-layer-dot" style="background:#7d9f86"></span> Healthcare Facilities</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="schools" /><span class="sr-layer-dot" style="background:#c9a35c"></span> Schools</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="community_reports" checked /><span class="sr-layer-dot" style="background:#b5726b"></span> Community Reports</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="sensors" checked /><span class="sr-layer-dot" style="background:#729e75"></span> Sensor Stations</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="vulnerability" /><span class="sr-layer-dot" style="background:#c9a963"></span> Vulnerability</label>
-                <label class="sr-layer-toggle"><input type="checkbox" data-layer="carbon" /><span class="sr-layer-dot" style="background:#4a6b51"></span> Carbon</label>
+
+            <!-- Active National Alerts -->
+            <div class="na-panel na-panel--alerts">
+              <div class="na-panel-header">
+                <h2><i data-lucide="bell-ring"></i> Active National Alerts</h2>
+                <a href="early-warning.html" class="na-view-all">View All Alert Center →</a>
+              </div>
+              <div class="na-alerts-feed" id="sr-alerts-feed">
+                <div class="na-loading">Loading alerts...</div>
               </div>
             </div>
           </div>
-
-          <!-- Right Panel: Active National Alerts & Actions -->
-          <div class="sr-overview-side fade-in" style="animation-delay: 0.25s;">
-            <div class="sr-section__header">
-              <h2><i data-lucide="bell-ring"></i> Active Alerts</h2>
-            </div>
-            <div class="sr-actions-grid" id="sr-actions">
-              <div class="sr-action-placeholder">Loading alerts...</div>
-            </div>
-          </div>
-          
         </div>
 
-        <!-- Rest of the modules have been moved to their respective pages as per National Admin architecture -->
+        <!-- ═══════════ 3. BOTTOM ROW ═══════════ -->
+        <div class="na-bottom-grid fade-in" style="animation-delay: 0.2s;">
+          <!-- Decision Center -->
+          <div class="na-panel na-panel--decision">
+            <div class="na-panel-header">
+              <h2><i data-lucide="brain-circuit"></i> Decision Center</h2>
+              <div class="na-panel-header__sub">AI-powered recommendations for immediate action</div>
+            </div>
+            <div class="na-decision-cards" id="sr-decisions">
+              <div class="na-loading">Loading recommendations...</div>
+            </div>
+          </div>
+
+          <!-- Quick Reports -->
+          <div class="na-panel na-panel--reports">
+            <div class="na-panel-header">
+              <h2><i data-lucide="file-text"></i> Quick Reports</h2>
+            </div>
+            <div class="na-reports-grid">
+              <a href="javascript:void(0)" class="na-report-link"><i data-lucide="file-bar-chart"></i> National
+                Situation Report</a>
+              <a href="javascript:void(0)" class="na-report-link"><i data-lucide="file-bar-chart"></i> UNICEF Report</a>
+              <a href="javascript:void(0)" class="na-report-link"><i data-lucide="file-bar-chart"></i> WHO Report</a>
+              <a href="javascript:void(0)" class="na-report-link"><i data-lucide="file-bar-chart"></i> Monthly Climate
+                Bulletin</a>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <footer class="footer">
-        <p>CHEWS v3.0 · SafetySphere · Climate-Health Intelligence Platform · Sierra Leone </p>
+        <p>CHEWS v4.0 · SafetySphere · Climate-Health Intelligence Platform · Sierra Leone </p>
       </footer>
     </main>
   </div>
 
   <script src="theme.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="app.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
   <script src="health-assistant.js"></script>
 </body>
+
 </html>

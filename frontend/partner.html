@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Partner Dashboard — Impact metrics, model performance, and data access for UNICEF, WHO, NGOs." />
+  <title>CHEWS — Partner Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="auth.js"></script>
+  <script>requireRole();</script>
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute("data-theme", v === "light" || v === "dark" ? v : "dark");
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+    })();
+  </script>
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="partner.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate Health Intelligence</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section">
+          <a href="#" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="bar-chart-2"></i></span> Impact Overview</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Map</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="brain-circuit"></i></span> Model Performance</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="monitor"></i></span> Monitoring & Evaluation</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="file-text"></i></span> Reports</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="database"></i></span> Data & Research</a>
+        </div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div>
+          <div class="topbar__title">Impact & Performance Dashboard</div>
+          <div class="topbar__subtitle">Tracking progress, measuring impact, supporting healthier, safer communities</div>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
+          <select class="p-period-select" id="p-period">
+            <option value="3m">Last 3 months</option>
+            <option value="6m">Last 6 months</option>
+            <option value="1y">Last year</option>
+          </select>
+          <button class="btn btn--secondary btn--sm"><i data-lucide="download"></i> Export</button>
+          <div class="topbar__profile" id="topbar-profile">
+            <div class="topbar__avatar topbar__avatar--partner" id="topbar-avatar">AS</div>
+            <div class="topbar__profile-info">
+              <div class="topbar__profile-name" id="topbar-name">Anna Smith</div>
+              <div class="topbar__profile-role" id="topbar-role-label">Research Analyst</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page fade-in">
+
+        <!-- ═══════════ KPI STRIP ═══════════ -->
+        <div class="p-kpi-strip fade-in">
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="shield"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Children Protected</div>
+              <div class="p-kpi-card__value" id="p-children">1.24M</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +3.8%</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="map-pin"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Districts Covered</div>
+              <div class="p-kpi-card__value">14 <span class="p-kpi-card__of">/ 16</span></div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +2 new</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="hospital"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Facilities Supported</div>
+              <div class="p-kpi-card__value" id="p-facilities">286</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +12%</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="users"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">CHWs Active</div>
+              <div class="p-kpi-card__value" id="p-chws">3,482</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +4%</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="target"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Forecast Accuracy</div>
+              <div class="p-kpi-card__value">81%</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +5%</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="bell"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Alerts Issued</div>
+              <div class="p-kpi-card__value" id="p-alerts">247</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +32%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ MAIN CONTENT GRID ═══════════ -->
+        <div class="p-main-grid fade-in" style="animation-delay: 0.1s;">
+          <!-- National Impact Map -->
+          <div class="na-map-panel p-map-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="map"></i> National Impact Map</h2>
+              <div class="na-panel-header__layers">
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="na-layer-dot" style="background:#6f8faa"></span> Flood Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="na-layer-dot" style="background:#c75c54"></span> Malaria Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="na-layer-dot" style="background:#7d9f86"></span> Health Facilities</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="community_reports" /><span class="na-layer-dot" style="background:#b5726b"></span> Community Reports</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="projects" checked /><span class="na-layer-dot" style="background:#9c7f8f"></span> Project Areas</label>
+              </div>
+            </div>
+            <div class="na-map-container" id="partner-map"></div>
+          </div>
+
+          <!-- Key Impact Indicators -->
+          <div class="na-panel p-impact-panel">
+            <div class="na-panel-header">
+              <h2>Key Impact Indicators</h2>
+            </div>
+            <div class="p-impact-tabs">
+              <button class="p-impact-tab p-impact-tab--active">Health</button>
+              <button class="p-impact-tab">Climate</button>
+              <button class="p-impact-tab">SDGs</button>
+              <button class="p-impact-tab">Gender</button>
+            </div>
+            <div class="p-impact-indicators">
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Reduction in malaria cases <span class="p-indicator__type">(year, %)</span></div>
+                  <div class="p-indicator__value">24%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill" style="width: 24%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Facilities with improved readiness <span class="p-indicator__type">(target: 80%)</span></div>
+                  <div class="p-indicator__value">76%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 76%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Communities with early warning coverage</div>
+                  <div class="p-indicator__value">68%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill p-indicator__fill--blue" style="width: 68%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">CHWs submitting regular reports</div>
+                  <div class="p-indicator__value">82%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 82%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ BOTTOM ROW ═══════════ -->
+        <div class="p-bottom-grid fade-in" style="animation-delay: 0.2s;">
+          <!-- Model Performance -->
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="brain-circuit"></i> Model Performance</h2>
+            </div>
+            <div class="p-model-grid">
+              <div class="p-model-metric">
+                <svg viewBox="0 0 100 100" class="p-model-gauge">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="6" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="6"
+                          stroke-dasharray="264" stroke-dashoffset="50"
+                          stroke-linecap="round" transform="rotate(-90 50 50)" />
+                  <text x="50" y="46" text-anchor="middle" dominant-baseline="central"
+                        fill="var(--text-bright)" font-size="20" font-weight="700">81%</text>
+                  <text x="50" y="64" text-anchor="middle"
+                        fill="var(--text-dim)" font-size="9">Overall</text>
+                </svg>
+                <div class="p-model-metric__label">Overall Accuracy</div>
+              </div>
+              <div class="p-model-metric">
+                <div class="p-model-metric__big">0.79</div>
+                <div class="p-model-metric__label">F1 Score</div>
+              </div>
+              <div class="p-model-metric">
+                <div class="p-model-metric__big">0.83</div>
+                <div class="p-model-metric__label">Precision</div>
+              </div>
+              <div class="p-model-metric">
+                <div class="p-model-metric__big">0.87</div>
+                <div class="p-model-metric__label">Recall</div>
+              </div>
+            </div>
+            <div class="p-model-links">
+              <a href="ai-models.html" class="na-view-all">Monthly Impact Report (Nov 2024)</a>
+              <a href="javascript:void(0)" class="na-view-all">District Comparison Report</a>
+            </div>
+          </div>
+
+          <!-- Recent Reports -->
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="file-text"></i> Recent Reports</h2>
+            </div>
+            <div class="p-reports-list">
+              <div class="p-report-item">
+                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+                <div class="p-report-item__info">
+                  <div class="p-report-item__name">Monthly Impact Report (Nov 2024)</div>
+                  <div class="p-report-item__meta">PDF · 4.2 MB</div>
+                </div>
+                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
+              </div>
+              <div class="p-report-item">
+                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+                <div class="p-report-item__info">
+                  <div class="p-report-item__name">District Comparison Report</div>
+                  <div class="p-report-item__meta">PDF · 3.1 MB</div>
+                </div>
+                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
+              </div>
+              <div class="p-report-item">
+                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+                <div class="p-report-item__info">
+                  <div class="p-report-item__name">Climate Health Bulletin</div>
+                  <div class="p-report-item__meta">PDF · 2.8 MB</div>
+                </div>
+                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Access -->
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="database"></i> Data Access</h2>
+            </div>
+            <p class="p-data-desc">Explore anonymized data for research and analysis</p>
+            <div class="p-data-actions">
+              <button class="btn btn--primary"><i data-lucide="database"></i> Browse Dataset</button>
+              <button class="btn btn--secondary"><i data-lucide="code"></i> API Access</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="footer">
+        <p>CHEWS v4.0 · SafetySphere · Partner Intelligence Dashboard · Sierra Leone</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="theme.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="partner.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+  <script src="health-assistant.js"></script>
+</body>
+</html>

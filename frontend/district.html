@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS District Dashboard — Local insights for better, faster decisions." />
+  <title>CHEWS — District Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="auth.js"></script>
+  <script>requireRole();</script>
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute("data-theme", v === "light" || v === "dark" ? v : "dark");
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+    })();
+  </script>
+</head>
+<body>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header"><a href="district.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate Health Intelligence</div></div></a></div>
+      <nav class="sidebar__nav">
+        <div class="nav-section">
+          <a href="#" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="layout-dashboard"></i></span> Dashboard</a>
+          <a href="strategic.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> Strategic Planning</a>
+          <a href="early-warning.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="zap"></i></span> Early Warning</a>
+          <a href="healthcare.html" class="nav-link"><span class="nav-link__icon"><i data-lucide="hospital"></i></span> Healthcare Readiness</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="users"></i></span> Community Reports</a>
+          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="file-text"></i></span> Reports</a>
+        </div>
+      </nav>
+      <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <div class="topbar">
+        <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
+        <div>
+          <div class="topbar__title" id="district-title">District Dashboard</div>
+          <div class="topbar__subtitle">Local insights for better, faster decisions</div>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
+          <div class="topbar__badge"><span class="pulse-dot"></span> Live</div>
+          <div class="topbar__timestamp" id="topbar-timestamp">Last updated: --</div>
+          <div class="topbar__profile" id="topbar-profile">
+            <div class="topbar__avatar topbar__avatar--district" id="topbar-avatar">DK</div>
+            <div class="topbar__profile-info">
+              <div class="topbar__profile-name" id="topbar-name">Dr. Kamara</div>
+              <div class="topbar__profile-role" id="topbar-role-label">District Health Officer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page fade-in">
+        <!-- ═══════════ KPI STRIP ═══════════ -->
+        <div class="na-kpi-strip fade-in">
+          <div class="na-kpi-card na-kpi-card--risk">
+            <div class="na-kpi-card__label">District Risk Score</div>
+            <div class="na-kpi-card__row">
+              <div class="na-kpi-card__value na-kpi-card__value--xl" id="d-risk-score">0.76</div>
+              <div class="na-kpi-card__badge na-kpi-card__badge--high" id="d-risk-badge">High Risk</div>
+            </div>
+            <div class="na-kpi-card__trend"><i data-lucide="trending-up"></i> +18% from last week</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Communities at Risk</div>
+            <div class="na-kpi-card__value" id="d-communities">23 <span class="na-kpi-card__of">/ 127</span></div>
+            <div class="na-kpi-card__sub">communities</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Active Cases (This Week)</div>
+            <div class="na-kpi-card__value" id="d-active-cases">148</div>
+            <div class="na-kpi-card__trend na-kpi-card__trend--up"><i data-lucide="trending-up"></i> +32% vs last week</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Health Facilities</div>
+            <div class="na-kpi-card__value" id="d-facilities">8 <span class="na-kpi-card__of">/ 12</span></div>
+            <div class="na-kpi-card__sub">Ready</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Active Alerts</div>
+            <div class="na-kpi-card__value na-kpi-card__value--alerts" id="d-alerts">3</div>
+            <div class="na-kpi-card__sub">1 requires action</div>
+          </div>
+        </div>
+
+        <!-- ═══════════ MAIN GRID ═══════════ -->
+        <div class="na-main-grid fade-in" style="animation-delay: 0.1s;">
+          <!-- District Risk Map -->
+          <div class="na-map-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="map"></i> District Risk Map</h2>
+              <div class="na-panel-header__layers">
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="na-layer-dot" style="background:#6f8faa"></span> Flood Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="na-layer-dot" style="background:#c75c54"></span> Malaria Risk</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="heat" /><span class="na-layer-dot" style="background:#c4876a"></span> Heat Stress</label>
+                <label class="na-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="na-layer-dot" style="background:#7d9f86"></span> Facility Vulnerability</label>
+              </div>
+            </div>
+            <div class="na-map-container" id="district-map"></div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="na-right-col">
+            <!-- Recent Community Reports -->
+            <div class="na-panel na-panel--reports-feed">
+              <div class="na-panel-header">
+                <h2><i data-lucide="message-square"></i> Recent Community Reports</h2>
+                <a href="javascript:void(0)" class="na-view-all">View All</a>
+              </div>
+              <div class="d-reports-feed" id="d-reports-feed">
+                <div class="d-report-item">
+                  <div class="d-report-item__icon d-report-item__icon--warning"><i data-lucide="alert-triangle"></i></div>
+                  <div class="d-report-item__content">
+                    <div class="d-report-item__title">Landslide warning spotted</div>
+                    <div class="d-report-item__meta">Sarabuya Chiefdom · 2 hours ago</div>
+                  </div>
+                </div>
+                <div class="d-report-item">
+                  <div class="d-report-item__icon d-report-item__icon--danger"><i data-lucide="thermometer"></i></div>
+                  <div class="d-report-item__content">
+                    <div class="d-report-item__title">Fever cases increasing</div>
+                    <div class="d-report-item__meta">Bombali North · 1 day ago</div>
+                  </div>
+                </div>
+                <div class="d-report-item">
+                  <div class="d-report-item__icon d-report-item__icon--info"><i data-lucide="waves"></i></div>
+                  <div class="d-report-item__content">
+                    <div class="d-report-item__title">Road damaged by flood</div>
+                    <div class="d-report-item__meta">Kunike · 1 day ago</div>
+                  </div>
+                </div>
+                <div class="d-report-item">
+                  <div class="d-report-item__icon d-report-item__icon--warning"><i data-lucide="bug"></i></div>
+                  <div class="d-report-item__content">
+                    <div class="d-report-item__title">Mosquito breeding site</div>
+                    <div class="d-report-item__meta">Tonkolili · 2 days ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Facility Readiness -->
+            <div class="na-panel na-panel--readiness">
+              <div class="na-panel-header">
+                <h2>Facility Readiness</h2>
+              </div>
+              <div class="d-readiness-container">
+                <div class="d-readiness-gauge">
+                  <svg viewBox="0 0 120 120" class="d-gauge-svg">
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8" />
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="8"
+                            stroke-dasharray="327" stroke-dashoffset="82"
+                            stroke-linecap="round" transform="rotate(-90 60 60)"
+                            class="d-gauge-arc" />
+                    <text x="60" y="55" text-anchor="middle" dominant-baseline="central"
+                          fill="var(--text-bright)" font-size="28" font-weight="700">75%</text>
+                    <text x="60" y="78" text-anchor="middle"
+                          fill="var(--text-dim)" font-size="11">Facilities ready</text>
+                  </svg>
+                </div>
+                <div class="d-facility-list">
+                  <div class="d-facility-item"><span>Makeni Government Hospital</span><span class="d-status d-status--ready">Ready</span></div>
+                  <div class="d-facility-item"><span>Kambia PHU</span><span class="d-status d-status--ready">Ready</span></div>
+                  <div class="d-facility-item"><span>Gbonko CHC</span><span class="d-status d-status--ready">Ready</span></div>
+                  <div class="d-facility-item"><span>Rogbom PHU</span><span class="d-status d-status--partial">Partial</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ BOTTOM ROW ═══════════ -->
+        <div class="d-bottom-grid fade-in" style="animation-delay: 0.2s;">
+          <!-- Disease Trends -->
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="activity"></i> Disease Trends</h2>
+              <div class="d-trend-tabs">
+                <button class="d-trend-tab d-trend-tab--active">Malaria</button>
+                <button class="d-trend-tab">Cholera</button>
+                <button class="d-trend-tab">Diarrhea</button>
+              </div>
+            </div>
+            <div class="d-trend-chart" id="d-trend-chart">
+              <div class="d-sparkline-container">
+                <svg viewBox="0 0 300 80" class="d-sparkline" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--danger)" stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color="var(--danger)" stop-opacity="0.02"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,60 L30,55 L60,50 L90,45 L120,40 L150,35 L180,38 L210,30 L240,25 L270,20 L300,15" 
+                        fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M0,60 L30,55 L60,50 L90,45 L120,40 L150,35 L180,38 L210,30 L240,25 L270,20 L300,15 L300,80 L0,80 Z" 
+                        fill="url(#sparkGrad)"/>
+                </svg>
+                <div class="d-sparkline-labels">
+                  <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weather Forecast -->
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="cloud-sun"></i> Weather Forecast</h2>
+            </div>
+            <div class="d-weather-strip">
+              <div class="d-weather-day">
+                <div class="d-weather-day__label">Mon</div>
+                <div class="d-weather-day__icon">☁️</div>
+                <div class="d-weather-day__temp">28°</div>
+                <div class="d-weather-day__cond">Partly cloudy</div>
+              </div>
+              <div class="d-weather-day">
+                <div class="d-weather-day__label">Tue</div>
+                <div class="d-weather-day__icon">🌧️</div>
+                <div class="d-weather-day__temp">29°</div>
+                <div class="d-weather-day__cond">Light rain</div>
+              </div>
+              <div class="d-weather-day">
+                <div class="d-weather-day__label">Wed</div>
+                <div class="d-weather-day__icon">🌧️</div>
+                <div class="d-weather-day__temp">27°</div>
+                <div class="d-weather-day__cond">Partly cloudy</div>
+              </div>
+              <div class="d-weather-day">
+                <div class="d-weather-day__label">Thu</div>
+                <div class="d-weather-day__icon">⛈️</div>
+                <div class="d-weather-day__temp">28°</div>
+                <div class="d-weather-day__cond">Heavy rain</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerts for Your District -->
+          <div class="na-panel na-panel--alerts">
+            <div class="na-panel-header">
+              <h2><i data-lucide="bell-ring"></i> Alerts for Your District</h2>
+            </div>
+            <div class="na-alerts-feed" id="d-alerts-feed">
+              <div class="na-alert-item na-alert-item--high">
+                <div class="na-alert-item__badge">High</div>
+                <div class="na-alert-item__content">
+                  <div class="na-alert-item__title">Flood risk - Makeni area</div>
+                  <div class="na-alert-item__meta">4 hours ago</div>
+                </div>
+              </div>
+              <div class="na-alert-item na-alert-item--medium">
+                <div class="na-alert-item__badge">Medium</div>
+                <div class="na-alert-item__content">
+                  <div class="na-alert-item__title">Malaria surge expected</div>
+                  <div class="na-alert-item__meta">1 day ago</div>
+                </div>
+              </div>
+              <div class="na-alert-item na-alert-item--medium">
+                <div class="na-alert-item__badge">Medium</div>
+                <div class="na-alert-item__content">
+                  <div class="na-alert-item__title">Heat stress alert</div>
+                  <div class="na-alert-item__meta">2 days ago</div>
+                </div>
+              </div>
+            </div>
+            <a href="early-warning.html" class="na-view-all" style="margin-top:0.75rem; display:block">View Alert Center →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="footer">
+        <p>CHEWS v4.0 · SafetySphere · District Health Intelligence · Sierra Leone</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="theme.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="district.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+  <script src="health-assistant.js"></script>
+</body>
+</html>

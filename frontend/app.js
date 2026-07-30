@@ -73,88 +73,142 @@ document.querySelectorAll('.sidebar__nav a[href^="#"]').forEach(link => {
 // ==================== 1. Situation Room Data ====================
 
 async function loadSituationRoom() {
+  // Update profile
   const roleDetails = typeof getRoleDetails !== "undefined" ? getRoleDetails() : null;
   if (roleDetails) {
-    const greetingEl = document.getElementById("topbar-greeting");
-    if (greetingEl) {
-      let text = roleDetails.name;
-      const district = typeof getDistrict !== "undefined" ? getDistrict() : null;
-      if (district) text += ` — ${district} District`;
-      greetingEl.textContent = `Welcome, ${text}`;
-    }
-    const roleBadgeEl = document.getElementById("topbar-role");
-    if (roleBadgeEl) roleBadgeEl.querySelector("span").textContent = roleDetails.name;
+    const avatarEl = document.getElementById("topbar-avatar");
+    const nameEl = document.getElementById("topbar-name");
+    const roleEl = document.getElementById("topbar-role-label");
+    if (avatarEl) avatarEl.textContent = roleDetails.initials;
+    if (nameEl) nameEl.textContent = roleDetails.fullName;
+    if (roleEl) roleEl.textContent = roleDetails.subtitle;
   }
 
-  const srRiskLevel = document.getElementById("sr-risk-level");
-  if (!srRiskLevel) return;
+  // Update timestamp
+  const tsEl = document.getElementById("topbar-timestamp");
+  if (tsEl) {
+    const now = new Date();
+    tsEl.textContent = `Last updated: ${now.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}, ${now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+  }
+
+  const srRiskScore = document.getElementById("sr-risk-score");
+  if (!srRiskScore) return;
 
   try {
     const res = await fetch(`${API_BASE}/situation-room`);
     const data = await res.json();
 
-    srRiskLevel.textContent = data.national_risk_level;
-    srRiskLevel.className = `situation-risk-badge situation-risk-badge--${data.national_risk_level.toLowerCase()}`;
+    // Risk score
+    const riskScore = data.national_risk_score || 0.68;
+    srRiskScore.textContent = riskScore.toFixed(2);
+    const riskBadge = document.getElementById("sr-risk-badge");
+    if (riskBadge) {
+      riskBadge.textContent = data.national_risk_level || "High Risk";
+      const level = (data.national_risk_level || "high").toLowerCase();
+      riskBadge.className = `na-kpi-card__badge na-kpi-card__badge--${level === "extreme" || level === "critical" || level === "high" ? "high" : level === "moderate" || level === "medium" ? "medium" : "low"}`;
+    }
 
-    document.getElementById("sr-updated").textContent = `${data.last_updated_minutes} minutes ago`;
-    document.getElementById("sr-confidence").textContent = `${data.ai_confidence_pct}%`;
-
-    const popRisk = data.population_at_risk || 845200;
-    const childrenRisk = data.children_at_risk || 183000;
-    const pregnantRisk = data.pregnant_women_at_risk || 42500;
+    // KPI Values
+    const popRisk = data.population_at_risk || 1200000;
+    const childrenRisk = data.children_at_risk || 412000;
+    const pregnantRisk = data.pregnant_women_at_risk || 89000;
+    const alertCount = data.active_alerts || 7;
 
     const popEl = document.getElementById("sr-population-risk");
     const childEl = document.getElementById("sr-children-risk");
     const pregEl = document.getElementById("sr-pregnant-risk");
+    const alertEl = document.getElementById("sr-alert-count");
 
-    if (popEl) animateCounter(popEl, 0, popRisk, 1000);
-    if (childEl) animateCounter(childEl, 0, childrenRisk, 1000);
-    if (pregEl) animateCounter(pregEl, 0, pregnantRisk, 1000);
+    if (popEl) popEl.textContent = formatLargeNumber(popRisk);
+    if (childEl) childEl.textContent = formatLargeNumber(childrenRisk);
+    if (pregEl) pregEl.textContent = formatLargeNumber(pregnantRisk);
+    if (alertEl) alertEl.textContent = alertCount;
 
-    // Render district rankings
+    // District Rankings Table
     const rankingsContainer = document.getElementById("sr-district-rankings");
     if (rankingsContainer) {
       rankingsContainer.innerHTML = "";
-      const mockedRankings = [
-        { name: "Western Area Urban", score: 94, level: "high" },
-        { name: "Bo District", score: 88, level: "high" },
-        { name: "Kenema", score: 76, level: "med" },
-        { name: "Port Loko", score: 72, level: "med" },
-        { name: "Bombali", score: 65, level: "med" },
+      const rankings = [
+        { name: "Koinadugu", score: 0.82, risk: "Flood + Malaria", level: "high" },
+        { name: "Bombali", score: 0.76, risk: "Flood", level: "high" },
+        { name: "Port Loko", score: 0.72, risk: "Malaria", level: "med" },
+        { name: "Kenema", score: 0.68, risk: "Malaria", level: "med" },
+        { name: "Bo", score: 0.65, risk: "Malaria", level: "med" },
       ];
-      mockedRankings.forEach(d => {
-        const el = document.createElement("div");
-        el.className = `sr-district-rank sr-district-rank--${d.level}`;
-        el.innerHTML = `
-          <div class="sr-district-rank__name">${d.name}</div>
-          <div class="sr-district-rank__score">${d.score}</div>
+      rankings.forEach(d => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${d.name}</td>
+          <td><span class="na-district-score na-district-score--${d.level}">${d.score.toFixed(2)}</span></td>
+          <td><span class="na-district-badge na-district-badge--${d.level}">${d.risk}</span></td>
         `;
-        rankingsContainer.appendChild(el);
+        rankingsContainer.appendChild(tr);
       });
     }
 
-    // Render actions
-    const actionsContainer = document.getElementById("sr-actions");
-    actionsContainer.innerHTML = "";
-    data.recommended_actions.forEach(act => {
-      const el = document.createElement("div");
-      el.className = `sr-action-card sr-action-card--${act.priority}`;
-      el.innerHTML = `
-        <div class="sr-action-card__icon"><i data-lucide="${act.icon || "alert-circle"}"></i></div>
-        <div class="sr-action-card__content">
-          <div class="sr-action-card__title">${act.action}</div>
-          <div class="sr-action-card__priority">${act.priority}</div>
-        </div>
-      `;
-      actionsContainer.appendChild(el);
-    });
+    // Active Alerts Feed
+    const alertsFeed = document.getElementById("sr-alerts-feed");
+    if (alertsFeed) {
+      const alerts = data.recommended_actions || [
+        { action: "Flood risk high in Koinadugu", priority: "high", icon: "waves", time: "3 hours ago" },
+        { action: "Malaria surge predicted", priority: "high", icon: "bug", time: "5 hours ago" },
+        { action: "Air quality unhealthy - Freetown", priority: "medium", icon: "cloud", time: "8 hours ago" },
+        { action: "Heatwave expected next week", priority: "medium", icon: "thermometer", time: "12 hours ago" },
+      ];
+      alertsFeed.innerHTML = "";
+      alerts.forEach(a => {
+        const severity = a.priority === "critical" || a.priority === "high" ? "high" : "medium";
+        const el = document.createElement("div");
+        el.className = `na-alert-item na-alert-item--${severity}`;
+        el.innerHTML = `
+          <div class="na-alert-item__badge">${severity}</div>
+          <div class="na-alert-item__content">
+            <div class="na-alert-item__title">${a.action}</div>
+            <div class="na-alert-item__meta">${a.time || "Recently"}</div>
+          </div>
+        `;
+        alertsFeed.appendChild(el);
+      });
+    }
+
+    // Decision Center
+    const decisionsContainer = document.getElementById("sr-decisions");
+    if (decisionsContainer) {
+      decisionsContainer.innerHTML = "";
+      const decisions = [
+        { action: "Deploy mobile clinics to 12 high-risk communities", priority: "Critical Priority", impact: "86,000 people affected", timeline: "Estimated resources: 4 teams, 3,000 nets", level: "critical" },
+        { action: "Pre-position medical supplies in Bombali district", priority: "High Priority", impact: "23,000 people at risk", timeline: "72-hour deployment window", level: "high" },
+      ];
+      decisions.forEach(d => {
+        const el = document.createElement("div");
+        el.className = `na-decision-card na-decision-card--${d.level}`;
+        el.innerHTML = `
+          <div class="na-decision-card__badge">${d.priority}</div>
+          <div class="na-decision-card__content">
+            <div class="na-decision-card__action">${d.action}</div>
+            <div class="na-decision-card__meta">
+              <span><i data-lucide="target"></i> ${d.impact}</span>
+              <span><i data-lucide="clock"></i> ${d.timeline}</span>
+            </div>
+          </div>
+        `;
+        decisionsContainer.appendChild(el);
+      });
+    }
 
     if (window.lucide) lucide.createIcons();
   } catch (err) {
     console.error("Failed to load situation room data", err);
-    srRiskLevel.textContent = "Offline";
+    srRiskScore.textContent = "--";
   }
 }
+
+function formatLargeNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1).replace(".0", "") + "M";
+  if (num >= 1000) return (num / 1000).toFixed(0) + "K";
+  return num.toLocaleString();
+}
+
 
 // ==================== 2. Interactive Map ====================
 
@@ -305,7 +359,7 @@ function renderReportMarkers(features) {
 }
 
 function setupLayerToggles() {
-  document.querySelectorAll("#sr-layer-panel input[data-layer]").forEach(checkbox => {
+  document.querySelectorAll("input[data-layer]").forEach(checkbox => {
     checkbox.addEventListener("change", () => {
       const layerName = checkbox.dataset.layer;
       if (!mapLayers[layerName]) return;

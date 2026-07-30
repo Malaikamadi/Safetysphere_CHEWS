@@ -5,27 +5,44 @@
 
 const ROLE_KEY = 'chews-role';
 const DISTRICT_KEY = 'chews-district';
+const USER_KEY = 'chews-user';
 
 const ROLE_PERMISSIONS = {
   'admin': {
     name: 'National Administrator',
     features: ['all'],
-    nav: ['strategic-planning', 'early-warning', 'healthcare-readiness', 'point-of-care', 'ai-models']
+    nav: ['strategic-planning', 'early-warning', 'healthcare-readiness', 'point-of-care', 'ai-models'],
+    page: 'index.html',
+    initials: 'MO',
+    fullName: 'Ministry of Health',
+    subtitle: 'National Administrator'
   },
   'district': {
     name: 'District Health Officer',
     features: ['district-only'],
-    nav: ['healthcare-readiness', 'early-warning']
+    nav: ['healthcare-readiness', 'early-warning', 'community-reports'],
+    page: 'district.html',
+    initials: 'DK',
+    fullName: 'Dr. Kamara',
+    subtitle: 'District Health Officer'
   },
   'worker': {
     name: 'Health Worker',
     features: ['facility-only'],
-    nav: ['point-of-care', 'early-warning']
+    nav: ['point-of-care', 'early-warning'],
+    page: 'chw.html',
+    initials: 'MM',
+    fullName: 'Mariama',
+    subtitle: 'Community Health Worker'
   },
   'partner': {
     name: 'Partner',
     features: ['analytics'],
-    nav: ['ai-models', 'strategic-planning']
+    nav: ['ai-models', 'strategic-planning'],
+    page: 'partner.html',
+    initials: 'AS',
+    fullName: 'Anna Smith',
+    subtitle: 'Research Analyst'
   }
 };
 
@@ -37,7 +54,7 @@ function setRole(roleId, district = null) {
     } else {
       localStorage.removeItem(DISTRICT_KEY);
     }
-    window.location.href = 'index.html';
+    window.location.href = ROLE_PERMISSIONS[roleId].page;
   }
 }
 
