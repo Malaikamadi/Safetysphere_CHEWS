@@ -5271,3 +5271,14 @@ body.eoc-emergency-mode .eoc-banner {
   border: 2px solid white;
   box-shadow: 0 0 8px currentColor;
 }
+
+/* EOC Foldable Sidebar */
+.eoc-body .sidebar {
+  transform: translateX(-100%);
+}
+.eoc-body .sidebar.sidebar--open {
+  transform: translateX(0);
+}
+.eoc-body .menu-toggle {
+  display: block;
+}
