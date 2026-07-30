@@ -8,10 +8,10 @@ if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar-
 
 function switchTab(tab) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-  document.querySelectorAll(".tab-btn").forEach(b => { b.classList.remove("active-tab","btn--secondary"); b.classList.add("btn--ghost"); });
+  document.querySelectorAll(".tab-btn").forEach(b => { b.classList.remove("active-tab", "btn--secondary"); b.classList.add("btn--ghost"); });
   document.getElementById("tab-" + tab).classList.remove("hidden");
   const btn = document.querySelector(`[data-tab="${tab}"]`);
-  btn.classList.add("active-tab","btn--secondary"); btn.classList.remove("btn--ghost");
+  btn.classList.add("active-tab", "btn--secondary"); btn.classList.remove("btn--ghost");
 }
 
 // === Disease Forecast ===
@@ -62,19 +62,19 @@ function renderForecast(data) {
         <div class="metric__icon"><i data-lucide="crosshair"></i></div>
         <div class="metric__label">Onset Probability</div>
         <div class="metric__value" style="font-size:1.3rem">${(data.onset_likelihood * 100).toFixed(0)}%</div>
-        <div class="progress-bar"><div class="progress-bar__fill" style="width:${data.onset_likelihood*100}%;background:var(--accent-2)"></div></div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:${data.onset_likelihood * 100}%;background:var(--accent-2)"></div></div>
       </div>
       <div class="metric">
         <div class="metric__icon"><i data-lucide="bar-chart-2"></i></div>
         <div class="metric__label">Surge Probability</div>
         <div class="metric__value" style="font-size:1.3rem;color:${data.surge_probability > 0.6 ? 'var(--danger)' : 'var(--warning)'}">${(data.surge_probability * 100).toFixed(0)}%</div>
-        <div class="progress-bar"><div class="progress-bar__fill" style="width:${data.surge_probability*100}%;background:linear-gradient(90deg,var(--warning),var(--danger))"></div></div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:${data.surge_probability * 100}%;background:linear-gradient(90deg,var(--warning),var(--danger))"></div></div>
       </div>
       <div class="metric">
         <div class="metric__icon"><i data-lucide="calendar"></i></div>
         <div class="metric__label">Peak Window</div>
         <div class="metric__value" style="font-size:1rem">${data.peak_window}</div>
-        <div class="metric__trend">Confidence: ${(data.confidence*100).toFixed(0)}%</div>
+        <div class="metric__trend">Confidence: ${(data.confidence * 100).toFixed(0)}%</div>
       </div>
     </div>
 
@@ -180,7 +180,7 @@ function renderSurge(data) {
       <div style="font-size:2.5rem;font-weight:800;color:${lvlColor}">${(data.readiness_score * 100).toFixed(0)}%</div>
       <div class="risk-badge risk-badge--${lvlClass === 'critical-gap' ? 'critical' : lvlClass === 'at-risk' ? 'high' : lvlClass === 'partially-ready' ? 'moderate' : 'low'}">${data.readiness_level}</div>
     </div>
-    <div class="progress-bar mb-1"><div class="progress-bar__fill" style="width:${data.readiness_score*100}%;background:linear-gradient(90deg,var(--danger),var(--warning),var(--success))"></div></div>
+    <div class="progress-bar mb-1"><div class="progress-bar__fill" style="width:${data.readiness_score * 100}%;background:linear-gradient(90deg,var(--danger),var(--warning),var(--success))"></div></div>
 
     <div class="grid-3 mb-1">
       <div class="metric">
@@ -249,7 +249,7 @@ function renderMalariaResult(data) {
   if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
     const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
     contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
-      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--accent-2)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v * 100).toFixed(0)}%;background:var(--accent-2)"></div></div><span class="contrib__val">${(v * 100).toFixed(0)}%</span></div>`).join("") +
       `</div>`;
   }
 
@@ -300,7 +300,7 @@ function renderReadinessResult(data) {
   if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
     const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
     contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
-      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--success)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v * 100).toFixed(0)}%;background:var(--success)"></div></div><span class="contrib__val">${(v * 100).toFixed(0)}%</span></div>`).join("") +
       `</div>`;
   }
 
@@ -352,7 +352,7 @@ function renderFloodResult(data) {
   if (data.feature_contributions && Object.keys(data.feature_contributions).length) {
     const sorted = Object.entries(data.feature_contributions).sort((a, b) => b[1] - a[1]).slice(0, 6);
     contribHtml = `<div class="zone-detail__bars" style="margin-top:0.75rem">` +
-      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v*100).toFixed(0)}%;background:var(--warning)"></div></div><span class="contrib__val">${(v*100).toFixed(0)}%</span></div>`).join("") +
+      sorted.map(([k, v]) => `<div class="contrib"><span class="contrib__lbl">${k.replace(/_/g, " ")}</span><div class="contrib__track"><div class="contrib__fill" style="width:${(v * 100).toFixed(0)}%;background:var(--warning)"></div></div><span class="contrib__val">${(v * 100).toFixed(0)}%</span></div>`).join("") +
       `</div>`;
   }
 

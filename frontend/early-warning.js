@@ -1,168 +1,150 @@
 /**
- * CHEWS v3.0 — Early Warning Logic
+ * CHEWS v3.0 — Early Warning Center (EOC) Logic
  */
-const API = "/api";
 
 // Mobile menu
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");
 if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar--open")); }
 
-const SEVERITY_ICONS = { Emergency: `<i data-lucide="alert-circle" class="text-danger"></i>`, Warning: `<i data-lucide="alert-triangle" class="text-warning"></i>`, Watch: `<i data-lucide="info" class="text-warning"></i>`, Advisory: `<i data-lucide="info" class="text-accent-2"></i>`, Info: `<i data-lucide="info"></i>` };
-const SEVERITY_CLASS = { Emergency: "emergency", Warning: "warning", Watch: "watch", Advisory: "advisory" };
-
-// Comprehensive Assessment
-document.getElementById("ew-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const payload = {
-    location: document.getElementById("ew-loc").value,
-    temperature: +document.getElementById("ew-temp").value,
-    humidity: +document.getElementById("ew-hum").value,
-    rainfall_intensity: +document.getElementById("ew-rain-i").value,
-    rainfall_24h: +document.getElementById("ew-rain-24").value,
-    elevation: +document.getElementById("ew-elev").value,
-    pm25: +document.getElementById("ew-pm25").value,
-    pm10: +document.getElementById("ew-pm10").value,
-    uv_index: +document.getElementById("ew-uv").value,
-    soil_saturation: 60,
-  };
-
-  try {
-    const res = await fetch(`${API}/early-warning/assess`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error(`Server error (${res.status})`);
-    const data = await res.json();
-    renderAssessment(data);
-    loadAlerts();
-  } catch (err) {
-    alert("Error: " + err.message + "\n\nEnsure backend is running on port 8000.");
+// Clock Update
+function updateClock() {
+  const clockEl = document.getElementById("eoc-clock");
+  if (clockEl) {
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString('en-GB', { timeZoneName: 'short' });
   }
-});
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-function renderAssessment(data) {
-  const el = document.getElementById("ew-result");
-  el.classList.remove("hidden");
-  el.classList.add("slide-up");
+// Map Initialization
+let eocMap;
+function initMap() {
+  const mapContainer = document.getElementById("eoc-map-container");
+  if (!mapContainer || !window.L) return;
 
-  const threatColors = { Normal: "var(--success)", Guarded: "var(--accent-2)", Elevated: "var(--warning)", High: "var(--orange)", Critical: "var(--danger)" };
-  const threatColor = threatColors[data.overall_threat_level] || "var(--text)";
+  // Center on Sierra Leone
+  eocMap = L.map('eoc-map-container', {
+    zoomControl: false // We can add custom zoom controls if needed
+  }).setView([8.460555, -11.779889], 7);
 
-  let html = `
-    <div style="text-align:center;margin-bottom:1.25rem">
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:0.35rem">Overall Threat Level</div>
-      <div style="font-size:2rem;font-weight:800;color:${threatColor}">${data.overall_threat_level}</div>
-      <div style="font-size:0.72rem;color:var(--text-dim)">${data.location} · ${new Date(data.assessment_time).toLocaleString()}</div>
-    </div>
-    <div class="grid-4 mb-1">`;
+  // Use CartoDB Dark Matter for the EOC feel
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+  }).addTo(eocMap);
 
-  // Hazard cards
-  const hazardConfig = {
-    air_quality: { icon: `<i data-lucide="wind"></i>`, label: "Air Quality", main: `AQI ${data.hazards.air_quality.aqi}`, sub: data.hazards.air_quality.category },
-    flood: { icon: `<i data-lucide="waves"></i>`, label: "Flood Risk", main: data.hazards.flood.score.toFixed(2), sub: data.hazards.flood.level },
-    heat: { icon: `<i data-lucide="thermometer"></i>`, label: "Heat Stress", main: `${data.hazards.heat.wbgt}°C`, sub: data.hazards.heat.category },
-    uv: { icon: `<i data-lucide="sun"></i>`, label: "UV Index", main: data.hazards.uv.index.toFixed(1), sub: data.hazards.uv.level },
-  };
+  // Add some mock hot zones (heatmaps or circles)
+  L.circle([8.95, -12.05], {
+    color: '#ef4444',
+    fillColor: '#ef4444',
+    fillOpacity: 0.4,
+    radius: 15000
+  }).addTo(eocMap).bindPopup("Level 4 Flood Risk - Bombali");
 
-  for (const [, cfg] of Object.entries(hazardConfig)) {
-    html += `<div class="metric"><div class="metric__icon">${cfg.icon}</div><div class="metric__label">${cfg.label}</div><div class="metric__value">${cfg.main}</div><div class="metric__trend">${cfg.sub}</div></div>`;
-  }
-  html += `</div>`;
+  L.circle([7.95, -11.73], {
+    color: '#f97316',
+    fillColor: '#f97316',
+    fillOpacity: 0.4,
+    radius: 20000
+  }).addTo(eocMap).bindPopup("Level 3 Malaria Risk - Bo");
 
-  // Active alerts from this assessment
-  if (data.active_alerts && data.active_alerts.length) {
-    html += `<div class="section-heading"><i data-lucide="alert-triangle"></i> Alerts Triggered</div><div class="alert-feed mb-1">`;
-    data.active_alerts.forEach(a => {
-      html += renderAlertItem(a);
-    });
-    html += `</div>`;
-  }
+  // Custom Icon for alerts
+  const alertIcon = L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style="background:#ef4444; width:16px; height:16px; border-radius:50%; box-shadow: 0 0 10px #ef4444; border: 2px solid white;"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
 
-  // UV actions
-  if (data.hazards.uv.actions && data.hazards.uv.actions.length) {
-    html += `<div class="section-heading"><i data-lucide="sun"></i> UV Protection</div><ul class="result-list result-list--warning mb-1">`;
-    data.hazards.uv.actions.forEach(a => html += `<li>${a}</li>`);
-    html += `</ul>`;
-  }
+  const marker = L.marker([8.95, -12.05], { icon: alertIcon }).addTo(eocMap);
+  marker.on('click', () => openAiDrawer("Flood Surge Detected", "Bombali District"));
+}
 
-  // Flood impact
-  if (data.hazards.flood.impact) {
-    html += `<div class="result-panel result-panel--info"><div class="section-heading"><i data-lucide="waves"></i> Flood Impact</div><p style="font-size:0.82rem">${data.hazards.flood.impact}</p></div>`;
-  }
+// Drawer Interactions
+const aiDrawer = document.getElementById("eoc-ai-drawer");
+const closeDrawerBtn = document.getElementById("close-ai-drawer");
 
-  el.innerHTML = html;
+function openAiDrawer(title, location) {
+  if (!aiDrawer) return;
+  document.getElementById("ai-drawer-title").textContent = title;
+  document.getElementById("ai-drawer-loc").innerHTML = `<i data-lucide="map-pin"></i> ${location}`;
+  aiDrawer.classList.add("is-open");
   if (window.lucide) lucide.createIcons();
 }
 
-function renderAlertItem(a) {
-  const icon = SEVERITY_ICONS[a.severity] || `<i data-lucide="info"></i>`;
-  const cls = SEVERITY_CLASS[a.severity] || "advisory";
-  return `<div class="alert-item">
-    <div class="alert-item__severity alert-item__severity--${cls}">${icon}</div>
-    <div class="alert-item__body">
-      <div class="alert-item__title">${a.title}</div>
-      <div class="alert-item__desc">${a.description}</div>
-      <div class="alert-item__time">${a.affected_area} · ${a.auto_trigger ? '<i data-lucide="zap"></i> Auto-trigger' : 'Manual'}</div>
+if (closeDrawerBtn) {
+  closeDrawerBtn.addEventListener("click", () => {
+    aiDrawer.classList.remove("is-open");
+  });
+}
+
+// Mock Alert Feed
+const mockAlerts = [
+  { severity: 'critical', title: 'Severe Flood Surge', location: 'Bombali District', time: '2m ago', conf: '94%' },
+  { severity: 'high', title: 'Malaria Outbreak Risk', location: 'Bo District', time: '14m ago', conf: '88%' },
+  { severity: 'medium', title: 'Air Quality Advisory', location: 'Freetown', time: '1h ago', conf: '96%' },
+  { severity: 'medium', title: 'Heatwave Warning', location: 'Kenema', time: '3h ago', conf: '82%' }
+];
+
+function renderAlertFeed() {
+  const feed = document.getElementById("eoc-alert-list");
+  if (!feed) return;
+  
+  feed.innerHTML = mockAlerts.map(a => `
+    <div class="eoc-alert-item severity-${a.severity}" onclick="openAiDrawer('${a.title}', '${a.location}')">
+      <div class="eoc-alert-meta">
+        <span>${a.time}</span>
+        <span>AI Conf: ${a.conf}</span>
+      </div>
+      <div class="eoc-alert-title">${a.title}</div>
+      <div class="eoc-alert-loc"><i data-lucide="map-pin"></i> ${a.location}</div>
     </div>
-  </div>`;
+  `).join("");
 }
 
-// Manual Trigger
-document.getElementById("trigger-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch(`${API}/early-warning/trigger`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        hazard_type: document.getElementById("tr-type").value,
-        current_value: +document.getElementById("tr-value").value,
-        location: document.getElementById("tr-loc").value,
-      }),
-    });
-    if (!res.ok) throw new Error(`Server error (${res.status})`);
-    const data = await res.json();
-    const el = document.getElementById("trigger-result");
-    el.classList.remove("hidden");
-    el.classList.add("slide-up");
-    if (data.triggered) {
-      el.innerHTML = `<div class="result-panel result-panel--danger">${renderAlertItem(data.alert)}</div>`;
+// Emergency Mode
+const emergencyBtn = document.getElementById("btn-emergency-mode");
+if (emergencyBtn) {
+  emergencyBtn.addEventListener("click", () => {
+    document.body.classList.toggle("eoc-emergency-mode");
+    if (document.body.classList.contains("eoc-emergency-mode")) {
+      emergencyBtn.innerHTML = `<i data-lucide="x-circle"></i> STAND DOWN`;
+      emergencyBtn.classList.add("btn--danger");
+      emergencyBtn.classList.remove("btn--sm");
+      // Add red tint to map
+      if (eocMap) {
+        document.getElementById('eoc-map-container').style.filter = "sepia(1) hue-rotate(-50deg) saturate(3)";
+      }
     } else {
-      el.innerHTML = `<div class="result-panel result-panel--accent"><p style="font-size:0.85rem;color:var(--success)"><i data-lucide="check-circle"></i> ${data.message}</p></div>`;
+      emergencyBtn.innerHTML = `<i data-lucide="alert-triangle"></i> EMERGENCY MODE`;
+      emergencyBtn.classList.remove("btn--danger");
+      emergencyBtn.classList.add("btn--sm");
+      if (eocMap) {
+        document.getElementById('eoc-map-container').style.filter = "none";
+      }
     }
-    loadAlerts();
-  } catch (err) {
-    alert("Error: " + err.message);
-  }
-});
-
-// Load alerts
-async function loadAlerts() {
-  try {
-    const res = await fetch(`${API}/early-warning/alerts?min_severity=Advisory`);
-    if (!res.ok) return;
-    const data = await res.json();
-    const feed = document.getElementById("alert-feed-ew");
-    if (!data.alerts || !data.alerts.length) {
-      feed.innerHTML = `<div style="text-align:center;padding:1.5rem 0;color:var(--text-dim);font-size:0.82rem">No active alerts</div>`;
-      return;
-    }
-    feed.innerHTML = data.alerts.map(a => renderAlertItem(a)).join("");
     if (window.lucide) lucide.createIcons();
-  } catch { /* ignore */ }
+  });
 }
 
-loadAlerts();
+// Timeline Scrubber Mock Interaction
+const timeline = document.getElementById("eoc-time-slider");
+if (timeline) {
+  timeline.addEventListener("input", (e) => {
+    const val = parseInt(e.target.value);
+    const kpiPop = document.querySelector(".eoc-kpi-card:nth-child(2) .eoc-kpi-val");
+    if (kpiPop) {
+      // Mock predictive changes
+      const basePop = 142500;
+      kpiPop.textContent = (basePop + (val * 15000)).toLocaleString();
+    }
+  });
+}
 
-document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
-
-// Tab Hash Routing
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.location.hash) {
-    const tabId = window.location.hash.substring(1);
-    if (typeof switchTab === 'function') switchTab(tabId);
-  }
-});
-
-window.addEventListener('hashchange', () => {
-  const tabId = window.location.hash.substring(1);
-  if (tabId && typeof switchTab === 'function') switchTab(tabId);
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  initMap();
+  renderAlertFeed();
 });
