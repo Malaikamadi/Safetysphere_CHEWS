@@ -4572,18 +4572,12 @@ body {
   color: var(--text-dim);
 }
 
-/* Data Access */
-.p-data-desc {
-  padding: 0 1rem;
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  margin-bottom: 1rem;
+/* Partner Sub-Page Views */
+.p-view {
+  display: none;
 }
-.p-data-actions {
-  padding: 0 1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.p-view--active {
+  display: block;
 }
 
 /* ============================================================

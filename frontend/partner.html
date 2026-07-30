@@ -33,12 +33,12 @@
       <div class="sidebar__header"><a href="partner.html" class="sidebar__brand"><div class="sidebar__icon"><i data-lucide="globe"></i></div><div><div class="sidebar__title">CHEWS</div><div class="sidebar__version">Climate Health Intelligence</div></div></a></div>
       <nav class="sidebar__nav">
         <div class="nav-section">
-          <a href="#" class="nav-link nav-link--active"><span class="nav-link__icon"><i data-lucide="bar-chart-2"></i></span> Impact Overview</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Map</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="brain-circuit"></i></span> Model Performance</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="monitor"></i></span> Monitoring & Evaluation</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="file-text"></i></span> Reports</a>
-          <a href="javascript:void(0)" class="nav-link"><span class="nav-link__icon"><i data-lucide="database"></i></span> Data & Research</a>
+          <a href="#" class="nav-link nav-link--active" data-view="impact"><span class="nav-link__icon"><i data-lucide="bar-chart-2"></i></span> Impact Overview</a>
+          <a href="#" class="nav-link" data-view="map"><span class="nav-link__icon"><i data-lucide="map"></i></span> National Map</a>
+          <a href="#" class="nav-link" data-view="models"><span class="nav-link__icon"><i data-lucide="brain-circuit"></i></span> Model Performance</a>
+          <a href="#" class="nav-link" data-view="mne"><span class="nav-link__icon"><i data-lucide="monitor"></i></span> Monitoring & Evaluation</a>
+          <a href="#" class="nav-link" data-view="reports"><span class="nav-link__icon"><i data-lucide="file-text"></i></span> Reports</a>
+          <a href="#" class="nav-link" data-view="data"><span class="nav-link__icon"><i data-lucide="database"></i></span> Data & Research</a>
         </div>
       </nav>
       <div class="sidebar__footer"><div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div></div>
@@ -49,8 +49,8 @@
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
         <div>
-          <div class="topbar__title">Impact & Performance Dashboard</div>
-          <div class="topbar__subtitle">Tracking progress, measuring impact, supporting healthier, safer communities</div>
+          <div class="topbar__title" id="partner-view-title">Impact & Performance Dashboard</div>
+          <div class="topbar__subtitle" id="partner-view-sub">Tracking progress, measuring impact, supporting healthier, safer communities</div>
         </div>
         <div class="topbar__actions">
           <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
@@ -59,7 +59,7 @@
             <option value="6m">Last 6 months</option>
             <option value="1y">Last year</option>
           </select>
-          <button class="btn btn--secondary btn--sm"><i data-lucide="download"></i> Export</button>
+          <button class="btn btn--secondary btn--sm" onclick="exportCurrentView()"><i data-lucide="download"></i> Export</button>
           <div class="topbar__profile" id="topbar-profile">
             <div class="topbar__avatar topbar__avatar--partner" id="topbar-avatar">AS</div>
             <div class="topbar__profile-info">
@@ -70,9 +70,10 @@
         </div>
       </div>
 
-      <div class="page fade-in">
+      <!-- ═══════════ VIEW 1: IMPACT OVERVIEW ═══════════ -->
+      <div class="page fade-in p-view p-view--active" id="p-view-impact">
 
-        <!-- ═══════════ KPI STRIP ═══════════ -->
+        <!-- KPI STRIP -->
         <div class="p-kpi-strip fade-in">
           <div class="p-kpi-card">
             <div class="p-kpi-card__icon"><i data-lucide="shield"></i></div>
@@ -124,9 +125,8 @@
           </div>
         </div>
 
-        <!-- ═══════════ MAIN CONTENT GRID ═══════════ -->
+        <!-- MAIN CONTENT GRID -->
         <div class="p-main-grid fade-in" style="animation-delay: 0.1s;">
-          <!-- National Impact Map -->
           <div class="na-map-panel p-map-panel">
             <div class="na-panel-header">
               <h2><i data-lucide="map"></i> National Impact Map</h2>
@@ -134,25 +134,23 @@
                 <label class="na-layer-toggle"><input type="checkbox" data-layer="flood" checked /><span class="na-layer-dot" style="background:#6f8faa"></span> Flood Risk</label>
                 <label class="na-layer-toggle"><input type="checkbox" data-layer="malaria" checked /><span class="na-layer-dot" style="background:#c75c54"></span> Malaria Risk</label>
                 <label class="na-layer-toggle"><input type="checkbox" data-layer="facilities" checked /><span class="na-layer-dot" style="background:#7d9f86"></span> Health Facilities</label>
-                <label class="na-layer-toggle"><input type="checkbox" data-layer="community_reports" /><span class="na-layer-dot" style="background:#b5726b"></span> Community Reports</label>
                 <label class="na-layer-toggle"><input type="checkbox" data-layer="projects" checked /><span class="na-layer-dot" style="background:#9c7f8f"></span> Project Areas</label>
               </div>
             </div>
             <div class="na-map-container" id="partner-map"></div>
           </div>
 
-          <!-- Key Impact Indicators -->
           <div class="na-panel p-impact-panel">
             <div class="na-panel-header">
               <h2>Key Impact Indicators</h2>
             </div>
             <div class="p-impact-tabs">
-              <button class="p-impact-tab p-impact-tab--active">Health</button>
-              <button class="p-impact-tab">Climate</button>
-              <button class="p-impact-tab">SDGs</button>
-              <button class="p-impact-tab">Gender</button>
+              <button class="p-impact-tab p-impact-tab--active" data-itab="health">Health</button>
+              <button class="p-impact-tab" data-itab="climate">Climate</button>
+              <button class="p-impact-tab" data-itab="sdgs">SDGs</button>
+              <button class="p-impact-tab" data-itab="gender">Gender</button>
             </div>
-            <div class="p-impact-indicators">
+            <div class="p-impact-indicators" id="p-indicators-container">
               <div class="p-indicator">
                 <div class="p-indicator__info">
                   <div class="p-indicator__label">Reduction in malaria cases <span class="p-indicator__type">(year, %)</span></div>
@@ -185,9 +183,8 @@
           </div>
         </div>
 
-        <!-- ═══════════ BOTTOM ROW ═══════════ -->
+        <!-- BOTTOM ROW -->
         <div class="p-bottom-grid fade-in" style="animation-delay: 0.2s;">
-          <!-- Model Performance -->
           <div class="na-panel">
             <div class="na-panel-header">
               <h2><i data-lucide="brain-circuit"></i> Model Performance</h2>
@@ -220,12 +217,10 @@
               </div>
             </div>
             <div class="p-model-links">
-              <a href="ai-models.html" class="na-view-all">Monthly Impact Report (Nov 2024)</a>
-              <a href="javascript:void(0)" class="na-view-all">District Comparison Report</a>
+              <a href="#" onclick="switchView('models'); return false;" class="na-view-all">Detailed Model Diagnostics & ROC Curves →</a>
             </div>
           </div>
 
-          <!-- Recent Reports -->
           <div class="na-panel">
             <div class="na-panel-header">
               <h2><i data-lucide="file-text"></i> Recent Reports</h2>
@@ -237,7 +232,7 @@
                   <div class="p-report-item__name">Monthly Impact Report (Nov 2024)</div>
                   <div class="p-report-item__meta">PDF · 4.2 MB</div>
                 </div>
-                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
+                <button class="btn btn--ghost btn--sm" onclick="downloadReport('Monthly Impact Report Nov 2024')"><i data-lucide="download"></i> Download</button>
               </div>
               <div class="p-report-item">
                 <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
@@ -245,32 +240,278 @@
                   <div class="p-report-item__name">District Comparison Report</div>
                   <div class="p-report-item__meta">PDF · 3.1 MB</div>
                 </div>
-                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
-              </div>
-              <div class="p-report-item">
-                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
-                <div class="p-report-item__info">
-                  <div class="p-report-item__name">Climate Health Bulletin</div>
-                  <div class="p-report-item__meta">PDF · 2.8 MB</div>
-                </div>
-                <button class="btn btn--ghost btn--sm"><i data-lucide="download"></i> Download</button>
+                <button class="btn btn--ghost btn--sm" onclick="downloadReport('District Comparison Report')"><i data-lucide="download"></i> Download</button>
               </div>
             </div>
           </div>
 
-          <!-- Data Access -->
           <div class="na-panel">
             <div class="na-panel-header">
               <h2><i data-lucide="database"></i> Data Access</h2>
             </div>
-            <p class="p-data-desc">Explore anonymized data for research and analysis</p>
+            <p class="p-data-desc">Explore anonymized climate-health data for research</p>
             <div class="p-data-actions">
-              <button class="btn btn--primary"><i data-lucide="database"></i> Browse Dataset</button>
-              <button class="btn btn--secondary"><i data-lucide="code"></i> API Access</button>
+              <button class="btn btn--primary" onclick="switchView('data')"><i data-lucide="database"></i> Browse Dataset</button>
+              <button class="btn btn--secondary" onclick="switchView('data')"><i data-lucide="code"></i> API Access</button>
             </div>
           </div>
         </div>
 
+      </div>
+
+      <!-- ═══════════ VIEW 2: NATIONAL MAP ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-map">
+        <div class="na-map-panel" style="margin-bottom:1rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="map"></i> Interactive National Climate-Health Map</h2>
+            <div class="p-map-controls">
+              <select id="p-map-district-filter" class="form-input form-select" style="font-size:0.8rem;padding:0.3rem 0.6rem">
+                <option value="all">All Districts (16)</option>
+                <option value="Western Area Urban">Western Area Urban</option>
+                <option value="Bombali">Bombali</option>
+                <option value="Bo">Bo</option>
+                <option value="Kenema">Kenema</option>
+                <option value="Port Loko">Port Loko</option>
+                <option value="Koinadugu">Koinadugu</option>
+              </select>
+            </div>
+          </div>
+          <div class="na-map-container" id="partner-full-map" style="height:540px"></div>
+        </div>
+
+        <div class="na-panel">
+          <div class="na-panel-header">
+            <h2><i data-lucide="bar-chart"></i> District Risk & Impact Breakdown</h2>
+          </div>
+          <table class="na-district-table">
+            <thead>
+              <tr><th>District</th><th>Population</th><th>Flood Risk</th><th>Malaria Index</th><th>Readiness Score</th><th>Active CHWs</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Koinadugu</strong></td><td>185,000</td><td><span class="na-district-score na-district-score--high">0.82</span></td><td>0.74</td><td>64%</td><td>184</td><td><span class="na-district-badge na-district-badge--high">High Risk</span></td></tr>
+              <tr><td><strong>Bombali</strong></td><td>450,000</td><td><span class="na-district-score na-district-score--high">0.76</span></td><td>0.68</td><td>75%</td><td>342</td><td><span class="na-district-badge na-district-badge--high">High Risk</span></td></tr>
+              <tr><td><strong>Port Loko</strong></td><td>520,000</td><td><span class="na-district-score na-district-score--med">0.72</span></td><td>0.79</td><td>81%</td><td>410</td><td><span class="na-district-badge na-district-badge--med">Medium Risk</span></td></tr>
+              <tr><td><strong>Kenema</strong></td><td>610,000</td><td><span class="na-district-score na-district-score--med">0.68</span></td><td>0.81</td><td>78%</td><td>480</td><td><span class="na-district-badge na-district-badge--med">Medium Risk</span></td></tr>
+              <tr><td><strong>Bo</strong></td><td>575,000</td><td><span class="na-district-score na-district-score--med">0.65</span></td><td>0.62</td><td>84%</td><td>425</td><td><span class="na-district-badge na-district-badge--med">Medium Risk</span></td></tr>
+              <tr><td><strong>Western Area Urban</strong></td><td>1,050,000</td><td><span class="na-district-score na-district-score--low">0.42</span></td><td>0.51</td><td>92%</td><td>650</td><td><span class="na-district-badge na-district-badge--low">Low Risk</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════ VIEW 3: MODEL PERFORMANCE ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-models">
+        <div class="na-kpi-strip" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1.25rem;">
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Overall Accuracy</div>
+            <div class="na-kpi-card__value" style="color:var(--accent)">81.4%</div>
+            <div class="na-kpi-card__sub">Across 4 hazard models</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">F1 Score</div>
+            <div class="na-kpi-card__value">0.79</div>
+            <div class="na-kpi-card__sub">Weighted average</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Precision</div>
+            <div class="na-kpi-card__value">0.83</div>
+            <div class="na-kpi-card__sub">Low false positives</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">Recall</div>
+            <div class="na-kpi-card__value">0.87</div>
+            <div class="na-kpi-card__sub">High outbreak capture</div>
+          </div>
+          <div class="na-kpi-card">
+            <div class="na-kpi-card__label">ROC-AUC</div>
+            <div class="na-kpi-card__value" style="color:var(--warning)">0.87</div>
+            <div class="na-kpi-card__sub">Model discrimination</div>
+          </div>
+        </div>
+
+        <div class="na-bottom-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.25rem;">
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="brain-circuit"></i> Hazard Model Evaluation</h2>
+            </div>
+            <div style="padding: 1rem;">
+              <table class="na-district-table">
+                <thead>
+                  <tr><th>Model Name</th><th>Type</th><th>Accuracy</th><th>AUC</th><th>Last Trained</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Flood Risk Engine v2.4</strong></td><td>XGBoost / Spatial</td><td>84.2%</td><td>0.89</td><td>12 Nov 2024</td></tr>
+                  <tr><td><strong>Malaria Outbreak Predictor v3.1</strong></td><td>LSTM Ensemble</td><td>79.6%</td><td>0.85</td><td>10 Nov 2024</td></tr>
+                  <tr><td><strong>Heatwave Stress Classifier v1.8</strong></td><td>Random Forest</td><td>86.1%</td><td>0.91</td><td>05 Nov 2024</td></tr>
+                  <tr><td><strong>Facility Vulnerability Twin v2.0</strong></td><td>Neural Network</td><td>78.9%</td><td>0.84</td><td>01 Nov 2024</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="sliders"></i> Feature Importance Breakdown</h2>
+            </div>
+            <div class="p-impact-indicators" style="padding:1rem">
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">7-Day Accumulated Rainfall</div>
+                  <div class="p-indicator__value">32.4%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill" style="width: 32.4%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Mean Relative Humidity</div>
+                  <div class="p-indicator__value">24.1%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill p-indicator__fill--blue" style="width: 24.1%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Historical Disease Baseline</div>
+                  <div class="p-indicator__value">18.6%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 18.6%"></div></div>
+              </div>
+              <div class="p-indicator">
+                <div class="p-indicator__info">
+                  <div class="p-indicator__label">Surface Temperature Anomaly</div>
+                  <div class="p-indicator__value">14.9%</div>
+                </div>
+                <div class="p-indicator__bar"><div class="p-indicator__fill" style="width: 14.9%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ VIEW 4: MONITORING & EVALUATION (M&E) ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-mne">
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="monitor"></i> Monitoring & Evaluation Framework — Target vs Actuals</h2>
+          </div>
+          <div class="p-impact-indicators" style="padding:1.25rem">
+            <div class="p-indicator" style="margin-bottom:1rem">
+              <div class="p-indicator__info">
+                <div class="p-indicator__label"><strong>Children Under 5 Protected with Mosquito Nets & Triage</strong> <span class="p-indicator__type">(Target: 1,500,000)</span></div>
+                <div class="p-indicator__value">1,240,000 (82.6%)</div>
+              </div>
+              <div class="p-indicator__bar" style="height:10px"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 82.6%"></div></div>
+            </div>
+
+            <div class="p-indicator" style="margin-bottom:1rem">
+              <div class="p-indicator__info">
+                <div class="p-indicator__label"><strong>Healthcare Facilities with Operational Climate Surge Plan</strong> <span class="p-indicator__type">(Target: 300)</span></div>
+                <div class="p-indicator__value">286 (95.3%)</div>
+              </div>
+              <div class="p-indicator__bar" style="height:10px"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 95.3%"></div></div>
+            </div>
+
+            <div class="p-indicator" style="margin-bottom:1rem">
+              <div class="p-indicator__info">
+                <div class="p-indicator__label"><strong>Communities Covered by Early Warning Alert Broadcasts</strong> <span class="p-indicator__type">(Target: 100%)</span></div>
+                <div class="p-indicator__value">68.4%</div>
+              </div>
+              <div class="p-indicator__bar" style="height:10px"><div class="p-indicator__fill p-indicator__fill--blue" style="width: 68.4%"></div></div>
+            </div>
+
+            <div class="p-indicator" style="margin-bottom:1rem">
+              <div class="p-indicator__info">
+                <div class="p-indicator__label"><strong>Active CHWs Submitting Weekly Surveillance Logs</strong> <span class="p-indicator__type">(Target: 4,000)</span></div>
+                <div class="p-indicator__value">3,482 (87.0%)</div>
+              </div>
+              <div class="p-indicator__bar" style="height:10px"><div class="p-indicator__fill p-indicator__fill--accent" style="width: 87%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ VIEW 5: REPORTS ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-reports">
+        <div class="na-panel" style="margin-bottom: 1.25rem;">
+          <div class="na-panel-header">
+            <h2><i data-lucide="file-text"></i> Published Policy Briefs & Partner Reports</h2>
+          </div>
+          <div class="p-reports-list">
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">CHEWS Monthly Situation & Impact Report (Nov 2024)</div>
+                <div class="p-report-item__meta">PDF · 4.2 MB · Published 12 Nov 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('Monthly Impact Report Nov 2024')"><i data-lucide="download"></i> Download PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">UNICEF Sierra Leone — Children Climate Risk Brief</div>
+                <div class="p-report-item__meta">PDF · 3.8 MB · Published 01 Nov 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('UNICEF Climate Risk Brief')"><i data-lucide="download"></i> Download PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">WHO Malaria Surge Prediction & Facility Readiness Index</div>
+                <div class="p-report-item__meta">PDF · 5.1 MB · Published 28 Oct 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('WHO Malaria Surge Report')"><i data-lucide="download"></i> Download PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">District Health Comparison Dataset Export</div>
+                <div class="p-report-item__meta">CSV · 1.4 MB · Updated Daily</div>
+              </div>
+              <button class="btn btn--secondary btn--sm" onclick="downloadReport('District Comparison CSV')"><i data-lucide="download"></i> Download CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ VIEW 6: DATA & RESEARCH ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-data">
+        <div class="na-panel" style="margin-bottom: 1.25rem;">
+          <div class="na-panel-header">
+            <h2><i data-lucide="database"></i> Anonymized Climate-Health Dataset Explorer</h2>
+            <button class="btn btn--primary btn--sm" onclick="downloadDatasetCSV()"><i data-lucide="download"></i> Export Full Dataset (CSV)</button>
+          </div>
+          <div style="padding:1rem">
+            <div style="display:flex;gap:0.75rem;margin-bottom:1rem">
+              <input type="text" id="p-data-search" class="form-input" placeholder="Filter by district, disease, or risk level..." style="flex:1" onkeyup="filterDatasetTable()" />
+            </div>
+            <table class="na-district-table" id="p-data-table">
+              <thead>
+                <tr><th>District</th><th>Date</th><th>Rainfall (mm)</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Malaria Risk</th><th>Flood Risk</th><th>Status</th></tr>
+              </thead>
+              <tbody id="p-data-tbody">
+                <tr><td>Bombali</td><td>2024-11-10</td><td>142.5</td><td>29.2</td><td>86%</td><td>High (0.76)</td><td>High (0.81)</td><td><span class="na-district-badge na-district-badge--high">Active Alert</span></td></tr>
+                <tr><td>Koinadugu</td><td>2024-11-10</td><td>168.0</td><td>27.8</td><td>91%</td><td>High (0.82)</td><td>High (0.84)</td><td><span class="na-district-badge na-district-badge--high">Active Alert</span></td></tr>
+                <tr><td>Port Loko</td><td>2024-11-10</td><td>115.2</td><td>30.1</td><td>82%</td><td>High (0.72)</td><td>Med (0.64)</td><td><span class="na-district-badge na-district-badge--med">Monitored</span></td></tr>
+                <tr><td>Kenema</td><td>2024-11-10</td><td>98.4</td><td>31.0</td><td>78%</td><td>High (0.68)</td><td>Med (0.58)</td><td><span class="na-district-badge na-district-badge--med">Monitored</span></td></tr>
+                <tr><td>Bo</td><td>2024-11-10</td><td>85.0</td><td>31.5</td><td>75%</td><td>Med (0.65)</td><td>Med (0.52)</td><td><span class="na-district-badge na-district-badge--med">Monitored</span></td></tr>
+                <tr><td>Western Area Urban</td><td>2024-11-10</td><td>62.1</td><td>32.0</td><td>71%</td><td>Low (0.42)</td><td>Low (0.35)</td><td><span class="na-district-badge na-district-badge--low">Normal</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="na-panel">
+          <div class="na-panel-header">
+            <h2><i data-lucide="code"></i> API Integration & Developer Access</h2>
+          </div>
+          <div style="padding:1.25rem">
+            <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:1rem">Access real-time CHEWS endpoints programmatically via REST API.</p>
+            <div style="background:var(--map-shell-bg);padding:1rem;border-radius:var(--radius-xs);font-family:monospace;font-size:0.8rem;color:var(--accent);margin-bottom:1rem;overflow-x:auto">
+              curl -X GET "https://safetysphere-chews.vercel.app/api/situation-room" \<br/>
+              &nbsp;&nbsp;-H "Authorization: Bearer chews_live_partner_key_2024"
+            </div>
+            <button class="btn btn--secondary btn--sm" onclick="alert('API Token copied to clipboard!')"><i data-lucide="copy"></i> Copy Partner API Key</button>
+          </div>
+        </div>
       </div>
 
       <footer class="footer">
