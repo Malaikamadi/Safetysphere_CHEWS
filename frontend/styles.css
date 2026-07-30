@@ -4882,7 +4882,7 @@ body {
   position: absolute;
   top: 5rem;
   right: 380px; /* Slides out from under right panel */
-  width: 400px;
+  width: 500px;
   bottom: 6rem;
   background: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(20px);
@@ -5134,4 +5134,140 @@ body.eoc-emergency-mode .eoc-banner {
   0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
   70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
   100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* =========================================
+   EOC Enhancements (Phase 2)
+   ========================================= */
+
+/* District Health Status Strip */
+.eoc-district-strip {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  background: rgba(11, 17, 32, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 21;
+  position: relative;
+}
+
+.eoc-district-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-dim);
+}
+
+/* AI Confidence Gauge */
+.eoc-gauge-container {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.eoc-gauge-text {
+  margin-bottom: 0.5rem;
+}
+
+.eoc-gauge-bar {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.eoc-gauge-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.eoc-gauge-meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* Operational Context List */
+.eoc-context-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eoc-context-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.eoc-context-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Recommended Actions Checklist */
+.eoc-actions-block {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--accent-2);
+}
+
+.eoc-action-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.eoc-action-checklist li label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.eoc-action-checklist input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-2);
+  cursor: pointer;
+}
+
+/* KPI Animations */
+@keyframes kpi-flash-up {
+  0% { color: #10b981; text-shadow: 0 0 10px #10b981; transform: translateY(-2px); }
+  100% { color: inherit; text-shadow: none; transform: translateY(0); }
+}
+
+@keyframes kpi-flash-down {
+  0% { color: #ef4444; text-shadow: 0 0 10px #ef4444; transform: translateY(2px); }
+  100% { color: inherit; text-shadow: none; transform: translateY(0); }
+}
+
+.kpi-animate-up {
+  animation: kpi-flash-up 1s ease-out;
+}
+
+.kpi-animate-down {
+  animation: kpi-flash-down 1s ease-out;
+}
+
+/* Sensor Leaflet Icon */
+.sensor-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 8px currentColor;
 }

@@ -17,6 +17,36 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
+// Live KPI Ticker Animation
+function tickKPIs() {
+  const alertsVal = document.querySelector(".eoc-kpi-card:nth-child(1) .eoc-kpi-val");
+  const popVal = document.querySelector(".eoc-kpi-card:nth-child(2) .eoc-kpi-val");
+  
+  if (alertsVal && Math.random() > 0.7) {
+    let current = parseInt(alertsVal.textContent);
+    let diff = Math.random() > 0.5 ? 1 : -1;
+    if (current + diff > 0) {
+      alertsVal.textContent = current + diff;
+      alertsVal.classList.remove('kpi-animate-up', 'kpi-animate-down');
+      void alertsVal.offsetWidth; // trigger reflow
+      alertsVal.classList.add(diff > 0 ? 'kpi-animate-up' : 'kpi-animate-down');
+    }
+  }
+
+  const slider = document.getElementById("eoc-time-slider");
+  if (popVal && Math.random() > 0.7 && (!slider || slider.value == 0)) {
+    let current = parseInt(popVal.textContent.replace(/,/g, ''));
+    let diff = Math.floor(Math.random() * 50) * (Math.random() > 0.3 ? 1 : -1);
+    if (current + diff > 0) {
+      popVal.textContent = (current + diff).toLocaleString();
+      popVal.classList.remove('kpi-animate-up', 'kpi-animate-down');
+      void popVal.offsetWidth;
+      popVal.classList.add(diff > 0 ? 'kpi-animate-up' : 'kpi-animate-down');
+    }
+  }
+}
+setInterval(tickKPIs, 3000);
+
 // Map Initialization
 let eocMap;
 function initMap() {
@@ -60,6 +90,38 @@ function initMap() {
 
   const marker = L.marker([8.95, -12.05], { icon: alertIcon }).addTo(eocMap);
   marker.on('click', () => openAiDrawer("Flood Surge Detected", "Bombali District"));
+
+  // Simulated IoT Sensors
+  const sensors = [
+    { loc: [8.5, -13.2], name: "Station 14 - Freetown Coastal", status: "green", temp: 31, hum: 82, rain: 0 },
+    { loc: [8.9, -12.1], name: "Station 08 - Bombali River", status: "red", temp: 29, hum: 95, rain: 120 },
+    { loc: [8.0, -11.8], name: "Station 22 - Bo Central", status: "orange", temp: 34, hum: 60, rain: 0 },
+    { loc: [7.8, -11.2], name: "Station 41 - Kenema East", status: "yellow", temp: 32, hum: 75, rain: 5 }
+  ];
+
+  sensors.forEach(s => {
+    const color = s.status === 'red' ? '#ef4444' : s.status === 'orange' ? '#f97316' : s.status === 'yellow' ? '#facc15' : '#10b981';
+    const sIcon = L.divIcon({
+      className: 'custom-div-icon',
+      html: `<div class="sensor-icon" style="background:${color};"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+    const sm = L.marker(s.loc, { icon: sIcon }).addTo(eocMap);
+    
+    // Use an inline style popup for simplicity
+    sm.bindPopup(`
+      <div style="font-family: 'Inter', sans-serif; min-width: 150px; color: #333;">
+        <strong style="display:block; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:8px;">${s.name}</strong>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Temp:</span> <strong>${s.temp}°C</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Humidity:</span> <strong>${s.hum}%</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Rainfall:</span> <strong>${s.rain}mm</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Battery:</span> <strong>98%</strong></div>
+        <div style="display:flex; justify-content:space-between; color:#10b981;"><span>Signal:</span> <strong>Strong</strong></div>
+        <div style="font-size:0.75rem; color:#888; margin-top:8px;">Last Sync: Just now</div>
+      </div>
+    `);
+  });
 }
 
 // Drawer Interactions

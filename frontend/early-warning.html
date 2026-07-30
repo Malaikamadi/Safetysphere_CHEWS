@@ -115,6 +115,15 @@
       <!-- Base Map Container -->
       <div id="eoc-map-container"></div>
       
+      <!-- District Health Status Strip -->
+      <div class="eoc-district-strip" id="eoc-district-strip">
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Western Area: Normal</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Bombali: Critical</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Bo: High</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Kenema: Moderate</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Kailahun: Stable</div>
+      </div>
+      
       <!-- Top Situation Banner -->
       <div class="eoc-banner">
         <div class="eoc-banner__left">
@@ -176,7 +185,7 @@
         </div>
       </div>
 
-      <!-- Contextual Slide-out: AI Insight Drawer -->
+      <!-- Contextual Slide-out: Incident Workspace (Expanded AI Drawer) -->
       <div class="eoc-ai-drawer" id="eoc-ai-drawer">
         <div class="eoc-ai-drawer__header">
           <div>
@@ -186,50 +195,70 @@
           <button class="btn btn--ghost btn--sm" id="close-ai-drawer"><i data-lucide="x"></i></button>
         </div>
         <div class="eoc-ai-drawer__content">
+          
+          <!-- AI Assessment & Confidence -->
           <div class="eoc-ai-block">
-            <div class="eoc-ai-block__label">AI Confidence</div>
-            <div class="eoc-ai-confidence">
-              <div class="eoc-ai-conf-val text-orange">89%</div>
-              <div class="eoc-ai-conf-meta">Model: XGBoost-Epi-v2<br>Retrained: 2 days ago</div>
+            <div class="eoc-ai-block__label">AI Assessment</div>
+            <div class="eoc-gauge-container">
+              <div class="eoc-gauge-text">
+                <span class="text-orange" style="font-size: 1.5rem; font-weight: 700;">Flood Risk 97%</span>
+              </div>
+              <div class="eoc-gauge-bar">
+                <div class="eoc-gauge-fill bg-orange" style="width: 94%;"></div>
+              </div>
+              <div class="eoc-gauge-meta">High Confidence (94%)</div>
             </div>
           </div>
           
+          <!-- Incident Details Grid -->
           <div class="eoc-ai-block">
-            <div class="eoc-ai-block__label">Top Contributing Factors</div>
-            <ul class="eoc-factor-list">
-              <li>
-                <div class="eoc-factor-name">Rainfall Anomaly</div>
-                <div class="eoc-factor-bar"><div class="eoc-bar-fill bg-orange" style="width: 80%"></div></div>
-                <div class="eoc-factor-val">+70%</div>
-              </li>
-              <li>
-                <div class="eoc-factor-name">River Level</div>
-                <div class="eoc-factor-bar"><div class="eoc-bar-fill bg-red" style="width: 95%"></div></div>
-                <div class="eoc-factor-val">Critical</div>
-              </li>
-              <li>
-                <div class="eoc-factor-name">Hist. Malaria</div>
-                <div class="eoc-factor-bar"><div class="eoc-bar-fill bg-yellow" style="width: 40%"></div></div>
-                <div class="eoc-factor-val">+40%</div>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="eoc-ai-block">
-            <div class="eoc-ai-block__label">Expected Impact</div>
+            <div class="eoc-ai-block__label">Incident Details</div>
             <div class="eoc-impact-grid">
               <div class="eoc-impact-item">
-                <span class="text-dim">Est. Cases:</span> <strong>1,200+</strong>
+                <span class="text-dim">Population Affected</span>
+                <strong style="font-size: 1.2rem;">18,400</strong>
               </div>
               <div class="eoc-impact-item">
-                <span class="text-dim">Peak:</span> <strong>In 48 hrs</strong>
+                <span class="text-dim">Facilities Affected</span>
+                <strong style="font-size: 1.2rem;">6 PHUs</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Schools Affected</span>
+                <strong style="font-size: 1.2rem;">11</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Likely Diseases</span>
+                <strong class="text-warning">✓ Malaria<br>✓ Cholera</strong>
               </div>
             </div>
           </div>
 
+          <!-- Operational Context -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label">Operational Context</div>
+            <div class="eoc-context-list">
+              <div class="eoc-context-item"><i data-lucide="camera" class="text-dim"></i> 14 Community Photos</div>
+              <div class="eoc-context-item"><i data-lucide="message-square" class="text-dim"></i> 42 CHW Reports Today</div>
+              <div class="eoc-context-item"><i data-lucide="activity" class="text-danger"></i> River Level: +1.2m (Rising)</div>
+              <div class="eoc-context-item"><i data-lucide="user" class="text-dim"></i> Assigned: Capt. Sesay</div>
+            </div>
+          </div>
+
+          <!-- Recommended Actions (Highest Priority) -->
+          <div class="eoc-ai-block eoc-actions-block">
+            <div class="eoc-ai-block__label text-accent-2"><i data-lucide="check-square"></i> Recommended Actions</div>
+            <ul class="eoc-action-checklist">
+              <li><label><input type="checkbox"> <span>Notify DHMT</span></label></li>
+              <li><label><input type="checkbox"> <span>Preposition ORS</span></label></li>
+              <li><label><input type="checkbox"> <span>Activate CHWs</span></label></li>
+              <li><label><input type="checkbox"> <span>Send SMS alert</span></label></li>
+              <li><label><input type="checkbox"> <span>Dispatch assessment team</span></label></li>
+            </ul>
+            <div class="text-dim mt-1" style="font-size: 0.75rem;">Generated 2 minutes ago</div>
+          </div>
+
           <div class="eoc-ai-actions mt-2">
-            <button class="btn btn--primary btn--full mb-1"><i data-lucide="zap"></i> Generate Interventions</button>
-            <button class="btn btn--ghost btn--full"><i data-lucide="share-2"></i> Notify DHMT</button>
+            <button class="btn btn--primary btn--full mb-1"><i data-lucide="zap"></i> Execute Selected Actions</button>
           </div>
         </div>
       </div>
