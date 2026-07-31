@@ -26,8 +26,10 @@ function ewSwitchTab(tab) {
   if (pageContainer) {
     if (tab === 'live') {
       pageContainer.classList.add('page--live-map');
+      document.body.classList.add('eoc-body');
     } else {
       pageContainer.classList.remove('page--live-map');
+      document.body.classList.remove('eoc-body');
     }
   }
 

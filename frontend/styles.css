@@ -6074,3 +6074,5 @@ body.eoc-emergency-mode .eoc-banner {
   overflow: hidden;
   height: 100%;
 }
+
+.eoc-body .main-content { margin-left: 0 !important; }
