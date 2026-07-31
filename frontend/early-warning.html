@@ -37,13 +37,16 @@
       <!-- Base Map Container -->
       <div id="eoc-map-container"></div>
       
-      <!-- District Health Status Strip -->
+      <!-- Location Health Status Strip -->
       <div class="eoc-district-strip" id="eoc-district-strip">
-        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Western Area: Normal</div>
-        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Bombali: Critical</div>
-        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Bo: High</div>
-        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Kenema: Moderate</div>
-        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Kailahun: Stable</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Kroo Bay, Western Area Urban: Critical</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Susan's Bay, Western Area Urban: Critical</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Bo Town, Bo District: High</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Kambia Town, Kambia: High</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Kenema Town, Kenema: Moderate</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Waterloo, Western Area Rural: Moderate</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Magburaka, Tonkolili: Stable</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Lungi / Tagrin, Port Loko: Stable</div>
       </div>
       
       <!-- Top Situation Banner -->
@@ -132,21 +135,44 @@
             </div>
           </div>
           
+          <!-- Location Details -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label"><i data-lucide="map-pin"></i> Location Details</div>
+            <div class="eoc-impact-grid">
+              <div class="eoc-impact-item">
+                <span class="text-dim">Specific Area</span>
+                <strong id="ai-drawer-area" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">District</span>
+                <strong id="ai-drawer-district" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Region</span>
+                <strong id="ai-drawer-region" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Near Water Body</span>
+                <strong id="ai-drawer-waterbody" class="text-blue" style="font-size: 0.85rem;">—</strong>
+              </div>
+            </div>
+          </div>
+
           <!-- Incident Details Grid -->
           <div class="eoc-ai-block">
             <div class="eoc-ai-block__label">Incident Details</div>
             <div class="eoc-impact-grid">
               <div class="eoc-impact-item">
                 <span class="text-dim">Population Affected</span>
-                <strong style="font-size: 1.2rem;">18,400</strong>
+                <strong id="ai-drawer-pop" style="font-size: 1.2rem;">18,400</strong>
               </div>
               <div class="eoc-impact-item">
                 <span class="text-dim">Facilities Affected</span>
-                <strong style="font-size: 1.2rem;">6 PHUs</strong>
+                <strong id="ai-drawer-facilities" style="font-size: 1.2rem;">6 PHUs</strong>
               </div>
               <div class="eoc-impact-item">
-                <span class="text-dim">Schools Affected</span>
-                <strong style="font-size: 1.2rem;">11</strong>
+                <span class="text-dim">Elevation</span>
+                <strong id="ai-drawer-elevation" style="font-size: 1.2rem;">—</strong>
               </div>
               <div class="eoc-impact-item">
                 <span class="text-dim">Likely Diseases</span>

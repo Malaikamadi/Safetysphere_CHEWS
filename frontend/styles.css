@@ -4877,6 +4877,19 @@ body {
   height: 14px;
 }
 
+.eoc-alert-district-tag {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  opacity: 0.7;
+  margin-top: 0.15rem;
+  letter-spacing: 0.02em;
+  font-style: italic;
+}
+
+.text-blue {
+  color: #38bdf8;
+}
+
 /* AI Insight Drawer */
 .eoc-ai-drawer {
   position: absolute;
