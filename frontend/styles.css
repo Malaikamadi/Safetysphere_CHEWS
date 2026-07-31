@@ -6051,3 +6051,26 @@ body.eoc-emergency-mode .eoc-banner {
   background: transparent;
   border: none;
 }
+
+/* Live Map Overrides */
+.page.page--live-map {
+  max-width: none !important;
+  padding: 0 !important;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); /* assuming topbar is ~64px */
+}
+.page.page--live-map > div:first-child {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  margin-bottom: 0 !important;
+}
+#ewtab-live {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}

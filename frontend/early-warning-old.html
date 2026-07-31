@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHEWS Early Warning Center — National Emergency Operations Center (EOC)." />
+  <title>CHEWS — Early Warning Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="auth.js"></script>
+  <script>
+    requireRole();
+  </script>
+  <script>
+    (function () {
+      try {
+        var v = localStorage.getItem("chews-theme");
+        document.documentElement.setAttribute(
+          "data-theme",
+          v === "light" || v === "dark" ? v : "dark"
+        );
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+</head>
+<body class="eoc-body">
+  <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="eoc-main-content">
+      
+      <!-- Base Map Container -->
+      <div id="eoc-map-container"></div>
+      
+      <!-- Location Health Status Strip -->
+      <div class="eoc-district-strip" id="eoc-district-strip">
+        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Kroo Bay, Western Area Urban: Critical</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-red"></span> Susan's Bay, Western Area Urban: Critical</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Bo Town, Bo District: High</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-orange"></span> Kambia Town, Kambia: High</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Kenema Town, Kenema: Moderate</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-yellow"></span> Waterloo, Western Area Rural: Moderate</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Magburaka, Tonkolili: Stable</div>
+        <div class="eoc-district-item"><span class="pulse-dot bg-green"></span> Lungi / Tagrin, Port Loko: Stable</div>
+      </div>
+      
+      <!-- Top Situation Banner -->
+      <div class="eoc-banner">
+        <div class="eoc-banner__left">
+          <button class="menu-toggle eoc-menu-btn" id="menu-toggle" aria-label="Toggle menu">☰</button>
+          <div class="eoc-threat-level">
+            <span class="eoc-pill eoc-pill--yellow">Threat Level: Elevated</span>
+          </div>
+          <div class="eoc-alert-desc">Level 3 - Regional Flooding Alert</div>
+        </div>
+        
+        <div class="eoc-banner__right">
+          <div class="eoc-live-indicator"><span class="pulse-dot"></span> LIVE </div>
+          <div class="eoc-time" id="eoc-clock">12:45:32 GMT</div>
+          <div class="eoc-health-cluster">
+            <span class="eoc-status-icon tooltip" data-tip="AI Engine: Optimal"><i data-lucide="cpu" class="text-green"></i></span>
+            <span class="eoc-status-icon tooltip" data-tip="Weather API: Online"><i data-lucide="cloud" class="text-green"></i></span>
+            <span class="eoc-status-icon tooltip" data-tip="DHIS2: Synced"><i data-lucide="database" class="text-yellow"></i></span>
+            <span class="eoc-status-icon tooltip" data-tip="Sensors: 98% Online"><i data-lucide="radio" class="text-green"></i></span>
+          </div>
+          <button class="btn btn--sm eoc-emergency-btn" id="btn-emergency-mode"><i data-lucide="alert-triangle"></i> EMERGENCY MODE</button>
+        </div>
+      </div>
+
+      <!-- Floating Top Left: KPI Panel -->
+      <div class="eoc-kpi-panel">
+        <div class="eoc-kpi-card">
+          <div class="eoc-kpi-label">Active Alerts</div>
+          <div class="eoc-kpi-val text-red">12</div>
+          <div class="eoc-kpi-sparkline"><i data-lucide="trending-up" class="text-red"></i> +3 since 0800</div>
+        </div>
+        <div class="eoc-kpi-card">
+          <div class="eoc-kpi-label">Population at Risk</div>
+          <div class="eoc-kpi-val text-orange">142,500</div>
+          <div class="eoc-kpi-sparkline"><i data-lucide="users" class="text-orange"></i> Bo & Bombali</div>
+        </div>
+        <div class="eoc-kpi-card">
+          <div class="eoc-kpi-label">Facilities at Risk</div>
+          <div class="eoc-kpi-val text-yellow">8</div>
+          <div class="eoc-kpi-sparkline"><i data-lucide="hospital" class="text-yellow"></i> Flood Zones</div>
+        </div>
+        <div class="eoc-kpi-card">
+          <div class="eoc-kpi-label">Sensors Online</div>
+          <div class="eoc-kpi-val text-green">104 / 110</div>
+          <div class="eoc-kpi-sparkline"><i data-lucide="activity" class="text-green"></i> 94.5% Uptime</div>
+        </div>
+      </div>
+
+      <!-- Docked Right: Alert Feed -->
+      <div class="eoc-right-panel" id="eoc-right-panel">
+        <div class="eoc-panel-header">
+          <div class="eoc-panel-title"><i data-lucide="list"></i> Live Alert Feed</div>
+          <div class="eoc-panel-actions">
+            <button class="btn btn--ghost btn--sm tooltip" data-tip="Filter Alerts"><i data-lucide="filter"></i></button>
+            <button class="btn btn--ghost btn--sm tooltip" data-tip="Emergency Comms" id="btn-comms"><i data-lucide="megaphone"></i></button>
+          </div>
+        </div>
+        <div class="eoc-alert-list" id="eoc-alert-list">
+          <!-- Dynamic alerts will be injected here -->
+        </div>
+      </div>
+
+      <!-- Contextual Slide-out: Incident Workspace (Expanded AI Drawer) -->
+      <div class="eoc-ai-drawer" id="eoc-ai-drawer">
+        <div class="eoc-ai-drawer__header">
+          <div>
+            <div class="eoc-ai-drawer__title" id="ai-drawer-title">Alert Details</div>
+            <div class="eoc-ai-drawer__subtitle" id="ai-drawer-loc">Location</div>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="close-ai-drawer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="eoc-ai-drawer__content">
+          
+          <!-- AI Assessment & Confidence -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label">AI Assessment</div>
+            <div class="eoc-gauge-container">
+              <div class="eoc-gauge-text">
+                <span class="text-orange" style="font-size: 1.5rem; font-weight: 700;">Flood Risk 97%</span>
+              </div>
+              <div class="eoc-gauge-bar">
+                <div class="eoc-gauge-fill bg-orange" style="width: 94%;"></div>
+              </div>
+              <div class="eoc-gauge-meta">High Confidence (94%)</div>
+            </div>
+          </div>
+          
+          <!-- Location Details -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label"><i data-lucide="map-pin"></i> Location Details</div>
+            <div class="eoc-impact-grid">
+              <div class="eoc-impact-item">
+                <span class="text-dim">Specific Area</span>
+                <strong id="ai-drawer-area" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">District</span>
+                <strong id="ai-drawer-district" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Region</span>
+                <strong id="ai-drawer-region" style="font-size: 0.95rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Near Water Body</span>
+                <strong id="ai-drawer-waterbody" class="text-blue" style="font-size: 0.85rem;">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incident Details Grid -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label">Incident Details</div>
+            <div class="eoc-impact-grid">
+              <div class="eoc-impact-item">
+                <span class="text-dim">Population Affected</span>
+                <strong id="ai-drawer-pop" style="font-size: 1.2rem;">18,400</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Facilities Affected</span>
+                <strong id="ai-drawer-facilities" style="font-size: 1.2rem;">6 PHUs</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Elevation</span>
+                <strong id="ai-drawer-elevation" style="font-size: 1.2rem;">—</strong>
+              </div>
+              <div class="eoc-impact-item">
+                <span class="text-dim">Likely Diseases</span>
+                <strong class="text-warning">✓ Malaria<br>✓ Cholera</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operational Context -->
+          <div class="eoc-ai-block">
+            <div class="eoc-ai-block__label">Operational Context</div>
+            <div class="eoc-context-list">
+              <div class="eoc-context-item"><i data-lucide="camera" class="text-dim"></i> 14 Community Photos</div>
+              <div class="eoc-context-item"><i data-lucide="message-square" class="text-dim"></i> 42 CHW Reports Today</div>
+              <div class="eoc-context-item"><i data-lucide="activity" class="text-danger"></i> River Level: +1.2m (Rising)</div>
+              <div class="eoc-context-item"><i data-lucide="user" class="text-dim"></i> Assigned: Capt. Sesay</div>
+            </div>
+          </div>
+
+          <!-- Recommended Actions (Highest Priority) -->
+          <div class="eoc-ai-block eoc-actions-block">
+            <div class="eoc-ai-block__label text-accent-2"><i data-lucide="check-square"></i> Recommended Actions</div>
+            <ul class="eoc-action-checklist">
+              <li><label><input type="checkbox"> <span>Notify DHMT</span></label></li>
+              <li><label><input type="checkbox"> <span>Preposition ORS</span></label></li>
+              <li><label><input type="checkbox"> <span>Activate CHWs</span></label></li>
+              <li><label><input type="checkbox"> <span>Send SMS alert</span></label></li>
+              <li><label><input type="checkbox"> <span>Dispatch assessment team</span></label></li>
+            </ul>
+            <div class="text-dim mt-1" style="font-size: 0.75rem;">Generated 2 minutes ago</div>
+          </div>
+
+          <div class="eoc-ai-actions mt-2">
+            <button class="btn btn--primary btn--full mb-1"><i data-lucide="zap"></i> Execute Selected Actions</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Bottom: Forecast Timeline Scrubber -->
+      <div class="eoc-timeline-panel">
+        <div class="eoc-timeline-header">
+          <i data-lucide="clock"></i> Forecast Engine
+        </div>
+        <div class="eoc-timeline-scrubber">
+          <input type="range" min="0" max="5" value="0" class="eoc-slider" id="eoc-time-slider">
+          <div class="eoc-timeline-labels">
+            <span>Now</span>
+            <span>6H</span>
+            <span>24H</span>
+            <span>48H</span>
+            <span>72H</span>
+            <span>7 Days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Action Button (Layers) -->
+      <button class="eoc-fab" id="eoc-fab-layers" title="Map Layers">
+        <i data-lucide="layers"></i>
+      </button>
+
+    </main>
+  </div>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="theme.js"></script>
+  <script src="early-warning.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

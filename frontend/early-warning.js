@@ -21,6 +21,20 @@ function ewSwitchTab(tab) {
     btn.classList.add("active-tab", "btn--secondary");
     btn.classList.remove("btn--ghost");
   }
+  
+  const pageContainer = document.querySelector('.page');
+  if (pageContainer) {
+    if (tab === 'live') {
+      pageContainer.classList.add('page--live-map');
+    } else {
+      pageContainer.classList.remove('page--live-map');
+    }
+  }
+
+  if (tab === 'live' && !liveMapInit) {
+    setTimeout(initLiveMap, 100);
+  }
+  
   // Init sensor map when sensors tab is opened
   if (tab === 'sensors' && !sensorMapInit) {
     setTimeout(initSensorMap, 100);
@@ -509,8 +523,125 @@ document.getElementById("sn-detail-close")?.addEventListener("click", () => {
   if (el) el.addEventListener(el.type === 'text' ? 'input' : 'change', renderSensorTable);
 });
 
+// ═══════════════════════════════════════════════════════════════════
+// TAB 0: LIVE MAP
+// ═══════════════════════════════════════════════════════════════════
+
+const locationData = {
+  kroo_bay: {
+    name: "Kroo Bay", district: "Western Area Urban", region: "Western", lat: 8.4892, lng: -13.2387,
+    elevation: "3m", waterBody: "Atlantic estuary (Crocodile River outlet)", population: 11500,
+  },
+  susans_bay: {
+    name: "Susan's Bay", district: "Western Area Urban", region: "Western", lat: 8.4922, lng: -13.2333,
+    elevation: "4m", waterBody: "Atlantic Ocean (Freetown harbour)", population: 13800,
+  },
+  bo_town: {
+    name: "Bo Town", district: "Bo", region: "Southern", lat: 7.9647, lng: -11.7383,
+    elevation: "125m", waterBody: "Sewa River basin", population: 174354,
+  },
+  kambia_town: {
+    name: "Kambia Town", district: "Kambia", region: "Northern", lat: 9.1208, lng: -12.9181,
+    elevation: "17m", waterBody: "Great Scarcies River", population: 17000,
+  },
+  kenema_town: {
+    name: "Kenema Town", district: "Kenema", region: "Eastern", lat: 7.8767, lng: -11.1903,
+    elevation: "148m", waterBody: "Sewa-Mano basin", population: 200354,
+  },
+  waterloo: {
+    name: "Waterloo", district: "Western Area Rural", region: "Western", lat: 8.3424, lng: -13.0719,
+    elevation: "24m", waterBody: "Ribbi / Pampana confluence", population: 39000,
+  }
+};
+
+let liveMapInit = false;
+let eocMap;
+function initLiveMap() {
+  const mapContainer = document.getElementById("eoc-map-container");
+  if (!mapContainer || !window.L || liveMapInit) return;
+
+  eocMap = L.map('eoc-map-container', { zoomControl: false }).setView([8.460555, -11.779889], 7);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OSM contributors &copy; CARTO',
+    subdomains: 'abcd', maxZoom: 20
+  }).addTo(eocMap);
+
+  L.circle([locationData.kroo_bay.lat, locationData.kroo_bay.lng], { color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.45, radius: 800 }).addTo(eocMap);
+  L.circle([locationData.susans_bay.lat, locationData.susans_bay.lng], { color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.45, radius: 800 }).addTo(eocMap);
+  L.circle([locationData.bo_town.lat, locationData.bo_town.lng], { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.4, radius: 5000 }).addTo(eocMap);
+  L.circle([locationData.kambia_town.lat, locationData.kambia_town.lng], { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.35, radius: 4000 }).addTo(eocMap);
+  L.circle([locationData.kenema_town.lat, locationData.kenema_town.lng], { color: '#facc15', fillColor: '#facc15', fillOpacity: 0.3, radius: 4000 }).addTo(eocMap);
+  L.circle([locationData.waterloo.lat, locationData.waterloo.lng], { color: '#facc15', fillColor: '#facc15', fillOpacity: 0.3, radius: 3000 }).addTo(eocMap);
+
+  const alertIcon = L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#ef4444; width:16px; height:16px; border-radius:50%; box-shadow: 0 0 10px #ef4444; border: 2px solid white;"></div>`, iconSize: [16, 16], iconAnchor: [8, 8] });
+  const warningIcon = L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#f97316; width:14px; height:14px; border-radius:50%; box-shadow: 0 0 8px #f97316; border: 2px solid white;"></div>`, iconSize: [14, 14], iconAnchor: [7, 7] });
+  const cautionIcon = L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#facc15; width:12px; height:12px; border-radius:50%; box-shadow: 0 0 6px #facc15; border: 2px solid white;"></div>`, iconSize: [12, 12], iconAnchor: [6, 6] });
+
+  L.marker([locationData.kroo_bay.lat, locationData.kroo_bay.lng], { icon: alertIcon }).addTo(eocMap).on('click', () => openAiDrawer("Severe Flood Surge", "kroo_bay"));
+  L.marker([locationData.susans_bay.lat, locationData.susans_bay.lng], { icon: alertIcon }).addTo(eocMap).on('click', () => openAiDrawer("Coastal Flood Warning", "susans_bay"));
+  L.marker([locationData.bo_town.lat, locationData.bo_town.lng], { icon: warningIcon }).addTo(eocMap).on('click', () => openAiDrawer("Malaria Outbreak Risk", "bo_town"));
+  L.marker([locationData.kambia_town.lat, locationData.kambia_town.lng], { icon: warningIcon }).addTo(eocMap).on('click', () => openAiDrawer("River Flood Warning", "kambia_town"));
+  L.marker([locationData.kenema_town.lat, locationData.kenema_town.lng], { icon: cautionIcon }).addTo(eocMap).on('click', () => openAiDrawer("Heatwave Warning", "kenema_town"));
+  L.marker([locationData.waterloo.lat, locationData.waterloo.lng], { icon: cautionIcon }).addTo(eocMap).on('click', () => openAiDrawer("Air Quality Advisory", "waterloo"));
+
+  liveMapInit = true;
+}
+
+const aiDrawer = document.getElementById("eoc-ai-drawer");
+const closeDrawerBtn = document.getElementById("close-ai-drawer");
+
+function openAiDrawer(title, locationId) {
+  if (!aiDrawer) return;
+  const loc = locationData[locationId];
+  const displayLocation = loc ? `${loc.name}, ${loc.district}` : locationId;
+  document.getElementById("ai-drawer-title").textContent = title;
+  document.getElementById("ai-drawer-loc").innerHTML = `<i data-lucide="map-pin"></i> ${displayLocation}`;
+  
+  if (loc) {
+    const elId = id => document.getElementById(id);
+    if(elId("ai-drawer-area")) elId("ai-drawer-area").textContent = loc.name;
+    if(elId("ai-drawer-district")) elId("ai-drawer-district").textContent = loc.district + " District";
+    if(elId("ai-drawer-region")) elId("ai-drawer-region").textContent = loc.region + " Region";
+    if(elId("ai-drawer-waterbody")) elId("ai-drawer-waterbody").textContent = loc.waterBody;
+    if(elId("ai-drawer-pop")) elId("ai-drawer-pop").textContent = loc.population.toLocaleString();
+    if(elId("ai-drawer-elevation")) elId("ai-drawer-elevation").textContent = loc.elevation;
+    if(elId("ai-drawer-facilities")) elId("ai-drawer-facilities").textContent = Math.max(1, Math.floor(loc.population / 5000)) + " PHUs";
+  }
+  
+  aiDrawer.classList.add("is-open");
+  if (window.lucide) lucide.createIcons();
+}
+
+if (closeDrawerBtn) {
+  closeDrawerBtn.addEventListener("click", () => aiDrawer.classList.remove("is-open"));
+}
+
+const mockAlerts = [
+  { severity: 'critical', title: 'Severe Flood Surge',       locationId: 'kroo_bay',     time: '2m ago',  conf: '97%' },
+  { severity: 'critical', title: 'Coastal Flood Warning',    locationId: 'susans_bay',   time: '5m ago',  conf: '94%' },
+  { severity: 'high',     title: 'Malaria Outbreak Risk',    locationId: 'bo_town',      time: '14m ago', conf: '88%' },
+  { severity: 'high',     title: 'River Flood Warning',      locationId: 'kambia_town',  time: '22m ago', conf: '85%' },
+];
+
+function renderAlertFeed() {
+  const feed = document.getElementById("eoc-alert-list");
+  if (!feed) return;
+  feed.innerHTML = mockAlerts.map(a => {
+    const loc = locationData[a.locationId];
+    const displayLoc = loc ? `${loc.name}, ${loc.district}` : a.locationId;
+    return `
+    <div class="eoc-alert-item severity-${a.severity}" onclick="openAiDrawer('${a.title}', '${a.locationId}')">
+      <div class="eoc-alert-meta"><span>${a.time}</span><span>AI Conf: ${a.conf}</span></div>
+      <div class="eoc-alert-title">${a.title}</div>
+      <div class="eoc-alert-loc"><i data-lucide="map-pin"></i> ${displayLoc}</div>
+    </div>`;
+  }).join("");
+}
+
 // ─── Init ───────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   renderAlertTable();
   renderSensorTable();
+  renderAlertFeed();
+  ewSwitchTab('live');
 });
