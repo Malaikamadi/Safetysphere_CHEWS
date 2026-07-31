@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CHEWS Early Warning Center — Alert Management, Forecast Timeline, Sensor Network." />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="CHEWS Early Warning Center — Alert Management, Forecast Timeline, Sensor Network." />
   <title>CHEWS — Early Warning Center</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="styles.css" />
   <script src="auth.js"></script>
   <script>
@@ -27,17 +34,28 @@
     })();
   </script>
 </head>
+
 <body>
-  <div class="bg-animation" aria-hidden="true"><div class="bg-orb bg-orb--1"></div><div class="bg-orb bg-orb--2"></div><div class="bg-orb bg-orb--3"></div><div class="bg-orb bg-orb--4"></div></div>
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+    <div class="bg-orb bg-orb--4"></div>
+  </div>
   <div class="app-layout">
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main-content">
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
-        <div><div class="topbar__title">Early Warning Center</div><div class="topbar__subtitle">Climate Health Emergency Operations</div></div>
+        <div>
+          <div class="topbar__title">Early Warning Center</div>
+          <div class="topbar__subtitle">Climate Health Emergency Operations</div>
+        </div>
         <div class="topbar__actions">
-          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
+          <button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme"
+            title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span
+              class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button>
           <div class="topbar__badge"><span class="pulse-dot"></span> Live</div>
         </div>
       </div>
@@ -45,9 +63,12 @@
       <div class="page fade-in">
         <!-- Tab Navigation -->
         <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
-          <button class="btn btn--secondary btn--sm ew-tab-btn active-tab" data-ewtab="alerts" onclick="ewSwitchTab('alerts')"><i data-lucide="bell"></i> Alert Management</button>
-          <button class="btn btn--ghost btn--sm ew-tab-btn" data-ewtab="forecast" onclick="ewSwitchTab('forecast')"><i data-lucide="trending-up"></i> Forecast Timeline</button>
-          <button class="btn btn--ghost btn--sm ew-tab-btn" data-ewtab="sensors" onclick="ewSwitchTab('sensors')"><i data-lucide="radio"></i> Sensor Network</button>
+          <button class="btn btn--secondary btn--sm ew-tab-btn active-tab" data-ewtab="alerts"
+            onclick="ewSwitchTab('alerts')"><i data-lucide="bell"></i> Alert Management</button>
+          <button class="btn btn--ghost btn--sm ew-tab-btn" data-ewtab="forecast" onclick="ewSwitchTab('forecast')"><i
+              data-lucide="trending-up"></i> Forecast Timeline</button>
+          <button class="btn btn--ghost btn--sm ew-tab-btn" data-ewtab="sensors" onclick="ewSwitchTab('sensors')"><i
+              data-lucide="radio"></i> Sensor Network</button>
         </div>
 
         <!-- ═══════════════════════════════════════════════════════════════
@@ -58,27 +79,45 @@
           <div class="ew-kpi-strip">
             <div class="ew-kpi-card ew-kpi--critical">
               <div class="ew-kpi-card__icon"><i data-lucide="alert-octagon"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-critical-count">4</div><div class="ew-kpi-card__label">Critical</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-critical-count">4</div>
+                <div class="ew-kpi-card__label">Critical</div>
+              </div>
             </div>
             <div class="ew-kpi-card ew-kpi--high">
               <div class="ew-kpi-card__icon"><i data-lucide="alert-triangle"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-high-count">6</div><div class="ew-kpi-card__label">High</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-high-count">6</div>
+                <div class="ew-kpi-card__label">High</div>
+              </div>
             </div>
             <div class="ew-kpi-card ew-kpi--moderate">
               <div class="ew-kpi-card__icon"><i data-lucide="info"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-mod-count">8</div><div class="ew-kpi-card__label">Moderate</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-mod-count">8</div>
+                <div class="ew-kpi-card__label">Moderate</div>
+              </div>
             </div>
             <div class="ew-kpi-card ew-kpi--resolved">
               <div class="ew-kpi-card__icon"><i data-lucide="check-circle"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-resolved-count">23</div><div class="ew-kpi-card__label">Resolved (7d)</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-resolved-count">23</div>
+                <div class="ew-kpi-card__label">Resolved (7d)</div>
+              </div>
             </div>
             <div class="ew-kpi-card">
               <div class="ew-kpi-card__icon"><i data-lucide="clock"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-avg-resp">14m</div><div class="ew-kpi-card__label">Avg Response</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-avg-resp">14m</div>
+                <div class="ew-kpi-card__label">Avg Response</div>
+              </div>
             </div>
             <div class="ew-kpi-card">
               <div class="ew-kpi-card__icon"><i data-lucide="users"></i></div>
-              <div><div class="ew-kpi-card__val" id="am-pop-risk">142,500</div><div class="ew-kpi-card__label">Pop. at Risk</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="am-pop-risk">142,500</div>
+                <div class="ew-kpi-card__label">Pop. at Risk</div>
+              </div>
             </div>
           </div>
 
@@ -115,10 +154,22 @@
                 <option value="Port Loko">Port Loko</option>
                 <option value="Tonkolili">Tonkolili</option>
                 <option value="Moyamba">Moyamba</option>
+                <option value="Kailahun">Kailahun</option>
+                <option value="Bonthe">Bonthe</option>
+                <option value="Pujehun">Pujehun</option>
+                <option value="Kono">Kono</option>
+                <option value="Kambia">Kambia</option>
+                <option value="Karene">Karene</option>
+                <option value="Falaba">Falaba</option>
+                <option value="Tonkolili">Tonkolili</option>
+                <option value="Kambia">Kambia</option>
+                <option value="Karene">Karene</option>
+                <option value="Falaba">Falaba</option>
               </select>
             </div>
             <div class="ew-toolbar__right">
-              <button class="btn btn--primary btn--sm" id="am-btn-new-alert"><i data-lucide="plus"></i> New Alert</button>
+              <button class="btn btn--primary btn--sm" id="am-btn-new-alert"><i data-lucide="plus"></i> New
+                Alert</button>
               <button class="btn btn--ghost btn--sm" id="am-btn-export"><i data-lucide="download"></i> Export</button>
             </div>
           </div>
@@ -167,7 +218,8 @@
           <div class="ew-forecast-header">
             <div class="ew-forecast-header__left">
               <h2 class="ew-section-title"><i data-lucide="trending-up"></i> Multi-Hazard Forecast Timeline</h2>
-              <p class="ew-section-desc">AI-powered 7-day predictive outlook across flood, malaria, heat stress, and air quality hazards</p>
+              <p class="ew-section-desc">AI-powered 7-day predictive outlook across flood, malaria, heat stress, and air
+                quality hazards</p>
             </div>
             <div class="ew-forecast-header__right">
               <select class="ew-select" id="fc-location-select">
@@ -239,9 +291,11 @@
               <span><i data-lucide="bar-chart-3"></i> 7-Day Risk Timeline</span>
               <div class="ew-legend">
                 <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#ef4444"></span> Flood</span>
-                <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#a855f7"></span> Malaria</span>
+                <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#a855f7"></span>
+                  Malaria</span>
                 <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#f97316"></span> Heat</span>
-                <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#38bdf8"></span> Air Quality</span>
+                <span class="ew-legend-item"><span class="ew-legend-dot" style="background:#38bdf8"></span> Air
+                  Quality</span>
               </div>
             </div>
             <canvas id="fc-timeline-chart" height="280"></canvas>
@@ -252,37 +306,106 @@
             <div class="ew-driver-card">
               <div class="ew-driver-card__label"><i data-lucide="cloud-rain"></i> Rainfall Forecast</div>
               <div class="ew-driver-bar-group">
-                <div class="ew-driver-bar-row"><span>Thu</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:92%;background:#ef4444"></div></div><span>184mm</span></div>
-                <div class="ew-driver-bar-row"><span>Fri</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:78%;background:#f97316"></div></div><span>156mm</span></div>
-                <div class="ew-driver-bar-row"><span>Sat</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:65%;background:#facc15"></div></div><span>130mm</span></div>
-                <div class="ew-driver-bar-row"><span>Sun</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:45%;background:#10b981"></div></div><span>90mm</span></div>
-                <div class="ew-driver-bar-row"><span>Mon</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:30%;background:#10b981"></div></div><span>60mm</span></div>
-                <div class="ew-driver-bar-row"><span>Tue</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:20%;background:#10b981"></div></div><span>40mm</span></div>
-                <div class="ew-driver-bar-row"><span>Wed</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:15%;background:#10b981"></div></div><span>30mm</span></div>
+                <div class="ew-driver-bar-row"><span>Thu</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:92%;background:#ef4444"></div>
+                  </div><span>184mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Fri</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:78%;background:#f97316"></div>
+                  </div><span>156mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Sat</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:65%;background:#facc15"></div>
+                  </div><span>130mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Sun</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:45%;background:#10b981"></div>
+                  </div><span>90mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Mon</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:30%;background:#10b981"></div>
+                  </div><span>60mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Tue</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:20%;background:#10b981"></div>
+                  </div><span>40mm</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Wed</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:15%;background:#10b981"></div>
+                  </div><span>30mm</span>
+                </div>
               </div>
             </div>
             <div class="ew-driver-card">
               <div class="ew-driver-card__label"><i data-lucide="thermometer"></i> Temperature Forecast</div>
               <div class="ew-driver-bar-group">
-                <div class="ew-driver-bar-row"><span>Thu</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:85%;background:#f97316"></div></div><span>34°C</span></div>
-                <div class="ew-driver-bar-row"><span>Fri</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:90%;background:#ef4444"></div></div><span>36°C</span></div>
-                <div class="ew-driver-bar-row"><span>Sat</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:82%;background:#f97316"></div></div><span>33°C</span></div>
-                <div class="ew-driver-bar-row"><span>Sun</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:75%;background:#facc15"></div></div><span>30°C</span></div>
-                <div class="ew-driver-bar-row"><span>Mon</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:72%;background:#facc15"></div></div><span>29°C</span></div>
-                <div class="ew-driver-bar-row"><span>Tue</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:70%;background:#10b981"></div></div><span>28°C</span></div>
-                <div class="ew-driver-bar-row"><span>Wed</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:72%;background:#facc15"></div></div><span>29°C</span></div>
+                <div class="ew-driver-bar-row"><span>Thu</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:85%;background:#f97316"></div>
+                  </div><span>34°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Fri</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:90%;background:#ef4444"></div>
+                  </div><span>36°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Sat</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:82%;background:#f97316"></div>
+                  </div><span>33°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Sun</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:75%;background:#facc15"></div>
+                  </div><span>30°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Mon</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:72%;background:#facc15"></div>
+                  </div><span>29°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Tue</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:70%;background:#10b981"></div>
+                  </div><span>28°C</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Wed</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:72%;background:#facc15"></div>
+                  </div><span>29°C</span>
+                </div>
               </div>
             </div>
             <div class="ew-driver-card">
               <div class="ew-driver-card__label"><i data-lucide="droplet"></i> Soil Saturation & River Level</div>
               <div class="ew-driver-bar-group">
-                <div class="ew-driver-bar-row"><span>Soil</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:82%;background:#ef4444"></div></div><span>82%</span></div>
-                <div class="ew-driver-bar-row"><span>River</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:78%;background:#f97316"></div></div><span>+1.2m</span></div>
-                <div class="ew-driver-bar-row"><span>Humidity</span><div class="ew-driver-bar"><div class="ew-driver-bar__fill" style="width:95%;background:#a855f7"></div></div><span>95%</span></div>
+                <div class="ew-driver-bar-row"><span>Soil</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:82%;background:#ef4444"></div>
+                  </div><span>82%</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>River</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:78%;background:#f97316"></div>
+                  </div><span>+1.2m</span>
+                </div>
+                <div class="ew-driver-bar-row"><span>Humidity</span>
+                  <div class="ew-driver-bar">
+                    <div class="ew-driver-bar__fill" style="width:95%;background:#a855f7"></div>
+                  </div><span>95%</span>
+                </div>
               </div>
               <div class="ew-driver-insight">
                 <i data-lucide="brain"></i>
-                <span><strong>AI Insight:</strong> Soil saturation above 80% combined with >150mm rainfall creates >90% flood probability within 6 hours</span>
+                <span><strong>AI Insight:</strong> Soil saturation above 80% combined with >150mm rainfall creates >90%
+                  flood probability within 6 hours</span>
               </div>
             </div>
           </div>
@@ -296,95 +419,116 @@
           <div class="ew-kpi-strip">
             <div class="ew-kpi-card">
               <div class="ew-kpi-card__icon text-green"><i data-lucide="radio"></i></div>
-              <div><div class="ew-kpi-card__val" id="sn-online">104</div><div class="ew-kpi-card__label">Online</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="sn-online">104</div>
+                <div class="ew-kpi-card__label">Online</div>
+              </div>
             </div>
             <div class="ew-kpi-card ew-kpi--critical">
               <div class="ew-kpi-card__icon"><i data-lucide="wifi-off"></i></div>
-              <div><div class="ew-kpi-card__val" id="sn-offline">6</div><div class="ew-kpi-card__label">Offline</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="sn-offline">6</div>
+                <div class="ew-kpi-card__label">Offline</div>
+              </div>
             </div>
             <div class="ew-kpi-card ew-kpi--moderate">
               <div class="ew-kpi-card__icon"><i data-lucide="battery-low"></i></div>
-              <div><div class="ew-kpi-card__val" id="sn-low-batt">3</div><div class="ew-kpi-card__label">Low Battery</div></div>
+              <div>
+                <div class="ew-kpi-card__val" id="sn-low-batt">3</div>
+                <div class="ew-kpi-card__label">Low Battery</div>
+              </div>
             </div>
             <div class="ew-kpi-card">
               <div class="ew-kpi-card__icon"><i data-lucide="activity"></i></div>
-              <div><div class="ew-kpi-card__val">94.5%</div><div class="ew-kpi-card__label">Uptime (30d)</div></div>
+              <div>
+                <div class="ew-kpi-card__val">94.5%</div>
+                <div class="ew-kpi-card__label">Uptime (30d)</div>
+              </div>
             </div>
             <div class="ew-kpi-card">
               <div class="ew-kpi-card__icon"><i data-lucide="clock"></i></div>
-              <div><div class="ew-kpi-card__val">< 2m</div><div class="ew-kpi-card__label">Avg Latency</div></div>
-            </div>
-            <div class="ew-kpi-card">
-              <div class="ew-kpi-card__icon"><i data-lucide="database"></i></div>
-              <div><div class="ew-kpi-card__val">1.2M</div><div class="ew-kpi-card__label">Readings (24h)</div></div>
-            </div>
-          </div>
-
-          <!-- Sensor Map -->
-          <div class="ew-sensor-layout">
-            <div class="ew-sensor-map-wrap">
-              <div id="sn-map-container" style="width:100%;height:420px;border-radius:0.75rem;overflow:hidden;"></div>
-            </div>
-
-            <!-- Sensor Table -->
-            <div class="ew-sensor-table-wrap">
-              <div class="ew-toolbar" style="margin-bottom:0.75rem">
-                <div class="ew-toolbar__left">
-                  <div class="ew-search" style="width:240px">
-                    <i data-lucide="search"></i>
-                    <input type="text" placeholder="Search sensors..." id="sn-search" />
-                  </div>
-                  <select class="ew-select" id="sn-filter-status">
-                    <option value="all">All Status</option>
-                    <option value="online">Online</option>
-                    <option value="warning">Warning</option>
-                    <option value="offline">Offline</option>
-                  </select>
+              <div>
+                <div class="ew-kpi-card__val">
+                  < 2m</div>
+                    <div class="ew-kpi-card__label">Avg Latency</div>
                 </div>
               </div>
-              <div class="ew-table-container" style="max-height:350px;">
-                <table class="ew-table" id="sn-table">
-                  <thead>
-                    <tr>
-                      <th>Status</th>
-                      <th>Sensor</th>
-                      <th>Location</th>
-                      <th>Temp</th>
-                      <th>Humidity</th>
-                      <th>Rain</th>
-                      <th>Battery</th>
-                      <th>Last Sync</th>
-                    </tr>
-                  </thead>
-                  <tbody id="sn-table-body">
-                    <!-- Populated by JS -->
-                  </tbody>
-                </table>
+              <div class="ew-kpi-card">
+                <div class="ew-kpi-card__icon"><i data-lucide="database"></i></div>
+                <div>
+                  <div class="ew-kpi-card__val">1.2M</div>
+                  <div class="ew-kpi-card__label">Readings (24h)</div>
+                </div>
               </div>
+            </div>
+
+            <!-- Sensor Map -->
+            <div class="ew-sensor-layout">
+              <div class="ew-sensor-map-wrap">
+                <div id="sn-map-container" style="width:100%;height:420px;border-radius:0.75rem;overflow:hidden;"></div>
+              </div>
+
+              <!-- Sensor Table -->
+              <div class="ew-sensor-table-wrap">
+                <div class="ew-toolbar" style="margin-bottom:0.75rem">
+                  <div class="ew-toolbar__left">
+                    <div class="ew-search" style="width:240px">
+                      <i data-lucide="search"></i>
+                      <input type="text" placeholder="Search sensors..." id="sn-search" />
+                    </div>
+                    <select class="ew-select" id="sn-filter-status">
+                      <option value="all">All Status</option>
+                      <option value="online">Online</option>
+                      <option value="warning">Warning</option>
+                      <option value="offline">Offline</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ew-table-container" style="max-height:350px;">
+                  <table class="ew-table" id="sn-table">
+                    <thead>
+                      <tr>
+                        <th>Status</th>
+                        <th>Sensor</th>
+                        <th>Location</th>
+                        <th>Temp</th>
+                        <th>Humidity</th>
+                        <th>Rain</th>
+                        <th>Battery</th>
+                        <th>Last Sync</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sn-table-body">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sensor Detail Panel -->
+            <div class="ew-detail-panel" id="sn-detail-panel">
+              <div class="ew-detail-panel__header">
+                <div>
+                  <div class="ew-detail-panel__title" id="sn-detail-title">Sensor Details</div>
+                  <div class="ew-detail-panel__subtitle" id="sn-detail-subtitle">—</div>
+                </div>
+                <button class="btn btn--ghost btn--sm" id="sn-detail-close"><i data-lucide="x"></i></button>
+              </div>
+              <div class="ew-detail-panel__body" id="sn-detail-body"></div>
             </div>
           </div>
 
-          <!-- Sensor Detail Panel -->
-          <div class="ew-detail-panel" id="sn-detail-panel">
-            <div class="ew-detail-panel__header">
-              <div>
-                <div class="ew-detail-panel__title" id="sn-detail-title">Sensor Details</div>
-                <div class="ew-detail-panel__subtitle" id="sn-detail-subtitle">—</div>
-              </div>
-              <button class="btn btn--ghost btn--sm" id="sn-detail-close"><i data-lucide="x"></i></button>
-            </div>
-            <div class="ew-detail-panel__body" id="sn-detail-body"></div>
-          </div>
         </div>
-
-      </div>
     </main>
   </div>
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="theme.js"></script>
   <script src="early-warning.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
 </body>
+
 </html>
