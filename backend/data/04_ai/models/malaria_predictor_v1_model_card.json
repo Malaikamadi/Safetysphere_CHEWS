@@ -1,0 +1,42 @@
+{
+  "model_name": "malaria_predictor",
+  "version": "v1",
+  "model_type": "GradientBoostingRegressor",
+  "task": "Regression — predicts malaria case count per district-period",
+  "trained_at": "2026-06-25T12:57:33Z",
+  "training_data": {
+    "source": "01_raw/dhis2/dhis2_malaria_chews_v1.csv",
+    "rows": 500,
+    "split": "80/20 random",
+    "random_state": 42
+  },
+  "features": {
+    "count": 11,
+    "list": [
+      "rainfall_mm", "temperature_c", "humidity_percent",
+      "water_stagnation_index", "mosquito_breeding_sites",
+      "reported_fever_cases", "population_density",
+      "district_encoded", "rain_x_stagnation",
+      "temp_humidity_index", "breeding_density"
+    ],
+    "top_3_drivers": [
+      {"feature": "rainfall_mm", "importance": 0.1971},
+      {"feature": "humidity_percent", "importance": 0.1850},
+      {"feature": "mosquito_breeding_sites", "importance": 0.1683}
+    ]
+  },
+  "metrics": {
+    "mae": 5.7288,
+    "rmse": 6.7074,
+    "r2": 0.6177
+  },
+  "known_limitations": [
+    "R² of 0.62 indicates moderate explanatory power — significant variance remains unexplained",
+    "No lag features — malaria transmission has known 2-4 week climate lag",
+    "District-level only — does not predict at chiefdom or facility level",
+    "Trained on synthetic data — requires retraining with real DHIS2 malaria data"
+  ],
+  "intended_use": "Forecasting malaria case burden at district level to support pre-positioning of ACTs and RDTs.",
+  "review_status": "Pre-production — pending validation with real data",
+  "artifact_path": "04_ai/models/malaria_predictor_v1_20260731.joblib"
+}

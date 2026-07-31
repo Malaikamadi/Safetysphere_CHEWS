@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Master Facility List — Sierra Leone",
+  "description": "Schema for the official Ministry of Health and Sanitation Master Facility List. Each row represents one health facility.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "facility_name",
+      "district",
+      "facility_type",
+      "beds_available",
+      "health_workers",
+      "malaria_medicine_stock",
+      "power_availability",
+      "water_availability",
+      "patient_load",
+      "readiness_score"
+    ],
+    "properties": {
+      "facility_name": {
+        "type": "string",
+        "description": "Official name of the facility"
+      },
+      "district": {
+        "type": "string",
+        "description": "District in which the facility is located",
+        "enum": [
+          "Western Urban", "Western Rural",
+          "Bo", "Bombali", "Bonthe", "Falaba",
+          "Kailahun", "Kambia", "Karene", "Kenema",
+          "Koinadugu", "Kono", "Moyamba",
+          "Port Loko", "Pujehun", "Tonkolili"
+        ]
+      },
+      "facility_type": {
+        "type": "string",
+        "description": "Facility classification per MFL",
+        "enum": ["MCHP", "CHP", "CHC", "Secondary", "Tertiary", "District Hospital", "Regional Hospital"]
+      },
+      "beds_available": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 1000
+      },
+      "health_workers": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 500
+      },
+      "malaria_medicine_stock": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0,
+        "description": "Stock level as a fraction (0 = out of stock, 1 = fully stocked)"
+      },
+      "power_availability": {
+        "type": "integer",
+        "enum": [0, 1],
+        "description": "1 = has reliable power, 0 = no reliable power"
+      },
+      "water_availability": {
+        "type": "integer",
+        "enum": [0, 1],
+        "description": "1 = has reliable water, 0 = no reliable water"
+      },
+      "patient_load": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Average daily patient load"
+      },
+      "readiness_score": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0,
+        "description": "Composite readiness score (0 = not ready, 1 = fully ready)"
+      },
+      "dhis2_uid": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9]{11}$",
+        "description": "DHIS2 organisation unit UID (11-character alphanumeric)"
+      },
+      "latitude": {
+        "type": "number",
+        "minimum": 6.9,
+        "maximum": 10.0,
+        "description": "Latitude (WGS84) — must fall within Sierra Leone"
+      },
+      "longitude": {
+        "type": "number",
+        "minimum": -13.4,
+        "maximum": -10.2,
+        "description": "Longitude (WGS84) — must fall within Sierra Leone"
+      }
+    }
+  }
+}

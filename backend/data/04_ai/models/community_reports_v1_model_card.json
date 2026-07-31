@@ -1,0 +1,43 @@
+{
+  "model_name": "community_reports",
+  "version": "v1",
+  "model_type": "RandomForestClassifier",
+  "task": "Binary classification — predicts whether a community report indicates active flooding",
+  "trained_at": "2026-06-25T12:57:33Z",
+  "training_data": {
+    "source": "01_raw/community_reports/community_reports_chews_202607.csv",
+    "rows": 500,
+    "split": "80/20 stratified",
+    "random_state": 42
+  },
+  "features": {
+    "count": 9,
+    "list": [
+      "standing_water", "fever_reports", "damaged_houses",
+      "displaced_households", "water_contamination",
+      "district_encoded", "community_encoded",
+      "damage_displacement_index", "total_impact"
+    ],
+    "top_3_drivers": [
+      {"feature": "damage_displacement_index", "importance": 0.3310},
+      {"feature": "damaged_houses", "importance": 0.2621},
+      {"feature": "total_impact", "importance": 0.2559}
+    ]
+  },
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0
+  },
+  "known_limitations": [
+    "CRITICAL: Perfect metrics (1.0 across all measures) strongly indicate data leakage or target variable being a deterministic function of features",
+    "damage_displacement_index and total_impact are likely derived from the target — must audit feature engineering",
+    "district_encoded and community_encoded have zero importance — categorical features may need better encoding",
+    "Model will likely fail on unseen real-world data distribution"
+  ],
+  "intended_use": "Classifying incoming community reports to flag potential flood events. Currently pre-production due to data leakage concerns.",
+  "review_status": "BLOCKED — requires audit for data leakage before use",
+  "artifact_path": "04_ai/models/community_reports_v1_20260731.joblib"
+}

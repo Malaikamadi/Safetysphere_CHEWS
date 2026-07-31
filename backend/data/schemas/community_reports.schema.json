@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Community Reports — CHEWS",
+  "description": "Schema for community health worker field reports capturing flood damage, fever clusters, and water contamination at the community level.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "date",
+      "district",
+      "community",
+      "reported_flooding",
+      "standing_water",
+      "fever_reports",
+      "damaged_houses",
+      "displaced_households",
+      "water_contamination"
+    ],
+    "properties": {
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Report date in ISO 8601 format (YYYY-MM-DD)"
+      },
+      "district": {
+        "type": "string",
+        "description": "District where the community is located"
+      },
+      "community": {
+        "type": "string",
+        "description": "Community or settlement name"
+      },
+      "reported_flooding": {
+        "type": "integer",
+        "enum": [0, 1],
+        "description": "1 = flooding reported, 0 = no flooding"
+      },
+      "standing_water": {
+        "type": "integer",
+        "enum": [0, 1],
+        "description": "1 = standing water observed, 0 = none"
+      },
+      "fever_reports": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of fever cases reported in the community"
+      },
+      "damaged_houses": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of houses reported damaged"
+      },
+      "displaced_households": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of households displaced"
+      },
+      "water_contamination": {
+        "type": "integer",
+        "enum": [0, 1],
+        "description": "1 = water contamination reported, 0 = none"
+      },
+      "latitude": {
+        "type": "number",
+        "minimum": 6.9,
+        "maximum": 10.0
+      },
+      "longitude": {
+        "type": "number",
+        "minimum": -13.4,
+        "maximum": -10.2
+      }
+    }
+  }
+}

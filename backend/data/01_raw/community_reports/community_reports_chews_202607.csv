@@ -1,0 +1,1001 @@
+date,district,community,reported_flooding,standing_water,fever_reports,damaged_houses,displaced_households,water_contamination
+2026-07-12,Tonkolili,Kissy,0,0,10,10,2,0
+2026-07-19,Bo,Tikonko,0,0,15,9,1,0
+2026-07-29,Western Rural,Moyamba Junction,0,1,56,8,1,1
+2026-07-12,Bombali,Dworzark,0,0,7,9,4,1
+2026-07-22,Port Loko,Kissy,0,0,11,7,0,1
+2026-07-17,Bo,Regent,0,1,21,8,1,1
+2026-07-22,Kono,Susan's Bay,0,1,24,10,2,1
+2026-07-26,Port Loko,Mambolo,0,0,8,7,4,0
+2026-07-30,Western Urban,Tikonko,1,1,42,68,23,1
+2026-07-21,Kambia,Regent,1,1,0,36,18,1
+2026-07-20,Western Urban,Regent,0,0,6,0,3,1
+2026-07-12,Bombali,Kissy,0,1,52,4,0,1
+2026-07-27,Western Urban,Mambolo,0,0,18,10,4,1
+2026-07-26,Port Loko,Aberdeen,0,0,2,3,0,0
+2026-07-30,Kambia,Kroo Bay,0,0,12,3,4,0
+2026-07-07,Bo,Kissy,1,1,22,92,7,1
+2026-07-04,Kenema,Regent,1,1,51,81,34,1
+2026-07-07,Kambia,Aberdeen,1,1,52,64,16,1
+2026-07-11,Tonkolili,Waterloo,1,1,5,72,15,1
+2026-07-16,Port Loko,Calaba,1,1,2,24,34,1
+2026-07-29,Bonthe,Tikonko,0,1,27,7,0,1
+2026-07-01,Western Urban,Regent,0,0,15,3,4,0
+2026-07-11,Kambia,Kissy,1,1,18,12,22,1
+2026-07-12,Port Loko,Calaba,0,0,12,8,5,0
+2026-07-09,Western Rural,Mambolo,0,1,3,4,0,1
+2026-07-12,Kenema,Moyamba Junction,0,0,4,1,4,1
+2026-07-28,Bonthe,Dworzark,1,1,29,97,16,1
+2026-07-24,Bonthe,Aberdeen,0,1,20,5,5,1
+2026-07-18,Kono,Kissy,0,0,12,7,3,0
+2026-07-01,Tonkolili,Aberdeen,1,1,43,14,42,1
+2026-07-08,Kenema,Waterloo,0,0,13,6,3,1
+2026-07-19,Port Loko,Calaba,1,1,21,104,38,1
+2026-07-25,Bonthe,Mambolo,0,1,27,0,4,1
+2026-07-06,Tonkolili,Tikonko,0,0,10,1,4,0
+2026-07-11,Bo,Kroo Bay,1,1,25,11,16,1
+2026-07-26,Bombali,Waterloo,1,1,41,25,25,1
+2026-07-28,Bombali,Tikonko,0,1,53,0,5,1
+2026-07-17,Kenema,Calaba,0,1,24,10,2,1
+2026-07-18,Bo,Waterloo,0,0,16,7,0,0
+2026-07-23,Western Urban,Tikonko,0,0,1,1,4,0
+2026-07-08,Port Loko,Susan's Bay,0,1,16,1,5,1
+2026-07-19,Bombali,Kroo Bay,0,1,57,5,2,1
+2026-07-27,Kenema,Kroo Bay,0,0,13,2,3,0
+2026-07-29,Bo,Regent,0,0,0,4,3,0
+2026-07-10,Bombali,Waterloo,0,1,28,5,0,1
+2026-07-28,Kambia,Kroo Bay,0,1,53,1,4,1
+2026-07-12,Kono,Cline Town,0,0,7,10,4,0
+2026-07-07,Kenema,Regent,0,1,11,2,5,1
+2026-07-30,Bonthe,Calaba,0,0,9,10,3,1
+2026-07-30,Tonkolili,Cline Town,0,0,17,5,4,1
+2026-07-20,Western Rural,Cline Town,0,1,16,4,2,1
+2026-07-03,Western Rural,Kissy,0,0,3,5,4,1
+2026-07-04,Western Rural,Moyamba Junction,0,0,3,7,5,0
+2026-07-01,Bo,Susan's Bay,1,1,41,99,11,1
+2026-07-20,Western Rural,Waterloo,0,1,30,6,1,1
+2026-07-09,Kenema,Cline Town,0,0,4,7,0,1
+2026-07-11,Kenema,Moyamba Junction,0,0,4,1,5,1
+2026-07-24,Western Rural,Mambolo,0,0,18,4,4,0
+2026-07-06,Bo,Cline Town,0,1,50,9,2,1
+2026-07-06,Port Loko,Regent,0,1,8,3,5,1
+2026-07-03,Bonthe,Dworzark,0,1,14,10,5,1
+2026-07-13,Kambia,Kissy,1,1,49,74,36,1
+2026-07-21,Kenema,Regent,0,0,7,9,0,0
+2026-07-28,Port Loko,Tikonko,0,0,11,4,1,1
+2026-07-30,Port Loko,Cline Town,0,1,39,6,3,1
+2026-07-05,Kenema,Regent,0,0,6,9,0,0
+2026-07-09,Kenema,Tikonko,0,1,36,5,1,1
+2026-07-30,Kenema,Aberdeen,0,1,43,9,5,1
+2026-07-24,Western Rural,Kissy,1,1,9,12,38,1
+2026-07-18,Western Rural,Regent,0,1,9,10,3,1
+2026-07-30,Kambia,Regent,1,1,9,54,26,1
+2026-07-16,Kenema,Regent,1,1,38,93,33,1
+2026-07-02,Bonthe,Cline Town,0,1,40,4,1,1
+2026-07-01,Kenema,Regent,0,1,6,2,3,1
+2026-07-21,Bombali,Tikonko,1,1,37,92,6,1
+2026-07-14,Western Urban,Dworzark,0,1,39,8,1,1
+2026-07-07,Port Loko,Cline Town,0,0,13,9,1,1
+2026-07-21,Western Urban,Tikonko,1,1,23,87,13,1
+2026-07-23,Kambia,Dworzark,1,1,52,80,20,1
+2026-07-13,Bonthe,Aberdeen,0,1,36,2,2,1
+2026-07-10,Kambia,Waterloo,0,1,9,1,2,1
+2026-07-30,Port Loko,Susan's Bay,1,1,22,25,40,1
+2026-07-07,Bo,Susan's Bay,1,1,44,20,45,1
+2026-07-01,Bonthe,Kroo Bay,0,1,13,2,4,1
+2026-07-05,Bo,Mambolo,0,1,23,10,1,1
+2026-07-24,Port Loko,Kroo Bay,0,0,3,10,5,0
+2026-07-16,Port Loko,Waterloo,0,0,1,4,5,0
+2026-07-25,Western Urban,Mambolo,0,1,44,5,1,1
+2026-07-04,Bombali,Tikonko,0,1,57,10,4,1
+2026-07-21,Bonthe,Calaba,0,0,12,4,0,0
+2026-07-06,Kenema,Mambolo,1,1,47,42,41,1
+2026-07-01,Kono,Cline Town,1,1,60,27,32,1
+2026-07-09,Port Loko,Waterloo,0,0,20,5,5,1
+2026-07-12,Bonthe,Aberdeen,0,1,37,7,5,1
+2026-07-19,Tonkolili,Susan's Bay,0,0,5,10,4,0
+2026-07-08,Bo,Aberdeen,0,0,2,9,3,0
+2026-07-27,Western Rural,Cline Town,1,1,48,42,19,1
+2026-07-22,Tonkolili,Mambolo,0,1,40,8,4,1
+2026-07-19,Bo,Aberdeen,0,0,14,5,0,1
+2026-07-20,Bombali,Cline Town,1,1,55,14,25,1
+2026-07-21,Bo,Aberdeen,0,1,15,5,5,1
+2026-07-21,Bo,Calaba,0,1,23,2,1,1
+2026-07-16,Kenema,Regent,0,0,0,5,4,1
+2026-07-28,Western Urban,Kissy,0,1,44,10,5,1
+2026-07-17,Bo,Cline Town,1,1,45,86,44,1
+2026-07-23,Tonkolili,Kroo Bay,0,1,36,2,3,1
+2026-07-01,Port Loko,Kroo Bay,0,0,13,1,4,0
+2026-07-12,Kono,Susan's Bay,1,1,57,87,10,1
+2026-07-15,Port Loko,Kroo Bay,0,1,30,3,2,1
+2026-07-28,Kono,Cline Town,0,0,1,0,1,0
+2026-07-18,Bo,Regent,0,1,46,3,4,1
+2026-07-05,Kono,Susan's Bay,0,1,35,10,4,1
+2026-07-06,Port Loko,Calaba,0,1,41,2,2,1
+2026-07-25,Tonkolili,Waterloo,0,1,31,8,3,1
+2026-07-24,Kono,Cline Town,1,1,40,84,45,1
+2026-07-12,Kenema,Cline Town,1,1,15,95,27,1
+2026-07-13,Western Rural,Aberdeen,0,1,21,6,4,1
+2026-07-09,Bonthe,Mambolo,0,1,54,3,5,1
+2026-07-28,Kono,Tikonko,1,1,18,20,8,1
+2026-07-10,Tonkolili,Kissy,1,1,5,47,40,1
+2026-07-12,Tonkolili,Tikonko,1,1,29,59,15,1
+2026-07-26,Tonkolili,Mambolo,0,1,49,8,3,1
+2026-07-25,Western Urban,Regent,0,0,2,8,2,0
+2026-07-05,Tonkolili,Kroo Bay,0,1,21,9,5,1
+2026-07-13,Kambia,Kroo Bay,0,0,15,5,2,0
+2026-07-13,Bombali,Tikonko,0,1,54,0,4,1
+2026-07-14,Western Rural,Waterloo,1,1,14,118,35,1
+2026-07-30,Port Loko,Aberdeen,0,0,6,8,1,0
+2026-07-04,Bonthe,Kroo Bay,0,1,12,1,4,1
+2026-07-30,Western Rural,Cline Town,0,0,13,8,0,0
+2026-07-28,Bo,Cline Town,1,1,22,45,28,1
+2026-07-18,Kono,Moyamba Junction,0,1,10,2,5,1
+2026-07-21,Kono,Dworzark,0,0,2,2,1,0
+2026-07-30,Bonthe,Calaba,0,0,15,8,4,1
+2026-07-09,Bo,Waterloo,1,1,42,70,40,1
+2026-07-28,Western Urban,Dworzark,0,0,15,5,5,0
+2026-07-28,Bo,Tikonko,0,1,26,3,5,1
+2026-07-08,Kambia,Kroo Bay,1,1,23,27,17,1
+2026-07-12,Kenema,Tikonko,0,0,10,5,4,0
+2026-07-26,Kenema,Calaba,0,0,12,4,3,1
+2026-07-24,Tonkolili,Kroo Bay,1,1,40,92,33,1
+2026-07-27,Bo,Tikonko,0,0,20,6,5,0
+2026-07-05,Bonthe,Susan's Bay,1,1,54,59,44,1
+2026-07-05,Bonthe,Cline Town,0,0,18,4,1,0
+2026-07-04,Port Loko,Kissy,0,0,7,6,5,0
+2026-07-13,Western Urban,Calaba,1,1,43,98,47,1
+2026-07-22,Bombali,Kroo Bay,0,0,17,0,0,1
+2026-07-10,Western Rural,Dworzark,0,0,2,10,0,1
+2026-07-22,Port Loko,Cline Town,0,1,19,9,5,1
+2026-07-06,Bombali,Cline Town,1,1,31,11,50,1
+2026-07-18,Bombali,Kroo Bay,0,0,3,3,3,0
+2026-07-28,Tonkolili,Tikonko,0,1,59,9,5,1
+2026-07-16,Port Loko,Kissy,0,0,15,6,1,1
+2026-07-30,Bo,Moyamba Junction,0,1,43,9,4,1
+2026-07-19,Bombali,Cline Town,0,1,10,0,2,1
+2026-07-24,Western Rural,Moyamba Junction,0,1,19,2,2,1
+2026-07-12,Port Loko,Dworzark,1,1,52,47,18,1
+2026-07-05,Bonthe,Kroo Bay,0,0,5,0,4,0
+2026-07-20,Bonthe,Kissy,0,1,30,10,0,1
+2026-07-15,Kambia,Dworzark,0,1,52,7,2,1
+2026-07-16,Kono,Mambolo,1,1,53,114,29,1
+2026-07-27,Bo,Tikonko,0,1,3,6,1,1
+2026-07-14,Western Urban,Dworzark,0,1,21,9,5,1
+2026-07-02,Bombali,Kissy,0,1,51,8,0,1
+2026-07-12,Bo,Cline Town,0,1,1,1,1,1
+2026-07-13,Bonthe,Cline Town,0,1,26,9,2,1
+2026-07-13,Bombali,Mambolo,0,1,8,9,5,1
+2026-07-24,Port Loko,Regent,1,1,0,87,9,1
+2026-07-16,Bo,Kissy,0,0,14,9,3,0
+2026-07-09,Kono,Kroo Bay,0,0,0,1,3,0
+2026-07-08,Port Loko,Aberdeen,0,0,6,1,3,1
+2026-07-27,Bombali,Mambolo,0,0,14,3,4,0
+2026-07-19,Kenema,Kissy,0,1,21,10,2,1
+2026-07-19,Kono,Cline Town,0,0,9,10,1,0
+2026-07-15,Bombali,Calaba,0,0,11,9,2,0
+2026-07-14,Kambia,Tikonko,1,1,48,12,22,1
+2026-07-10,Kambia,Waterloo,0,1,50,6,2,1
+2026-07-16,Bo,Susan's Bay,0,0,5,10,3,1
+2026-07-09,Western Urban,Aberdeen,0,0,6,8,1,0
+2026-07-08,Western Urban,Waterloo,0,1,2,1,3,1
+2026-07-11,Bonthe,Waterloo,0,1,29,2,1,1
+2026-07-10,Bonthe,Cline Town,0,0,17,0,3,0
+2026-07-06,Bo,Tikonko,0,0,10,5,3,0
+2026-07-10,Kenema,Kroo Bay,0,0,12,10,2,0
+2026-07-30,Bo,Aberdeen,0,0,4,3,1,0
+2026-07-17,Bonthe,Waterloo,1,1,46,79,49,1
+2026-07-07,Port Loko,Waterloo,0,1,44,0,4,1
+2026-07-18,Kenema,Aberdeen,0,1,16,8,0,1
+2026-07-04,Kono,Aberdeen,0,1,8,6,0,1
+2026-07-14,Bo,Moyamba Junction,0,0,2,3,0,0
+2026-07-08,Bombali,Tikonko,0,1,17,6,5,1
+2026-07-04,Bombali,Kissy,0,1,11,4,3,1
+2026-07-24,Bombali,Kissy,1,1,46,47,11,1
+2026-07-22,Bonthe,Mambolo,0,1,23,5,1,1
+2026-07-05,Western Rural,Kroo Bay,1,1,60,81,43,1
+2026-07-01,Kambia,Kroo Bay,0,0,12,10,3,0
+2026-07-04,Tonkolili,Regent,0,0,20,0,0,0
+2026-07-04,Western Rural,Calaba,0,1,25,0,1,1
+2026-07-14,Bombali,Kroo Bay,0,1,36,4,5,1
+2026-07-07,Kono,Tikonko,0,0,15,4,4,0
+2026-07-14,Port Loko,Susan's Bay,0,0,14,4,1,0
+2026-07-15,Kenema,Tikonko,0,0,14,5,2,1
+2026-07-14,Western Urban,Waterloo,0,1,58,6,1,1
+2026-07-24,Kenema,Aberdeen,0,1,29,0,4,1
+2026-07-23,Port Loko,Dworzark,0,1,9,9,2,1
+2026-07-16,Tonkolili,Waterloo,0,0,13,8,5,0
+2026-07-15,Kenema,Mambolo,0,0,20,1,1,0
+2026-07-28,Western Rural,Cline Town,0,1,13,4,0,1
+2026-07-11,Kenema,Mambolo,0,0,11,10,3,0
+2026-07-05,Kono,Susan's Bay,1,1,26,96,30,1
+2026-07-11,Tonkolili,Cline Town,0,1,44,6,4,1
+2026-07-30,Bombali,Regent,0,0,16,2,4,0
+2026-07-15,Port Loko,Moyamba Junction,0,0,19,3,5,0
+2026-07-02,Tonkolili,Susan's Bay,0,1,42,6,1,1
+2026-07-23,Tonkolili,Cline Town,0,1,22,10,3,1
+2026-07-05,Kenema,Tikonko,0,1,35,2,0,1
+2026-07-20,Bo,Kroo Bay,0,1,9,9,2,1
+2026-07-02,Western Urban,Cline Town,0,0,0,1,1,1
+2026-07-03,Bombali,Kroo Bay,0,1,30,2,0,1
+2026-07-30,Kambia,Regent,1,1,13,16,7,1
+2026-07-04,Western Urban,Dworzark,0,0,20,9,1,1
+2026-07-13,Kenema,Regent,1,1,52,67,8,1
+2026-07-06,Kono,Dworzark,0,1,35,7,3,1
+2026-07-29,Bo,Susan's Bay,0,0,14,7,5,0
+2026-07-06,Kenema,Regent,1,1,25,54,6,1
+2026-07-29,Bo,Calaba,0,1,21,4,0,1
+2026-07-16,Bo,Cline Town,0,1,44,7,1,1
+2026-07-17,Bonthe,Tikonko,0,0,19,4,2,1
+2026-07-07,Port Loko,Cline Town,0,0,14,3,1,0
+2026-07-09,Bonthe,Dworzark,0,0,17,0,3,0
+2026-07-11,Bo,Susan's Bay,1,1,36,115,17,1
+2026-07-11,Bonthe,Dworzark,1,1,5,26,48,1
+2026-07-25,Tonkolili,Tikonko,0,1,18,4,1,1
+2026-07-26,Port Loko,Regent,0,0,5,2,0,0
+2026-07-20,Bombali,Cline Town,0,0,3,3,2,0
+2026-07-06,Kambia,Kroo Bay,0,1,52,8,0,1
+2026-07-18,Bonthe,Tikonko,0,0,3,1,2,0
+2026-07-25,Kambia,Cline Town,0,0,5,4,2,0
+2026-07-20,Western Rural,Cline Town,1,1,0,45,42,1
+2026-07-28,Western Urban,Aberdeen,1,1,9,88,12,1
+2026-07-17,Bonthe,Susan's Bay,1,1,37,83,10,1
+2026-07-04,Tonkolili,Waterloo,0,1,6,10,0,1
+2026-07-08,Bo,Cline Town,0,1,13,10,0,1
+2026-07-03,Western Urban,Kissy,0,0,6,6,5,0
+2026-07-06,Bonthe,Moyamba Junction,0,0,3,3,0,1
+2026-07-17,Port Loko,Dworzark,0,1,13,3,0,1
+2026-07-01,Bo,Waterloo,0,1,56,7,4,1
+2026-07-30,Western Urban,Kissy,0,0,14,0,3,1
+2026-07-07,Bombali,Waterloo,1,1,46,41,23,1
+2026-07-02,Western Rural,Regent,0,0,18,5,0,1
+2026-07-25,Kambia,Dworzark,0,0,15,6,1,0
+2026-07-16,Kambia,Mambolo,0,1,11,1,1,1
+2026-07-29,Kenema,Susan's Bay,0,0,2,6,4,0
+2026-07-06,Bonthe,Dworzark,1,1,46,18,22,1
+2026-07-03,Kono,Regent,1,1,22,68,17,1
+2026-07-04,Kenema,Susan's Bay,0,0,19,7,2,1
+2026-07-24,Kambia,Dworzark,0,0,8,8,3,1
+2026-07-10,Kambia,Aberdeen,0,0,5,7,2,1
+2026-07-02,Bo,Regent,0,0,19,5,4,0
+2026-07-24,Bonthe,Kissy,0,0,7,6,0,0
+2026-07-09,Western Rural,Calaba,1,1,37,37,17,1
+2026-07-07,Bo,Regent,1,1,13,45,11,1
+2026-07-08,Western Urban,Susan's Bay,0,0,16,7,4,0
+2026-07-13,Bombali,Waterloo,0,0,5,8,2,1
+2026-07-13,Kenema,Tikonko,0,1,0,5,2,1
+2026-07-03,Western Rural,Moyamba Junction,0,0,17,5,2,0
+2026-07-25,Bo,Kroo Bay,0,1,12,3,0,1
+2026-07-05,Kono,Moyamba Junction,1,1,12,103,25,1
+2026-07-26,Western Rural,Mambolo,0,0,17,8,3,1
+2026-07-28,Bombali,Dworzark,0,1,23,1,2,1
+2026-07-18,Bo,Aberdeen,0,0,7,6,2,0
+2026-07-10,Kenema,Cline Town,0,1,56,1,1,1
+2026-07-06,Tonkolili,Cline Town,0,0,1,4,0,1
+2026-07-16,Bonthe,Regent,0,0,12,8,5,1
+2026-07-17,Kono,Dworzark,1,1,8,52,27,1
+2026-07-27,Bonthe,Waterloo,0,0,16,1,1,1
+2026-07-30,Bonthe,Aberdeen,0,0,2,8,2,0
+2026-07-14,Western Urban,Calaba,1,1,21,120,7,1
+2026-07-08,Bombali,Regent,0,1,1,6,0,1
+2026-07-20,Bombali,Waterloo,1,1,43,104,6,1
+2026-07-12,Kambia,Waterloo,0,0,17,5,4,0
+2026-07-10,Kono,Aberdeen,0,0,0,2,4,1
+2026-07-27,Tonkolili,Waterloo,1,1,53,106,18,1
+2026-07-16,Kono,Calaba,0,1,58,9,0,1
+2026-07-02,Kambia,Calaba,0,1,14,0,1,1
+2026-07-17,Bo,Tikonko,0,0,20,7,4,1
+2026-07-22,Kenema,Dworzark,0,0,7,4,0,0
+2026-07-08,Tonkolili,Regent,0,0,3,6,0,0
+2026-07-01,Port Loko,Waterloo,0,1,59,8,1,1
+2026-07-24,Port Loko,Susan's Bay,1,1,29,12,24,1
+2026-07-04,Tonkolili,Kroo Bay,0,1,14,0,1,1
+2026-07-12,Bombali,Kroo Bay,0,1,0,0,5,1
+2026-07-09,Western Urban,Moyamba Junction,0,1,29,0,3,1
+2026-07-11,Port Loko,Tikonko,0,0,0,9,2,1
+2026-07-09,Kambia,Susan's Bay,0,0,15,0,4,0
+2026-07-03,Kenema,Dworzark,0,0,4,4,3,0
+2026-07-14,Bombali,Cline Town,0,0,7,3,2,0
+2026-07-13,Tonkolili,Kroo Bay,0,0,11,9,1,0
+2026-07-04,Bombali,Aberdeen,0,0,15,6,1,0
+2026-07-04,Kenema,Kissy,1,1,33,58,34,1
+2026-07-02,Tonkolili,Regent,0,0,4,2,3,1
+2026-07-16,Bonthe,Regent,1,1,10,61,22,1
+2026-07-06,Bombali,Susan's Bay,0,1,47,1,1,1
+2026-07-10,Western Urban,Regent,0,0,18,10,2,0
+2026-07-14,Kono,Moyamba Junction,0,1,0,10,0,1
+2026-07-18,Bombali,Kissy,0,1,15,7,5,1
+2026-07-03,Western Urban,Tikonko,1,1,48,87,22,1
+2026-07-23,Port Loko,Kissy,1,1,50,40,19,1
+2026-07-20,Bombali,Tikonko,1,1,10,101,30,1
+2026-07-13,Bombali,Susan's Bay,1,1,29,90,5,1
+2026-07-15,Kono,Waterloo,0,1,34,4,0,1
+2026-07-26,Kono,Dworzark,0,0,1,2,0,1
+2026-07-17,Kono,Dworzark,0,1,14,10,3,1
+2026-07-03,Bombali,Kissy,0,1,22,1,2,1
+2026-07-26,Western Urban,Kissy,0,1,34,4,3,1
+2026-07-15,Port Loko,Regent,0,0,2,2,5,0
+2026-07-07,Port Loko,Waterloo,1,1,18,13,17,1
+2026-07-26,Western Urban,Kissy,1,1,2,77,49,1
+2026-07-30,Western Rural,Moyamba Junction,0,0,0,6,5,0
+2026-07-26,Port Loko,Susan's Bay,0,0,12,7,4,0
+2026-07-23,Bonthe,Tikonko,0,0,2,7,5,0
+2026-07-06,Port Loko,Aberdeen,0,1,29,7,2,1
+2026-07-08,Tonkolili,Cline Town,0,0,7,8,5,1
+2026-07-25,Kambia,Cline Town,0,1,29,10,5,1
+2026-07-17,Western Urban,Aberdeen,0,1,24,9,3,1
+2026-07-07,Kono,Regent,0,0,14,3,5,1
+2026-07-12,Kambia,Calaba,0,1,23,6,0,1
+2026-07-18,Port Loko,Kissy,0,1,1,6,3,1
+2026-07-13,Port Loko,Aberdeen,0,0,1,9,5,0
+2026-07-05,Kambia,Waterloo,0,0,2,1,1,1
+2026-07-28,Bonthe,Waterloo,0,1,17,9,5,1
+2026-07-28,Kono,Kissy,0,0,20,6,4,1
+2026-07-10,Bo,Aberdeen,0,1,21,5,3,1
+2026-07-08,Bo,Waterloo,0,1,24,7,4,1
+2026-07-15,Bombali,Kissy,0,1,31,6,1,1
+2026-07-10,Western Rural,Tikonko,1,1,31,110,44,1
+2026-07-13,Port Loko,Tikonko,1,1,1,108,27,1
+2026-07-16,Bonthe,Cline Town,1,1,49,67,18,1
+2026-07-13,Kambia,Kissy,0,0,13,4,0,0
+2026-07-14,Western Urban,Mambolo,0,0,18,5,2,1
+2026-07-25,Kenema,Kroo Bay,0,0,13,6,5,1
+2026-07-06,Bonthe,Regent,0,1,25,0,4,1
+2026-07-03,Bombali,Kroo Bay,1,1,18,26,17,1
+2026-07-20,Port Loko,Moyamba Junction,0,1,20,7,2,1
+2026-07-22,Bo,Susan's Bay,0,1,60,9,3,1
+2026-07-16,Kenema,Tikonko,0,0,10,8,4,1
+2026-07-16,Port Loko,Susan's Bay,0,1,19,2,1,1
+2026-07-23,Tonkolili,Waterloo,1,1,18,45,37,1
+2026-07-02,Western Rural,Cline Town,0,1,3,0,2,1
+2026-07-04,Bo,Cline Town,0,0,19,10,5,0
+2026-07-26,Bo,Susan's Bay,0,0,0,2,5,0
+2026-07-05,Western Rural,Kissy,0,1,27,3,2,1
+2026-07-09,Kambia,Susan's Bay,0,0,20,10,4,0
+2026-07-11,Western Urban,Dworzark,0,0,2,4,4,0
+2026-07-19,Bonthe,Regent,0,0,8,0,1,0
+2026-07-06,Kenema,Moyamba Junction,1,1,31,31,32,1
+2026-07-06,Western Urban,Tikonko,0,0,5,8,3,1
+2026-07-24,Kenema,Regent,1,1,24,117,19,1
+2026-07-10,Western Urban,Cline Town,1,1,12,85,25,1
+2026-07-07,Kenema,Cline Town,0,0,12,8,5,1
+2026-07-11,Bombali,Susan's Bay,0,1,9,10,3,1
+2026-07-01,Kenema,Calaba,0,1,49,8,2,1
+2026-07-01,Bo,Waterloo,1,1,58,100,31,1
+2026-07-23,Kono,Kissy,0,1,2,9,3,1
+2026-07-06,Port Loko,Tikonko,0,0,4,4,3,1
+2026-07-18,Kambia,Tikonko,1,1,57,69,23,1
+2026-07-03,Kambia,Calaba,0,1,56,9,1,1
+2026-07-21,Tonkolili,Mambolo,1,1,3,33,19,1
+2026-07-25,Kono,Moyamba Junction,0,1,39,3,0,1
+2026-07-25,Western Rural,Waterloo,0,1,19,1,0,1
+2026-07-10,Bo,Mambolo,1,1,14,120,28,1
+2026-07-27,Kenema,Aberdeen,0,0,3,1,3,1
+2026-07-17,Bombali,Susan's Bay,0,1,11,5,1,1
+2026-07-25,Bombali,Regent,0,1,40,5,4,1
+2026-07-19,Bo,Aberdeen,0,0,17,1,4,1
+2026-07-22,Western Rural,Calaba,1,1,53,86,33,1
+2026-07-03,Bo,Susan's Bay,1,1,24,89,34,1
+2026-07-12,Bonthe,Dworzark,1,1,16,66,18,1
+2026-07-26,Kenema,Mambolo,0,0,12,6,3,1
+2026-07-07,Port Loko,Regent,0,0,4,3,1,0
+2026-07-24,Western Urban,Tikonko,0,1,34,4,5,1
+2026-07-18,Bo,Aberdeen,0,1,28,1,1,1
+2026-07-07,Port Loko,Calaba,0,0,6,3,0,1
+2026-07-23,Tonkolili,Moyamba Junction,0,0,2,7,2,1
+2026-07-23,Western Urban,Cline Town,0,0,0,8,1,1
+2026-07-17,Western Rural,Kissy,0,0,10,10,3,0
+2026-07-13,Kono,Regent,0,1,9,3,5,1
+2026-07-16,Tonkolili,Aberdeen,1,1,6,82,16,1
+2026-07-12,Bo,Susan's Bay,1,1,52,17,37,1
+2026-07-21,Bonthe,Aberdeen,0,1,13,3,2,1
+2026-07-22,Western Urban,Susan's Bay,1,1,35,48,5,1
+2026-07-18,Western Urban,Moyamba Junction,0,0,16,7,4,0
+2026-07-25,Bombali,Dworzark,0,0,6,7,4,0
+2026-07-17,Tonkolili,Moyamba Junction,0,0,4,2,4,0
+2026-07-23,Kono,Dworzark,0,0,15,0,1,0
+2026-07-01,Bombali,Moyamba Junction,1,1,8,79,39,1
+2026-07-15,Kono,Calaba,1,1,37,103,19,1
+2026-07-08,Western Rural,Waterloo,0,1,25,5,5,1
+2026-07-19,Western Urban,Kissy,0,0,19,9,1,0
+2026-07-14,Western Rural,Moyamba Junction,0,1,33,6,5,1
+2026-07-06,Tonkolili,Calaba,0,0,15,10,4,0
+2026-07-08,Bombali,Kroo Bay,0,0,4,0,4,1
+2026-07-18,Kenema,Mambolo,1,1,46,99,23,1
+2026-07-20,Port Loko,Dworzark,0,0,0,2,5,1
+2026-07-23,Bombali,Dworzark,0,1,45,3,1,1
+2026-07-11,Kenema,Cline Town,0,0,0,1,1,1
+2026-07-20,Kenema,Kroo Bay,0,0,15,9,4,1
+2026-07-06,Kono,Calaba,0,1,51,9,2,1
+2026-07-05,Kenema,Mambolo,0,0,9,5,0,0
+2026-07-22,Western Urban,Susan's Bay,0,0,16,5,1,0
+2026-07-09,Western Urban,Moyamba Junction,1,1,27,81,27,1
+2026-07-09,Port Loko,Calaba,0,0,11,3,3,0
+2026-07-12,Bonthe,Kissy,1,1,34,14,30,1
+2026-07-30,Tonkolili,Cline Town,0,0,20,3,1,0
+2026-07-02,Kenema,Mambolo,1,1,17,80,28,1
+2026-07-28,Kenema,Calaba,0,0,7,10,5,1
+2026-07-17,Kono,Mambolo,0,1,50,6,1,1
+2026-07-14,Western Urban,Waterloo,0,1,2,6,5,1
+2026-07-08,Kambia,Regent,1,1,22,37,24,1
+2026-07-17,Kambia,Kroo Bay,1,1,13,77,16,1
+2026-07-05,Bombali,Waterloo,0,1,11,4,0,1
+2026-07-18,Bo,Kissy,0,1,9,4,2,1
+2026-07-27,Bombali,Kroo Bay,0,0,5,7,2,1
+2026-07-01,Kenema,Cline Town,0,0,4,9,3,0
+2026-07-03,Western Urban,Cline Town,0,0,19,7,0,0
+2026-07-30,Kenema,Regent,0,0,9,4,3,0
+2026-07-01,Bombali,Kissy,1,1,55,89,13,1
+2026-07-18,Port Loko,Aberdeen,0,1,20,3,4,1
+2026-07-07,Western Rural,Waterloo,0,0,9,1,0,1
+2026-07-20,Bonthe,Tikonko,0,0,6,2,3,0
+2026-07-21,Kono,Dworzark,1,1,47,44,50,1
+2026-07-14,Bombali,Waterloo,0,1,43,10,3,1
+2026-07-30,Kono,Tikonko,0,1,5,1,4,1
+2026-07-26,Kambia,Regent,0,0,3,6,2,0
+2026-07-02,Western Rural,Susan's Bay,1,1,51,120,17,1
+2026-07-05,Bo,Mambolo,0,1,54,2,5,1
+2026-07-01,Kambia,Dworzark,0,0,18,3,4,0
+2026-07-07,Tonkolili,Regent,0,1,6,2,4,1
+2026-07-03,Bombali,Kroo Bay,1,1,60,115,37,1
+2026-07-04,Western Urban,Tikonko,1,1,43,95,8,1
+2026-07-10,Bombali,Calaba,1,1,26,62,20,1
+2026-07-16,Bonthe,Cline Town,0,0,18,1,2,0
+2026-07-04,Port Loko,Kroo Bay,1,1,26,51,18,1
+2026-07-03,Port Loko,Calaba,0,1,50,8,0,1
+2026-07-07,Kono,Moyamba Junction,1,1,42,104,48,1
+2026-07-27,Bombali,Susan's Bay,0,0,13,4,2,0
+2026-07-19,Western Rural,Tikonko,0,0,0,4,0,0
+2026-07-19,Western Rural,Aberdeen,0,0,17,6,4,1
+2026-07-05,Port Loko,Mambolo,1,1,29,47,15,1
+2026-07-07,Kono,Tikonko,0,0,5,3,4,1
+2026-07-05,Bonthe,Kroo Bay,0,0,9,9,1,0
+2026-07-02,Tonkolili,Dworzark,0,0,17,6,3,0
+2026-07-06,Port Loko,Mambolo,0,0,20,6,3,0
+2026-07-19,Kono,Moyamba Junction,0,0,20,2,0,0
+2026-07-12,Western Urban,Moyamba Junction,0,1,12,2,5,1
+2026-07-07,Port Loko,Cline Town,0,0,4,5,5,0
+2026-07-11,Kambia,Dworzark,0,0,11,8,5,0
+2026-07-18,Kono,Dworzark,1,1,48,59,21,1
+2026-07-29,Tonkolili,Regent,0,1,39,6,3,1
+2026-07-16,Western Rural,Tikonko,0,1,4,5,0,1
+2026-07-19,Bo,Mambolo,0,1,41,7,2,1
+2026-07-30,Kono,Aberdeen,0,1,51,0,1,1
+2026-07-02,Bonthe,Tikonko,0,0,0,5,3,0
+2026-07-08,Bombali,Tikonko,0,1,12,1,5,1
+2026-07-10,Kambia,Calaba,1,1,19,42,16,1
+2026-07-19,Port Loko,Tikonko,1,1,41,13,45,1
+2026-07-01,Bonthe,Regent,0,0,5,4,4,0
+2026-07-22,Bo,Dworzark,0,1,29,7,4,1
+2026-07-14,Western Rural,Kissy,0,1,21,4,0,1
+2026-07-04,Western Rural,Waterloo,1,1,6,54,49,1
+2026-07-02,Kambia,Cline Town,0,1,49,2,3,1
+2026-07-08,Kenema,Susan's Bay,0,0,2,1,1,1
+2026-07-23,Kono,Mambolo,0,1,15,10,3,1
+2026-07-26,Kambia,Regent,0,1,56,9,4,1
+2026-07-20,Port Loko,Tikonko,1,1,2,43,38,1
+2026-07-10,Bonthe,Kroo Bay,0,0,10,8,5,0
+2026-07-11,Western Urban,Dworzark,1,1,33,99,29,1
+2026-07-18,Tonkolili,Regent,0,0,17,8,2,0
+2026-07-05,Kono,Aberdeen,0,1,38,3,4,1
+2026-07-22,Tonkolili,Calaba,0,1,25,9,2,1
+2026-07-20,Kenema,Mambolo,0,0,4,3,1,0
+2026-07-20,Western Urban,Tikonko,0,0,3,7,1,1
+2026-07-04,Kambia,Dworzark,1,1,47,11,15,1
+2026-07-16,Port Loko,Dworzark,0,1,35,5,4,1
+2026-07-19,Port Loko,Susan's Bay,1,1,56,19,7,1
+2026-07-25,Bombali,Waterloo,1,1,21,10,40,1
+2026-07-24,Kenema,Moyamba Junction,0,0,0,3,4,1
+2026-07-28,Bo,Regent,0,0,7,7,1,0
+2026-07-22,Kambia,Waterloo,0,1,21,6,4,1
+2026-07-26,Western Rural,Mambolo,0,0,19,8,2,0
+2026-07-19,Western Rural,Mambolo,0,0,5,5,4,1
+2026-07-17,Bonthe,Calaba,1,1,33,20,35,1
+2026-07-05,Bombali,Waterloo,0,0,18,8,5,1
+2026-07-29,Bo,Aberdeen,0,0,0,3,0,1
+2026-07-12,Kambia,Mambolo,0,0,12,8,3,1
+2026-07-01,Tonkolili,Cline Town,0,1,23,8,5,1
+2026-07-06,Bombali,Waterloo,0,0,15,6,3,0
+2026-07-13,Western Urban,Susan's Bay,0,1,55,9,4,1
+2026-07-13,Kenema,Calaba,0,0,19,6,2,1
+2026-07-04,Kono,Kroo Bay,1,1,42,108,6,1
+2026-07-12,Western Urban,Cline Town,0,1,4,7,3,1
+2026-07-02,Western Urban,Moyamba Junction,0,1,16,1,2,1
+2026-07-15,Kambia,Mambolo,0,1,50,3,2,1
+2026-07-30,Bombali,Susan's Bay,0,1,0,5,1,1
+2026-07-14,Bonthe,Dworzark,0,0,8,10,5,0
+2026-07-30,Bombali,Aberdeen,0,1,15,1,4,1
+2026-07-06,Bo,Dworzark,0,0,5,1,5,0
+2026-07-15,Kono,Waterloo,1,1,30,25,14,1
+2026-07-09,Tonkolili,Dworzark,0,1,57,10,2,1
+2026-07-16,Bombali,Aberdeen,0,0,6,4,2,0
+2026-07-20,Western Rural,Waterloo,1,1,60,45,11,1
+2026-07-02,Kenema,Moyamba Junction,0,0,9,10,0,0
+2026-07-18,Western Rural,Cline Town,0,0,5,9,2,0
+2026-07-07,Tonkolili,Waterloo,0,0,8,4,2,0
+2026-07-06,Tonkolili,Kroo Bay,0,0,12,7,3,1
+2026-07-23,Port Loko,Kroo Bay,0,1,33,3,2,1
+2026-07-29,Bonthe,Mambolo,0,1,27,10,4,1
+2026-07-16,Kono,Dworzark,0,1,3,0,2,1
+2026-07-03,Tonkolili,Moyamba Junction,1,1,8,28,15,1
+2026-07-01,Kono,Mambolo,0,0,6,0,3,1
+2026-07-23,Tonkolili,Tikonko,1,1,47,51,24,1
+2026-07-14,Bonthe,Kroo Bay,1,1,37,103,42,1
+2026-07-02,Western Urban,Tikonko,0,1,55,9,0,1
+2026-07-14,Bombali,Kissy,0,0,17,2,5,1
+2026-07-09,Bo,Regent,0,1,54,7,2,1
+2026-07-01,Western Rural,Cline Town,0,0,18,8,0,0
+2026-07-27,Western Urban,Aberdeen,0,0,12,7,3,0
+2026-07-25,Western Urban,Moyamba Junction,1,1,36,90,9,1
+2026-07-21,Western Rural,Aberdeen,1,1,54,25,29,1
+2026-07-16,Western Urban,Kroo Bay,0,0,19,1,0,0
+2026-07-08,Western Rural,Aberdeen,0,0,11,8,4,0
+2026-07-10,Western Rural,Kroo Bay,1,1,57,20,18,1
+2026-07-21,Kambia,Moyamba Junction,1,1,19,112,25,1
+2026-07-16,Kenema,Waterloo,0,1,39,8,1,1
+2026-07-16,Kambia,Susan's Bay,1,1,23,43,37,1
+2026-07-20,Kambia,Kroo Bay,0,0,19,6,3,1
+2026-07-01,Port Loko,Aberdeen,0,0,15,10,0,0
+2026-07-11,Bombali,Kissy,0,1,11,4,0,1
+2026-07-26,Kambia,Cline Town,0,1,58,10,4,1
+2026-07-29,Western Urban,Aberdeen,0,1,56,3,3,1
+2026-07-13,Western Rural,Mambolo,0,1,19,9,2,1
+2026-07-28,Kambia,Kroo Bay,1,1,37,28,21,1
+2026-07-04,Bonthe,Susan's Bay,0,0,10,9,5,0
+2026-07-11,Kenema,Waterloo,0,0,0,7,5,0
+2026-07-01,Bombali,Moyamba Junction,1,1,60,93,45,1
+2026-07-17,Western Rural,Tikonko,0,0,4,3,4,0
+2026-07-02,Bombali,Kissy,1,1,49,78,19,1
+2026-07-05,Western Rural,Tikonko,0,1,22,6,2,1
+2026-07-23,Bonthe,Susan's Bay,0,0,13,6,0,0
+2026-07-11,Kono,Moyamba Junction,0,0,4,2,4,1
+2026-07-28,Port Loko,Mambolo,0,1,17,1,5,1
+2026-07-19,Bombali,Tikonko,0,1,15,0,4,1
+2026-07-15,Kambia,Kroo Bay,1,1,29,89,14,1
+2026-07-03,Kambia,Susan's Bay,0,1,13,8,0,1
+2026-07-17,Bombali,Moyamba Junction,1,1,49,108,26,1
+2026-07-16,Tonkolili,Kroo Bay,0,1,9,9,3,1
+2026-07-11,Kenema,Susan's Bay,0,0,14,3,2,0
+2026-07-02,Kenema,Kroo Bay,0,1,29,9,5,1
+2026-07-24,Bonthe,Aberdeen,0,0,10,8,0,1
+2026-07-04,Bombali,Kroo Bay,1,1,33,49,32,1
+2026-07-20,Tonkolili,Aberdeen,0,0,10,9,0,1
+2026-07-16,Western Rural,Aberdeen,0,1,27,3,5,1
+2026-07-28,Western Rural,Susan's Bay,0,0,0,10,0,1
+2026-07-17,Bonthe,Regent,0,1,28,2,4,1
+2026-07-29,Tonkolili,Aberdeen,0,0,6,2,5,0
+2026-07-07,Tonkolili,Kissy,1,1,45,55,15,1
+2026-07-08,Tonkolili,Tikonko,0,0,1,10,5,0
+2026-07-15,Western Rural,Susan's Bay,0,1,55,0,1,1
+2026-07-18,Port Loko,Moyamba Junction,0,1,39,7,5,1
+2026-07-30,Kenema,Regent,0,1,20,7,3,1
+2026-07-16,Kono,Tikonko,1,1,51,50,45,1
+2026-07-13,Port Loko,Susan's Bay,1,1,3,94,20,1
+2026-07-23,Kambia,Calaba,0,0,7,7,0,1
+2026-07-01,Port Loko,Kissy,0,0,12,7,2,1
+2026-07-17,Tonkolili,Cline Town,0,0,12,9,4,0
+2026-07-27,Port Loko,Kroo Bay,0,1,25,1,4,1
+2026-07-15,Kono,Regent,1,1,45,86,12,1
+2026-07-07,Kono,Dworzark,0,1,38,3,4,1
+2026-07-16,Bonthe,Mambolo,0,0,18,0,0,0
+2026-07-23,Bo,Kroo Bay,1,1,53,80,44,1
+2026-07-15,Western Urban,Cline Town,0,1,37,9,2,1
+2026-07-26,Kenema,Calaba,0,1,5,5,2,1
+2026-07-15,Western Urban,Aberdeen,1,1,53,76,29,1
+2026-07-27,Bonthe,Dworzark,0,0,7,5,4,0
+2026-07-10,Kono,Kissy,0,0,0,9,0,0
+2026-07-28,Western Urban,Moyamba Junction,0,1,6,0,3,1
+2026-07-04,Port Loko,Waterloo,0,0,9,4,1,0
+2026-07-20,Western Rural,Tikonko,1,1,29,12,29,1
+2026-07-18,Bo,Waterloo,1,1,57,78,22,1
+2026-07-22,Bombali,Regent,1,1,40,38,7,1
+2026-07-07,Kambia,Cline Town,0,0,16,8,4,0
+2026-07-02,Kono,Calaba,0,0,8,5,0,0
+2026-07-11,Western Urban,Kissy,0,1,11,1,2,1
+2026-07-29,Bo,Dworzark,0,0,19,8,0,0
+2026-07-18,Bombali,Mambolo,0,0,17,5,2,0
+2026-07-28,Port Loko,Mambolo,0,0,11,10,0,1
+2026-07-28,Western Urban,Kissy,0,0,2,1,4,0
+2026-07-29,Western Rural,Kissy,0,1,50,0,2,1
+2026-07-09,Port Loko,Tikonko,0,1,8,5,4,1
+2026-07-29,Tonkolili,Calaba,0,1,22,2,3,1
+2026-07-10,Kenema,Waterloo,0,0,18,5,5,0
+2026-07-20,Kenema,Dworzark,0,1,51,10,1,1
+2026-07-22,Bombali,Kissy,0,1,40,3,4,1
+2026-07-29,Bo,Kroo Bay,0,0,20,9,4,0
+2026-07-23,Kono,Kroo Bay,0,0,7,0,4,0
+2026-07-02,Kenema,Kroo Bay,1,1,45,27,29,1
+2026-07-14,Port Loko,Kroo Bay,1,1,26,86,45,1
+2026-07-27,Bo,Dworzark,0,1,34,8,0,1
+2026-07-18,Bombali,Aberdeen,0,1,56,5,3,1
+2026-07-13,Western Urban,Mambolo,1,1,56,45,40,1
+2026-07-16,Kono,Aberdeen,0,1,24,10,5,1
+2026-07-01,Tonkolili,Dworzark,0,0,7,9,2,1
+2026-07-11,Port Loko,Waterloo,0,1,35,7,0,1
+2026-07-07,Kono,Aberdeen,0,0,17,6,4,1
+2026-07-07,Tonkolili,Aberdeen,0,1,45,0,4,1
+2026-07-29,Kambia,Kissy,0,0,10,0,2,0
+2026-07-25,Kono,Dworzark,1,1,0,60,24,1
+2026-07-20,Western Rural,Aberdeen,0,0,4,9,3,1
+2026-07-04,Bonthe,Kroo Bay,0,0,17,10,2,1
+2026-07-16,Bonthe,Kroo Bay,0,1,58,5,2,1
+2026-07-30,Kono,Aberdeen,0,1,54,8,5,1
+2026-07-15,Kenema,Susan's Bay,0,1,21,3,3,1
+2026-07-26,Port Loko,Kissy,1,1,37,98,31,1
+2026-07-19,Western Urban,Cline Town,1,1,29,35,24,1
+2026-07-06,Port Loko,Moyamba Junction,0,1,5,10,4,1
+2026-07-06,Bombali,Susan's Bay,0,0,14,7,1,0
+2026-07-02,Bo,Susan's Bay,0,0,0,0,0,1
+2026-07-26,Tonkolili,Waterloo,0,1,56,10,3,1
+2026-07-13,Western Urban,Dworzark,0,1,35,3,4,1
+2026-07-10,Port Loko,Moyamba Junction,0,1,41,4,3,1
+2026-07-20,Western Rural,Moyamba Junction,0,0,14,5,1,1
+2026-07-19,Western Rural,Calaba,0,1,18,4,3,1
+2026-07-14,Western Rural,Kroo Bay,1,1,34,93,48,1
+2026-07-30,Kambia,Calaba,0,0,4,10,2,0
+2026-07-08,Port Loko,Waterloo,1,1,14,89,6,1
+2026-07-13,Tonkolili,Waterloo,0,1,1,0,3,1
+2026-07-16,Western Rural,Dworzark,1,1,35,73,42,1
+2026-07-11,Bonthe,Cline Town,0,1,28,1,4,1
+2026-07-17,Bonthe,Waterloo,0,0,16,6,5,0
+2026-07-28,Western Urban,Dworzark,0,1,39,3,1,1
+2026-07-17,Port Loko,Regent,0,0,3,0,4,1
+2026-07-12,Port Loko,Aberdeen,0,0,14,6,2,1
+2026-07-09,Kenema,Kissy,0,0,5,3,3,0
+2026-07-04,Kenema,Susan's Bay,0,1,8,9,4,1
+2026-07-22,Bo,Mambolo,0,0,0,7,3,0
+2026-07-24,Western Urban,Mambolo,0,0,3,6,5,0
+2026-07-10,Western Rural,Cline Town,1,1,18,35,7,1
+2026-07-30,Bo,Susan's Bay,1,1,8,14,15,1
+2026-07-27,Bonthe,Regent,0,0,15,6,1,0
+2026-07-06,Western Urban,Kissy,0,0,17,7,3,0
+2026-07-08,Tonkolili,Cline Town,1,1,51,48,13,1
+2026-07-18,Tonkolili,Kissy,0,1,41,10,2,1
+2026-07-23,Port Loko,Dworzark,0,0,17,7,1,0
+2026-07-27,Kono,Moyamba Junction,1,1,31,99,19,1
+2026-07-10,Kenema,Tikonko,0,0,2,6,3,1
+2026-07-04,Bombali,Dworzark,0,0,15,7,1,0
+2026-07-30,Kambia,Cline Town,1,1,18,99,23,1
+2026-07-24,Kono,Susan's Bay,0,1,46,8,1,1
+2026-07-13,Bonthe,Regent,1,1,26,28,22,1
+2026-07-27,Bombali,Tikonko,1,1,33,22,22,1
+2026-07-08,Western Rural,Mambolo,0,0,17,2,2,0
+2026-07-09,Tonkolili,Tikonko,1,1,57,11,11,1
+2026-07-24,Tonkolili,Tikonko,0,1,11,1,2,1
+2026-07-02,Tonkolili,Cline Town,0,0,17,7,2,0
+2026-07-19,Tonkolili,Susan's Bay,0,1,0,0,3,1
+2026-07-15,Western Rural,Dworzark,0,1,53,4,5,1
+2026-07-01,Bonthe,Dworzark,0,0,16,9,5,0
+2026-07-02,Kono,Mambolo,0,0,5,10,4,1
+2026-07-22,Port Loko,Kissy,0,1,31,8,0,1
+2026-07-17,Kambia,Kissy,0,0,16,10,5,1
+2026-07-29,Port Loko,Moyamba Junction,0,1,33,5,1,1
+2026-07-21,Kenema,Waterloo,0,1,19,6,3,1
+2026-07-01,Western Urban,Aberdeen,0,0,18,0,4,0
+2026-07-08,Kono,Calaba,1,1,25,69,8,1
+2026-07-15,Bonthe,Moyamba Junction,0,0,4,9,4,1
+2026-07-14,Port Loko,Regent,1,1,0,116,29,1
+2026-07-30,Western Rural,Tikonko,1,1,31,83,17,1
+2026-07-22,Western Rural,Susan's Bay,0,0,14,6,3,0
+2026-07-08,Kambia,Regent,0,0,5,2,2,1
+2026-07-29,Bo,Cline Town,1,1,0,85,49,1
+2026-07-20,Bo,Mambolo,0,1,4,8,0,1
+2026-07-05,Tonkolili,Kroo Bay,1,1,27,37,35,1
+2026-07-05,Bonthe,Moyamba Junction,0,1,12,0,2,1
+2026-07-17,Western Urban,Kissy,0,1,51,3,3,1
+2026-07-25,Bo,Kroo Bay,0,1,39,8,2,1
+2026-07-03,Western Urban,Cline Town,0,0,19,0,5,0
+2026-07-19,Bo,Dworzark,0,0,4,0,5,0
+2026-07-28,Tonkolili,Tikonko,0,0,20,2,3,0
+2026-07-07,Tonkolili,Mambolo,0,1,58,0,3,1
+2026-07-01,Tonkolili,Kissy,0,0,4,5,5,0
+2026-07-15,Bonthe,Moyamba Junction,1,1,55,66,38,1
+2026-07-25,Port Loko,Calaba,1,1,20,74,6,1
+2026-07-17,Kambia,Dworzark,0,1,9,8,3,1
+2026-07-27,Kambia,Cline Town,1,1,45,79,40,1
+2026-07-06,Bo,Kroo Bay,0,1,39,0,1,1
+2026-07-12,Bombali,Susan's Bay,0,1,54,0,1,1
+2026-07-28,Tonkolili,Calaba,0,1,42,9,5,1
+2026-07-22,Kambia,Mambolo,1,1,48,32,15,1
+2026-07-27,Western Urban,Tikonko,0,1,52,9,0,1
+2026-07-23,Kono,Susan's Bay,0,1,35,2,1,1
+2026-07-24,Western Urban,Dworzark,0,0,16,2,3,1
+2026-07-11,Bombali,Waterloo,1,1,13,13,17,1
+2026-07-09,Bonthe,Cline Town,0,0,1,2,1,0
+2026-07-07,Kenema,Dworzark,1,1,35,50,42,1
+2026-07-21,Kono,Waterloo,0,1,26,3,0,1
+2026-07-01,Kambia,Waterloo,0,1,57,5,0,1
+2026-07-23,Western Urban,Tikonko,0,1,4,8,5,1
+2026-07-13,Kambia,Dworzark,0,0,1,8,1,1
+2026-07-12,Kenema,Regent,0,1,55,9,5,1
+2026-07-12,Bonthe,Moyamba Junction,0,1,32,8,2,1
+2026-07-23,Kambia,Mambolo,0,0,6,10,5,0
+2026-07-11,Bombali,Kissy,0,0,13,2,2,1
+2026-07-22,Bo,Mambolo,0,0,12,5,2,0
+2026-07-24,Port Loko,Kissy,0,0,8,7,2,1
+2026-07-08,Western Urban,Dworzark,1,1,27,66,35,1
+2026-07-27,Kono,Cline Town,0,0,9,3,2,0
+2026-07-16,Bombali,Aberdeen,0,0,7,1,3,0
+2026-07-24,Western Rural,Regent,0,1,47,2,4,1
+2026-07-27,Port Loko,Kissy,0,0,20,1,5,1
+2026-07-17,Kenema,Cline Town,0,1,3,8,4,1
+2026-07-04,Kenema,Tikonko,0,0,16,8,1,0
+2026-07-15,Kambia,Kissy,1,1,11,117,32,1
+2026-07-20,Western Urban,Kissy,0,0,6,7,5,1
+2026-07-17,Bombali,Cline Town,0,1,27,10,1,1
+2026-07-13,Kambia,Aberdeen,0,1,14,9,0,1
+2026-07-09,Bonthe,Calaba,0,1,56,9,5,1
+2026-07-12,Western Rural,Kissy,0,0,14,3,5,0
+2026-07-13,Bo,Regent,0,0,11,1,2,0
+2026-07-29,Kenema,Regent,0,0,8,4,4,1
+2026-07-01,Kono,Dworzark,0,0,15,8,3,0
+2026-07-06,Kono,Regent,1,1,35,85,33,1
+2026-07-20,Kenema,Cline Town,0,0,5,0,4,0
+2026-07-01,Kambia,Kroo Bay,1,1,59,83,8,1
+2026-07-29,Kambia,Moyamba Junction,0,0,0,2,4,0
+2026-07-19,Kambia,Calaba,0,1,38,9,2,1
+2026-07-27,Port Loko,Tikonko,0,0,0,5,5,0
+2026-07-21,Bombali,Mambolo,0,1,3,0,1,1
+2026-07-03,Kenema,Regent,1,1,19,89,48,1
+2026-07-17,Tonkolili,Kissy,0,0,4,7,4,0
+2026-07-01,Port Loko,Dworzark,0,1,40,1,1,1
+2026-07-23,Kenema,Kroo Bay,1,1,10,49,6,1
+2026-07-24,Western Rural,Kroo Bay,0,0,3,6,1,1
+2026-07-17,Bombali,Kroo Bay,1,1,31,59,33,1
+2026-07-06,Western Rural,Moyamba Junction,0,1,52,2,1,1
+2026-07-03,Kenema,Calaba,0,0,18,6,5,0
+2026-07-07,Port Loko,Calaba,0,0,11,7,3,0
+2026-07-11,Bombali,Susan's Bay,0,0,16,9,2,0
+2026-07-15,Tonkolili,Kroo Bay,0,1,41,5,0,1
+2026-07-18,Kambia,Moyamba Junction,1,1,29,120,37,1
+2026-07-19,Bo,Susan's Bay,0,0,12,5,2,1
+2026-07-27,Bombali,Aberdeen,0,1,6,2,4,1
+2026-07-16,Bombali,Cline Town,0,0,17,10,5,1
+2026-07-22,Port Loko,Kissy,1,1,39,56,11,1
+2026-07-15,Western Urban,Dworzark,0,0,7,8,2,0
+2026-07-11,Western Urban,Tikonko,0,1,9,10,4,1
+2026-07-20,Bonthe,Waterloo,0,1,10,5,5,1
+2026-07-30,Western Urban,Mambolo,1,1,18,14,29,1
+2026-07-30,Bombali,Calaba,1,1,9,37,33,1
+2026-07-10,Port Loko,Kissy,0,0,3,4,1,0
+2026-07-07,Kenema,Cline Town,0,0,9,2,3,0
+2026-07-19,Port Loko,Mambolo,1,1,4,109,44,1
+2026-07-19,Kambia,Moyamba Junction,1,1,36,118,47,1
+2026-07-01,Bonthe,Mambolo,0,1,60,3,5,1
+2026-07-25,Bombali,Kissy,0,0,17,6,3,1
+2026-07-08,Kenema,Regent,0,1,19,3,0,1
+2026-07-23,Kono,Kissy,0,0,5,10,4,0
+2026-07-15,Western Urban,Cline Town,0,0,20,10,2,0
+2026-07-16,Bonthe,Moyamba Junction,0,1,24,0,5,1
+2026-07-01,Bombali,Calaba,0,0,6,6,5,0
+2026-07-01,Port Loko,Waterloo,0,1,17,2,4,1
+2026-07-29,Port Loko,Mambolo,0,0,4,3,0,1
+2026-07-26,Tonkolili,Calaba,0,0,4,0,3,0
+2026-07-24,Western Rural,Kroo Bay,0,1,27,8,3,1
+2026-07-15,Bo,Mambolo,0,0,16,2,4,1
+2026-07-08,Tonkolili,Kissy,0,0,16,4,0,0
+2026-07-15,Kambia,Susan's Bay,0,0,3,7,2,0
+2026-07-16,Kono,Waterloo,0,0,7,9,1,1
+2026-07-12,Tonkolili,Moyamba Junction,1,1,2,101,41,1
+2026-07-16,Bo,Susan's Bay,0,1,3,7,0,1
+2026-07-30,Tonkolili,Kissy,1,1,44,41,41,1
+2026-07-24,Kono,Kissy,0,0,6,0,3,1
+2026-07-25,Bonthe,Kissy,0,1,32,3,4,1
+2026-07-13,Bo,Kroo Bay,1,1,10,65,15,1
+2026-07-07,Bombali,Regent,0,0,0,9,5,1
+2026-07-26,Kambia,Kroo Bay,0,0,10,3,3,0
+2026-07-19,Western Rural,Mambolo,1,1,37,92,13,1
+2026-07-19,Western Rural,Kissy,0,0,0,9,5,0
+2026-07-26,Western Rural,Kissy,0,0,20,2,0,1
+2026-07-19,Western Urban,Moyamba Junction,0,0,14,4,4,0
+2026-07-19,Port Loko,Tikonko,1,1,18,35,12,1
+2026-07-06,Western Rural,Waterloo,0,0,2,7,3,0
+2026-07-26,Bo,Susan's Bay,0,0,18,10,5,1
+2026-07-30,Bonthe,Moyamba Junction,0,1,47,4,0,1
+2026-07-17,Port Loko,Cline Town,0,0,5,8,5,1
+2026-07-28,Kenema,Susan's Bay,0,0,6,3,3,0
+2026-07-22,Bo,Moyamba Junction,0,0,4,4,3,0
+2026-07-23,Kono,Calaba,0,1,30,4,5,1
+2026-07-05,Kambia,Cline Town,1,1,54,87,12,1
+2026-07-02,Tonkolili,Aberdeen,1,1,51,65,22,1
+2026-07-03,Western Urban,Dworzark,0,1,15,5,4,1
+2026-07-08,Bo,Regent,1,1,31,71,46,1
+2026-07-17,Tonkolili,Kroo Bay,1,1,23,80,42,1
+2026-07-16,Kambia,Aberdeen,0,0,10,10,3,1
+2026-07-09,Tonkolili,Waterloo,1,1,59,57,18,1
+2026-07-15,Kenema,Susan's Bay,0,1,19,5,5,1
+2026-07-07,Western Urban,Moyamba Junction,0,0,7,9,1,0
+2026-07-16,Bo,Regent,0,1,36,8,0,1
+2026-07-25,Bo,Susan's Bay,0,0,5,8,0,0
+2026-07-28,Tonkolili,Waterloo,1,1,48,34,38,1
+2026-07-25,Western Urban,Moyamba Junction,1,1,8,86,37,1
+2026-07-19,Kambia,Cline Town,0,1,18,6,1,1
+2026-07-21,Kambia,Waterloo,1,1,4,78,42,1
+2026-07-11,Kenema,Dworzark,0,1,37,6,4,1
+2026-07-13,Kenema,Moyamba Junction,1,1,5,114,10,1
+2026-07-12,Western Rural,Tikonko,1,1,10,47,10,1
+2026-07-19,Bo,Dworzark,1,1,1,34,24,1
+2026-07-10,Tonkolili,Aberdeen,0,1,2,1,5,1
+2026-07-13,Western Rural,Kroo Bay,1,1,35,15,9,1
+2026-07-17,Bo,Waterloo,1,1,28,54,19,1
+2026-07-27,Bo,Cline Town,0,0,16,10,1,1
+2026-07-10,Western Rural,Calaba,0,0,10,10,1,0
+2026-07-27,Kono,Moyamba Junction,0,1,45,3,0,1
+2026-07-21,Bonthe,Kroo Bay,0,1,31,9,4,1
+2026-07-24,Western Urban,Aberdeen,0,0,5,5,0,0
+2026-07-20,Bo,Tikonko,0,0,5,4,1,1
+2026-07-02,Kono,Dworzark,1,1,54,101,47,1
+2026-07-15,Kono,Kissy,0,0,11,0,2,0
+2026-07-23,Kambia,Kroo Bay,0,0,14,0,3,0
+2026-07-08,Port Loko,Kroo Bay,0,1,7,4,4,1
+2026-07-10,Kono,Waterloo,0,0,8,8,4,0
+2026-07-21,Bo,Moyamba Junction,0,1,7,5,3,1
+2026-07-16,Bonthe,Aberdeen,0,1,55,0,3,1
+2026-07-29,Kambia,Aberdeen,0,1,43,4,3,1
+2026-07-14,Bo,Aberdeen,1,1,46,114,35,1
+2026-07-25,Kono,Susan's Bay,0,1,28,8,0,1
+2026-07-02,Kambia,Cline Town,1,1,23,16,36,1
+2026-07-20,Kono,Mambolo,0,0,20,5,1,0
+2026-07-01,Port Loko,Dworzark,0,0,6,0,4,1
+2026-07-20,Kono,Aberdeen,0,1,57,2,3,1
+2026-07-07,Western Urban,Moyamba Junction,0,0,8,0,1,0
+2026-07-19,Bo,Calaba,0,1,0,10,4,1
+2026-07-01,Bonthe,Kissy,0,1,3,10,3,1
+2026-07-13,Bombali,Mambolo,1,1,38,49,15,1
+2026-07-03,Bo,Dworzark,0,0,19,8,2,0
+2026-07-14,Kambia,Susan's Bay,0,0,9,6,5,0
+2026-07-11,Tonkolili,Regent,0,1,39,3,5,1
+2026-07-01,Kono,Tikonko,0,1,3,8,3,1
+2026-07-10,Bo,Aberdeen,1,1,39,22,17,1
+2026-07-11,Western Urban,Tikonko,0,1,26,9,1,1
+2026-07-05,Western Urban,Tikonko,0,0,0,5,1,0
+2026-07-14,Bombali,Aberdeen,0,0,2,4,3,1
+2026-07-09,Port Loko,Regent,1,1,1,32,45,1
+2026-07-05,Bonthe,Calaba,0,1,9,6,2,1
+2026-07-04,Bombali,Susan's Bay,0,0,8,9,0,1
+2026-07-23,Western Urban,Cline Town,0,0,8,10,0,1
+2026-07-30,Western Rural,Kissy,0,1,34,1,1,1
+2026-07-25,Tonkolili,Tikonko,0,1,14,9,5,1
+2026-07-07,Western Rural,Susan's Bay,0,1,18,3,4,1
+2026-07-11,Port Loko,Moyamba Junction,0,1,53,9,2,1
+2026-07-11,Port Loko,Kroo Bay,0,1,51,4,5,1
+2026-07-08,Kono,Susan's Bay,1,1,56,65,16,1
+2026-07-10,Western Rural,Regent,1,1,10,79,5,1
+2026-07-07,Bo,Cline Town,0,0,1,1,3,0
+2026-07-21,Bombali,Susan's Bay,0,1,23,7,4,1
+2026-07-22,Bo,Kissy,0,0,13,9,3,1
+2026-07-03,Tonkolili,Kissy,0,1,22,6,2,1
+2026-07-29,Tonkolili,Calaba,0,1,2,10,0,1
+2026-07-06,Tonkolili,Cline Town,0,0,2,0,0,0
+2026-07-30,Kambia,Moyamba Junction,1,1,36,23,21,1
+2026-07-13,Kenema,Calaba,0,0,11,10,5,1
+2026-07-19,Western Rural,Kissy,0,0,17,3,0,1
+2026-07-23,Bombali,Tikonko,1,1,13,95,47,1
+2026-07-27,Bombali,Kroo Bay,0,1,50,5,3,1
+2026-07-02,Western Urban,Waterloo,0,0,6,5,5,0
+2026-07-03,Tonkolili,Calaba,0,1,29,7,0,1
+2026-07-23,Bo,Waterloo,0,1,16,5,5,1
+2026-07-20,Kenema,Dworzark,0,1,37,1,3,1
+2026-07-14,Kambia,Kissy,0,1,20,0,4,1
+2026-07-01,Western Urban,Aberdeen,1,1,33,73,28,1
+2026-07-11,Kambia,Regent,0,0,10,0,4,0
+2026-07-11,Western Rural,Susan's Bay,0,1,16,9,1,1
+2026-07-28,Western Urban,Tikonko,0,1,54,4,3,1
+2026-07-09,Kambia,Kissy,1,1,19,117,47,1
+2026-07-30,Bonthe,Moyamba Junction,0,0,11,3,4,1
+2026-07-26,Tonkolili,Tikonko,0,1,47,10,0,1
+2026-07-13,Bombali,Susan's Bay,0,1,7,2,4,1
+2026-07-15,Kambia,Calaba,0,1,14,10,5,1
+2026-07-19,Western Rural,Cline Town,0,0,1,0,4,1
+2026-07-10,Bo,Aberdeen,1,1,46,48,9,1
+2026-07-05,Tonkolili,Kroo Bay,1,1,22,14,43,1
+2026-07-11,Kono,Calaba,0,0,18,2,0,0
+2026-07-14,Kenema,Waterloo,1,1,3,28,47,1
+2026-07-13,Tonkolili,Aberdeen,0,0,11,3,1,0
+2026-07-27,Kambia,Regent,1,1,37,84,50,1
+2026-07-16,Kambia,Kroo Bay,1,1,51,35,46,1
+2026-07-08,Kenema,Susan's Bay,0,0,1,6,3,0
+2026-07-19,Bombali,Moyamba Junction,0,0,9,4,3,0
+2026-07-19,Bombali,Aberdeen,0,1,20,3,5,1
+2026-07-07,Bonthe,Regent,0,0,17,0,0,0
+2026-07-01,Port Loko,Moyamba Junction,0,0,6,4,1,0
+2026-07-21,Western Rural,Waterloo,1,1,32,115,43,1
+2026-07-12,Western Rural,Mambolo,0,1,48,0,3,1
+2026-07-17,Kono,Dworzark,0,0,15,2,3,1
+2026-07-21,Tonkolili,Mambolo,1,1,16,116,43,1
+2026-07-27,Kenema,Kissy,1,1,19,67,16,1
+2026-07-15,Western Urban,Regent,0,0,10,3,5,0
+2026-07-08,Kenema,Cline Town,0,0,9,7,1,0
+2026-07-06,Western Urban,Susan's Bay,0,0,3,10,3,0
+2026-07-18,Western Rural,Aberdeen,0,0,14,2,0,0
+2026-07-12,Western Urban,Kroo Bay,0,0,13,4,2,0
+2026-07-22,Western Urban,Aberdeen,0,0,9,8,4,0
+2026-07-17,Port Loko,Kroo Bay,0,0,0,4,4,0
+2026-07-05,Western Urban,Regent,0,1,24,3,5,1
+2026-07-09,Bonthe,Mambolo,1,1,4,92,25,1
+2026-07-27,Bombali,Moyamba Junction,0,1,54,7,0,1
+2026-07-29,Kambia,Moyamba Junction,0,0,9,2,4,0
+2026-07-25,Bo,Kroo Bay,0,1,42,8,1,1
+2026-07-24,Kambia,Tikonko,0,1,21,9,4,1
+2026-07-29,Kambia,Calaba,1,1,26,68,44,1
+2026-07-29,Tonkolili,Regent,0,1,23,1,0,1
+2026-07-20,Bonthe,Aberdeen,0,0,19,0,0,0
+2026-07-18,Western Rural,Mambolo,1,1,32,55,47,1
+2026-07-07,Kenema,Regent,0,0,16,2,1,0
+2026-07-21,Port Loko,Kissy,0,1,58,5,5,1
+2026-07-21,Tonkolili,Dworzark,1,1,25,91,14,1
+2026-07-18,Western Urban,Moyamba Junction,0,0,0,10,2,0
+2026-07-30,Port Loko,Susan's Bay,0,0,0,1,0,0
+2026-07-22,Kenema,Waterloo,0,1,59,10,5,1
+2026-07-03,Port Loko,Kissy,0,1,7,3,2,1
+2026-07-10,Bonthe,Cline Town,0,0,1,5,2,1
+2026-07-03,Tonkolili,Kroo Bay,0,0,16,3,3,0
+2026-07-10,Kambia,Moyamba Junction,0,0,5,3,2,1
+2026-07-03,Western Urban,Tikonko,0,0,5,5,4,0
+2026-07-25,Bonthe,Calaba,0,1,47,2,3,1
+2026-07-08,Bonthe,Waterloo,0,0,5,9,0,1
+2026-07-17,Western Urban,Waterloo,0,0,2,3,4,0
+2026-07-20,Kenema,Dworzark,0,1,52,0,3,1
+2026-07-09,Tonkolili,Calaba,0,1,45,0,0,1
+2026-07-30,Bombali,Aberdeen,0,1,40,10,5,1
+2026-07-15,Western Urban,Kissy,0,0,8,10,0,0
+2026-07-17,Bombali,Susan's Bay,0,0,16,2,3,1
+2026-07-18,Kono,Waterloo,0,0,3,6,1,1
+2026-07-20,Bo,Dworzark,0,0,16,7,1,1
+2026-07-30,Bonthe,Cline Town,0,1,4,9,1,1
+2026-07-09,Kambia,Cline Town,0,1,13,9,1,1
+2026-07-01,Port Loko,Tikonko,1,1,57,89,5,1
+2026-07-29,Kenema,Waterloo,0,1,19,7,4,1
+2026-07-29,Western Urban,Calaba,0,0,14,8,0,0
+2026-07-14,Bombali,Kissy,1,1,1,74,14,1
+2026-07-02,Western Urban,Tikonko,1,1,51,33,42,1
+2026-07-18,Western Urban,Tikonko,0,1,60,8,1,1
+2026-07-16,Bo,Tikonko,0,1,8,6,2,1
+2026-07-25,Port Loko,Kissy,1,1,45,116,18,1
+2026-07-11,Western Rural,Kissy,0,1,50,9,2,1
+2026-07-03,Kenema,Tikonko,1,1,1,43,27,1
+2026-07-26,Port Loko,Waterloo,0,1,30,5,2,1
+2026-07-25,Tonkolili,Dworzark,1,1,56,21,6,1
+2026-07-04,Kono,Calaba,1,1,58,20,19,1
+2026-07-27,Tonkolili,Calaba,0,1,37,0,5,1
+2026-07-15,Port Loko,Kroo Bay,0,0,7,1,0,0
+2026-07-19,Bombali,Tikonko,1,1,50,116,18,1
+2026-07-18,Kambia,Dworzark,0,1,16,3,2,1
+2026-07-01,Bombali,Regent,0,0,10,10,2,0
+2026-07-17,Kenema,Kroo Bay,0,0,3,1,0,1
+2026-07-26,Kono,Regent,0,0,3,5,5,0
+2026-07-04,Kambia,Cline Town,0,0,4,7,3,0
+2026-07-23,Western Urban,Susan's Bay,0,1,44,4,1,1
+2026-07-27,Kenema,Cline Town,1,1,12,116,16,1
+2026-07-08,Bonthe,Tikonko,0,0,4,6,1,0
+2026-07-05,Bombali,Calaba,0,1,58,3,0,1
+2026-07-08,Kenema,Regent,0,1,56,3,3,1
+2026-07-29,Bombali,Calaba,1,1,6,77,25,1
+2026-07-28,Kono,Waterloo,1,1,33,112,24,1
+2026-07-07,Western Rural,Regent,0,0,19,8,3,0
+2026-07-05,Western Rural,Regent,0,1,39,3,5,1
+2026-07-29,Tonkolili,Regent,0,0,15,3,1,1
+2026-07-28,Port Loko,Calaba,0,1,57,3,1,1
+2026-07-08,Kenema,Regent,0,1,19,8,2,1
+2026-07-29,Bonthe,Susan's Bay,0,0,5,1,3,1
+2026-07-18,Kambia,Regent,1,1,40,100,23,1
+2026-07-17,Tonkolili,Moyamba Junction,0,0,9,1,1,0
+2026-07-28,Bo,Cline Town,0,0,2,1,1,0
+2026-07-16,Bombali,Regent,0,1,43,5,2,1
+2026-07-30,Kono,Calaba,0,1,12,2,5,1
+2026-07-06,Kambia,Dworzark,0,0,10,9,2,0
+2026-07-28,Port Loko,Tikonko,1,1,39,24,27,1
+2026-07-12,Kono,Regent,0,1,15,4,3,1
+2026-07-20,Port Loko,Cline Town,1,1,33,44,36,1
+2026-07-13,Kenema,Tikonko,0,0,9,3,0,0
+2026-07-23,Kono,Aberdeen,0,0,19,7,3,0
+2026-07-17,Tonkolili,Tikonko,0,0,1,5,4,0
+2026-07-12,Kono,Mambolo,0,1,0,5,5,1
+2026-07-07,Kambia,Aberdeen,0,1,12,10,3,1
+2026-07-26,Bo,Dworzark,0,0,11,8,0,0
+2026-07-13,Bo,Mambolo,0,1,8,9,0,1
+2026-07-04,Western Rural,Waterloo,1,1,6,46,18,1
+2026-07-27,Tonkolili,Regent,1,1,8,38,22,1
+2026-07-14,Western Urban,Waterloo,0,1,16,10,3,1
+2026-07-28,Bo,Kissy,1,1,29,109,43,1
+2026-07-05,Western Urban,Cline Town,1,1,52,55,38,1

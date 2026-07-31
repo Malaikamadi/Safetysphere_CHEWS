@@ -1,0 +1,41 @@
+{
+  "model_name": "healthcare_readiness",
+  "version": "v1",
+  "model_type": "RandomForestRegressor",
+  "task": "Regression — predicts composite facility readiness score (0–1)",
+  "trained_at": "2026-06-25T12:57:33Z",
+  "training_data": {
+    "source": "01_raw/master_facility_list/mfl_readiness_chews_v1.csv",
+    "rows": 100,
+    "split": "80/20 random",
+    "random_state": 42
+  },
+  "features": {
+    "count": 11,
+    "list": [
+      "beds_available", "health_workers", "malaria_medicine_stock",
+      "power_availability", "water_availability", "patient_load",
+      "district_encoded", "facility_type_encoded",
+      "resource_ratio", "infrastructure_score", "capacity_utilization"
+    ],
+    "top_3_drivers": [
+      {"feature": "beds_available", "importance": 0.2643},
+      {"feature": "infrastructure_score", "importance": 0.2127},
+      {"feature": "health_workers", "importance": 0.2070}
+    ]
+  },
+  "metrics": {
+    "mae": 0.0373,
+    "rmse": 0.0484,
+    "r2": 0.8811
+  },
+  "known_limitations": [
+    "Only 100 training samples — prone to overfitting",
+    "Readiness score target was pre-computed, not derived from independent outcome data",
+    "Does not account for supply chain seasonality or stockout frequency",
+    "Trained on synthetic data — must be recalibrated with real MFL data"
+  ],
+  "intended_use": "Predicting facility readiness to identify under-resourced facilities for intervention prioritization.",
+  "review_status": "Pre-production — pending validation with real data",
+  "artifact_path": "04_ai/models/healthcare_readiness_v1_20260731.joblib"
+}

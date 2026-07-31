@@ -1,0 +1,52 @@
+{
+  "flood": [
+    "rainfall_mm_24h",
+    "temperature_c",
+    "humidity_percent",
+    "elevation_m",
+    "water_level_m",
+    "drainage_encoded",
+    "soil_saturation",
+    "community_reports",
+    "rain_x_saturation",
+    "rain_x_drainage",
+    "low_elevation_flag"
+  ],
+  "malaria": [
+    "rainfall_mm",
+    "temperature_c",
+    "humidity_percent",
+    "water_stagnation_index",
+    "mosquito_breeding_sites",
+    "reported_fever_cases",
+    "population_density",
+    "district_encoded",
+    "rain_x_stagnation",
+    "temp_humidity_index",
+    "breeding_density"
+  ],
+  "community": [
+    "standing_water",
+    "fever_reports",
+    "damaged_houses",
+    "displaced_households",
+    "water_contamination",
+    "district_encoded",
+    "community_encoded",
+    "damage_displacement_index",
+    "total_impact"
+  ],
+  "healthcare": [
+    "beds_available",
+    "health_workers",
+    "malaria_medicine_stock",
+    "power_availability",
+    "water_availability",
+    "patient_load",
+    "district_encoded",
+    "facility_type_encoded",
+    "resource_ratio",
+    "infrastructure_score",
+    "capacity_utilization"
+  ]
+}

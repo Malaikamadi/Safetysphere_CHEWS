@@ -1,0 +1,9 @@
+facility_type_code,facility_type_name,chews_tier,tier_description,typical_beds,typical_staff
+MCHP,Maternal and Child Health Post,1,Community-level primary care,0,1-2
+CHP,Community Health Post,2,Community health post with basic services,0-5,2-4
+CHC,Community Health Centre,3,Sub-district referral with inpatient,10-50,5-25
+DH,District Hospital,4,District-level referral hospital,50-200,25-100
+RH,Regional Hospital,5,Regional referral hospital,100-400,50-200
+TH,Tertiary Hospital,6,National referral / teaching hospital,200-800,100-500
+PH,Private Hospital,4,Private sector hospital,10-200,10-100
+PC,Private Clinic,2,Private sector outpatient clinic,0-10,2-10

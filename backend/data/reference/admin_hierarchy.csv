@@ -1,0 +1,17 @@
+district_id,district_name,region,centroid_lat,centroid_lng,rainy_season_start_month,rainy_season_end_month,typical_aug_rainfall_mm
+western_area_urban,Western Area Urban,Western,8.4844,-13.2299,5,10,894
+western_area_rural,Western Area Rural,Western,8.3870,-13.0930,5,10,760
+bo,Bo,Southern,7.9647,-11.7383,5,10,540
+pujehun,Pujehun,Southern,7.3500,-11.7164,5,10,620
+bonthe,Bonthe,Southern,7.5269,-12.5025,5,10,700
+kenema,Kenema,Eastern,7.8767,-11.1903,5,10,470
+port_loko,Port Loko,Northern,8.6044,-13.1956,5,10,690
+kambia,Kambia,Northern,9.1208,-12.9181,5,10,720
+tonkolili,Tonkolili,Northern,8.7203,-11.9442,5,10,480
+moyamba,Moyamba,Southern,8.1571,-12.4322,5,10,590
+bombali,Bombali,Northern,9.0500,-12.2900,5,10,520
+kailahun,Kailahun,Eastern,8.2833,-10.5667,5,10,450
+kono,Kono,Eastern,8.6500,-10.9500,5,10,440
+koinadugu,Koinadugu,Northern,9.5000,-11.3333,5,10,410
+falaba,Falaba,Northern,9.8500,-11.3200,5,10,390
+karene,Karene,Northern,9.1800,-12.2900,5,10,500

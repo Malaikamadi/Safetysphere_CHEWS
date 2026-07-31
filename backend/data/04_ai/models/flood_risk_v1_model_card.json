@@ -1,0 +1,43 @@
+{
+  "model_name": "flood_risk",
+  "version": "v1",
+  "model_type": "GradientBoostingClassifier",
+  "task": "Binary classification — predicts whether a flood event will occur",
+  "trained_at": "2026-06-25T12:57:33Z",
+  "training_data": {
+    "source": "01_raw/climate/chews_flood_features_v1.csv",
+    "rows": 300,
+    "split": "80/20 stratified",
+    "random_state": 42
+  },
+  "features": {
+    "count": 11,
+    "list": [
+      "rainfall_mm_24h", "temperature_c", "humidity_percent",
+      "elevation_m", "water_level_m", "drainage_encoded",
+      "soil_saturation", "community_reports",
+      "rain_x_saturation", "rain_x_drainage", "low_elevation_flag"
+    ],
+    "top_3_drivers": [
+      {"feature": "rainfall_mm_24h", "importance": 0.4367},
+      {"feature": "humidity_percent", "importance": 0.3726},
+      {"feature": "elevation_m", "importance": 0.1024}
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.9667,
+    "precision": 1.0,
+    "recall": 0.8947,
+    "f1": 0.9444,
+    "roc_auc": 0.991
+  },
+  "known_limitations": [
+    "Trained on synthetic data — not yet validated against real DHIS2/NDMA flood records",
+    "No temporal component — treats each observation independently",
+    "Community reports feature has zero importance — may indicate data quality issue",
+    "Perfect precision suggests potential overfitting on small dataset"
+  ],
+  "intended_use": "Decision support for flood early warnings in Sierra Leone. Not a substitute for hydrological expertise.",
+  "review_status": "Pre-production — pending validation with real data",
+  "artifact_path": "04_ai/models/flood_risk_v1_20260731.joblib"
+}
