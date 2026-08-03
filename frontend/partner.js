@@ -32,6 +32,14 @@ const VIEW_METADATA = {
   data: {
     title: "Anonymized Data & Research Hub",
     sub: "Explore open datasets, query risk indicators, and access the REST API"
+  },
+  forecasts: {
+    title: "Climate-Health Forecasts",
+    sub: "7-day multi-hazard risk predictions, rainfall outlooks, and temperature trends"
+  },
+  downloads: {
+    title: "Data Downloads & Exports",
+    sub: "Datasets, model outputs, partner reports, GIS files, and API access"
   }
 };
 
@@ -64,6 +72,9 @@ function switchView(targetView) {
     if (targetView === "map") {
       if (!partnerFullMap) initPartnerFullMap();
       else partnerFullMap.invalidateSize();
+    }
+    if (targetView === "forecasts" && !forecastChartsDrawn) {
+      drawPartnerForecastCharts();
     }
   }, 100);
 }
@@ -280,6 +291,170 @@ function initImpactTabs() {
       `).join("");
     });
   });
+}
+
+// ==================== Forecast Charts ====================
+let forecastChartsDrawn = false;
+
+function drawPartnerForecastCharts() {
+  drawRainfallChart();
+  drawTempChart();
+  forecastChartsDrawn = true;
+}
+
+function drawRainfallChart() {
+  const canvas = document.getElementById("p-rainfall-chart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = 220 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '220px';
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 220;
+  const padL = 50, padR = 20, padT = 20, padB = 35;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const koinadugu = [168, 145, 120, 98, 85, 72, 60];
+  const bombali = [142, 130, 115, 105, 88, 70, 55];
+  const portLoko = [115, 100, 92, 80, 65, 55, 48];
+  const maxVal = 180;
+
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface-1').trim() || '#0f1729';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxVal - (maxVal / 4) * i) + 'mm', padL - 8, y + 4);
+  }
+
+  function drawLine(data, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    data.forEach((val, i) => {
+      const x = padL + (chartW / (data.length - 1)) * i;
+      const y = padT + chartH * (1 - val / maxVal);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    data.forEach((val, i) => {
+      const x = padL + (chartW / (data.length - 1)) * i;
+      const y = padT + chartH * (1 - val / maxVal);
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.strokeStyle = '#0f1729'; ctx.lineWidth = 2; ctx.stroke();
+    });
+  }
+
+  drawLine(koinadugu, '#ef4444');
+  drawLine(bombali, '#f97316');
+  drawLine(portLoko, '#facc15');
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  days.forEach((d, i) => {
+    ctx.fillText(d, padL + (chartW / (days.length - 1)) * i, H - 8);
+  });
+
+  // Legend
+  [['Koinadugu','#ef4444'],['Bombali','#f97316'],['Port Loko','#facc15']].forEach(([label, color], i) => {
+    const lx = padL + 10 + i * 100;
+    ctx.fillStyle = color;
+    ctx.fillRect(lx, padT + 2, 10, 10);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, lx + 14, padT + 11);
+  });
+}
+
+function drawTempChart() {
+  const canvas = document.getElementById("p-temp-chart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = 220 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '220px';
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 220;
+  const padL = 50, padR = 20, padT = 20, padB = 35;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const temp = [31, 32, 34, 33, 35, 36, 34];
+  const humidity = [85, 82, 78, 80, 75, 72, 76];
+
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface-1').trim() || '#0f1729';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(40 - (40 / 4) * i), padL - 8, y + 4);
+  }
+
+  // Temp line
+  ctx.strokeStyle = '#f97316';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  temp.forEach((val, i) => {
+    const x = padL + (chartW / (temp.length - 1)) * i;
+    const y = padT + chartH * (1 - val / 40);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  temp.forEach((val, i) => {
+    const x = padL + (chartW / (temp.length - 1)) * i;
+    const y = padT + chartH * (1 - val / 40);
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#f97316'; ctx.fill();
+    ctx.strokeStyle = '#0f1729'; ctx.lineWidth = 2; ctx.stroke();
+  });
+
+  // Humidity bars
+  const barW = chartW / days.length * 0.5;
+  humidity.forEach((val, i) => {
+    const x = padL + (chartW / (humidity.length - 1)) * i - barW / 2;
+    const barH = chartH * (val / 100);
+    const y = padT + chartH - barH;
+    ctx.fillStyle = 'rgba(56,189,248,0.2)';
+    ctx.fillRect(x, y, barW, barH);
+  });
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  days.forEach((d, i) => {
+    ctx.fillText(d, padL + (chartW / (days.length - 1)) * i, H - 8);
+  });
+
+  // Legend
+  ctx.fillStyle = '#f97316'; ctx.fillRect(padL + 10, padT + 2, 10, 10);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.textAlign = 'left';
+  ctx.fillText('Temperature (°C)', padL + 24, padT + 11);
+  ctx.fillStyle = 'rgba(56,189,248,0.4)'; ctx.fillRect(padL + 140, padT + 2, 10, 10);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillText('Humidity (%)', padL + 154, padT + 11);
 }
 
 // ==================== Page Init ====================

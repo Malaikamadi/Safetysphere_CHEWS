@@ -98,12 +98,12 @@ const SIDEBAR_CONFIG = {
     { label: 'Profile', icon: 'user', url: 'chw.html#profile' }
   ],
   partner: [
-    { label: 'National Dashboard', icon: 'crosshair', url: 'partner.html' },
-    { label: 'Maps', icon: 'map', url: 'partner.html#maps' },
-    { label: 'Forecasts', icon: 'trending-up', url: 'partner.html#forecasts' },
-    { label: 'Impact Metrics', icon: 'pie-chart', url: 'partner.html#metrics' },
-    { label: 'Reports', icon: 'file-text', url: 'partner.html#reports' },
-    { label: 'Downloads', icon: 'download', url: 'partner.html#downloads' }
+    { label: 'National Dashboard', icon: 'crosshair', url: 'partner.html', view: 'impact' },
+    { label: 'Maps', icon: 'map', url: 'partner.html', view: 'map' },
+    { label: 'Forecasts', icon: 'trending-up', url: 'partner.html', view: 'forecasts' },
+    { label: 'Impact Metrics', icon: 'pie-chart', url: 'partner.html', view: 'mne' },
+    { label: 'Reports', icon: 'file-text', url: 'partner.html', view: 'reports' },
+    { label: 'Downloads', icon: 'download', url: 'partner.html', view: 'downloads' }
   ]
 };
 
@@ -180,9 +180,10 @@ function renderSidebar() {
     } else {
       // Standalone link
       const isActive = currentPath.includes(item.url.split('#')[0]);
+      const viewAttr = item.view ? ` data-view="${item.view}"` : '';
       navHtml += `
         <div class="nav-section">
-          <a href="${item.url}" class="nav-link ${isActive ? 'is-active' : ''}">
+          <a href="${item.url}"${viewAttr} class="nav-link ${isActive ? 'is-active' : ''}">
             <span class="nav-link__icon"><i data-lucide="${item.icon}"></i></span> ${item.label}
           </a>
         </div>

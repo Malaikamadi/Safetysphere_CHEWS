@@ -501,6 +501,359 @@
         </div>
       </div>
 
+      <!-- ═══════════ VIEW 7: FORECASTS ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-forecasts">
+
+        <!-- Forecast KPI Strip -->
+        <div class="p-kpi-strip fade-in">
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="cloud-rain"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Active Flood Forecasts</div>
+              <div class="p-kpi-card__value" style="color:var(--danger)">4</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +2 this week</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="bug"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Malaria Surge Predictions</div>
+              <div class="p-kpi-card__value" style="color:var(--warning)">6</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +1 district</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="thermometer"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Heatwave Advisories</div>
+              <div class="p-kpi-card__value">2</div>
+              <div class="p-kpi-card__trend"><i data-lucide="minus"></i> Stable</div>
+            </div>
+          </div>
+          <div class="p-kpi-card">
+            <div class="p-kpi-card__icon"><i data-lucide="target"></i></div>
+            <div class="p-kpi-card__body">
+              <div class="p-kpi-card__label">Forecast Accuracy (30-day)</div>
+              <div class="p-kpi-card__value" style="color:var(--accent)">81%</div>
+              <div class="p-kpi-card__trend p-kpi-card__trend--up"><i data-lucide="trending-up"></i> +5%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7-Day Hazard Forecast Table -->
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="calendar"></i> 7-Day Multi-Hazard Forecast by District</h2>
+          </div>
+          <div style="padding:1rem;overflow-x:auto">
+            <table class="na-district-table" id="p-forecast-table">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>Today</th>
+                  <th>+1 Day</th>
+                  <th>+2 Days</th>
+                  <th>+3 Days</th>
+                  <th>+5 Days</th>
+                  <th>+7 Days</th>
+                  <th>Primary Hazard</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Koinadugu</strong></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.82</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.85</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.88</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.84</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.72</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.65</span></td>
+                  <td>Flood + Malaria</td>
+                </tr>
+                <tr>
+                  <td><strong>Bombali</strong></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.76</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.79</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.81</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.74</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.68</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.62</span></td>
+                  <td>Flood</td>
+                </tr>
+                <tr>
+                  <td><strong>Port Loko</strong></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.72</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.70</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.68</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.65</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.58</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.52</span></td>
+                  <td>Malaria</td>
+                </tr>
+                <tr>
+                  <td><strong>Kenema</strong></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.68</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.71</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.75</span></td>
+                  <td><span class="na-district-badge na-district-badge--high">0.78</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.70</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.63</span></td>
+                  <td>Malaria + Heat</td>
+                </tr>
+                <tr>
+                  <td><strong>Bo</strong></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.65</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.63</span></td>
+                  <td><span class="na-district-badge na-district-badge--med">0.61</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.55</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.48</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.42</span></td>
+                  <td>Malaria</td>
+                </tr>
+                <tr>
+                  <td><strong>W. Area Urban</strong></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.42</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.44</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.46</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.50</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.48</span></td>
+                  <td><span class="na-district-badge na-district-badge--low">0.40</span></td>
+                  <td>Air Quality</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Forecast Charts Row -->
+        <div class="na-bottom-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.25rem;">
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="cloud-rain"></i> Rainfall Forecast (7 Days)</h2>
+            </div>
+            <div style="padding:1rem">
+              <canvas id="p-rainfall-chart" style="width:100%;height:220px"></canvas>
+            </div>
+          </div>
+
+          <div class="na-panel">
+            <div class="na-panel-header">
+              <h2><i data-lucide="thermometer"></i> Temperature & Humidity Outlook</h2>
+            </div>
+            <div style="padding:1rem">
+              <canvas id="p-temp-chart" style="width:100%;height:220px"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Forecast Methodology -->
+        <div class="na-panel">
+          <div class="na-panel-header">
+            <h2><i data-lucide="brain-circuit"></i> Forecast Methodology & Data Sources</h2>
+          </div>
+          <div style="padding:1.25rem">
+            <div class="p-bottom-grid" style="grid-template-columns:1fr 1fr 1fr;gap:1rem">
+              <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
+                <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="satellite" style="width:16px;height:16px;vertical-align:middle"></i> Climate Inputs</div>
+                <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
+                  <li>ERA5 Reanalysis (ECMWF)</li>
+                  <li>CHIRPS Rainfall Estimates</li>
+                  <li>MODIS Land Surface Temperature</li>
+                  <li>GPM IMERG Precipitation</li>
+                </ul>
+              </div>
+              <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
+                <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="stethoscope" style="width:16px;height:16px;vertical-align:middle"></i> Health Inputs</div>
+                <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
+                  <li>DHIS2 Weekly Case Reports</li>
+                  <li>Master Facility List (MoHS)</li>
+                  <li>CHW Surveillance Logs</li>
+                  <li>Historical Outbreak Baselines</li>
+                </ul>
+              </div>
+              <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
+                <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="cpu" style="width:16px;height:16px;vertical-align:middle"></i> Model Stack</div>
+                <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
+                  <li>XGBoost Spatial (Flood)</li>
+                  <li>LSTM Ensemble (Malaria)</li>
+                  <li>Random Forest (Heat)</li>
+                  <li>7-day rolling window</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ VIEW 8: DOWNLOADS ═══════════ -->
+      <div class="page fade-in p-view" id="p-view-downloads">
+
+        <!-- Downloads Header -->
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="download"></i> Data Downloads & Exports</h2>
+          </div>
+          <div style="padding:1.25rem">
+            <p style="font-size:0.9rem;color:var(--text-dim);margin-bottom:1rem">
+              Download anonymized datasets, model outputs, partner reports, and GIS files for offline analysis and integration.
+              All datasets follow the <strong>CHEWS Data Architecture v2.0</strong> naming convention.
+            </p>
+          </div>
+        </div>
+
+        <!-- Datasets Section -->
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="database"></i> Datasets</h2>
+          </div>
+          <div class="p-reports-list">
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(16,185,129,0.12)"><i data-lucide="table-2" style="color:#10b981"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Climate-Health Integrated Dataset (National)</div>
+                <div class="p-report-item__meta">CSV · 12.4 MB · Updated daily · 16 districts × 365 days</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('SLE_climate_health_integrated_2024.csv')"><i data-lucide="download"></i> CSV</button>
+              <button class="btn btn--secondary btn--sm" onclick="downloadReport('SLE_climate_health_integrated_2024.parquet')"><i data-lucide="download"></i> Parquet</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(99,102,241,0.12)"><i data-lucide="map-pin" style="color:#6366f1"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Master Facility List with Geopoints</div>
+                <div class="p-report-item__meta">GeoJSON · 2.1 MB · 1,292 facilities · Includes PHU tier & catchment</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('SLE_master_facility_list.geojson')"><i data-lucide="download"></i> GeoJSON</button>
+              <button class="btn btn--secondary btn--sm" onclick="downloadReport('SLE_master_facility_list.csv')"><i data-lucide="download"></i> CSV</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(249,115,22,0.12)"><i data-lucide="cloud-rain" style="color:#f97316"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">DHIS2 Weekly Surveillance Export</div>
+                <div class="p-report-item__meta">CSV · 8.7 MB · Weekly aggregates · Malaria, cholera, diarrhea, ARI</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('dhis2_weekly_surveillance_2024.csv')"><i data-lucide="download"></i> CSV</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(236,72,153,0.12)"><i data-lucide="map" style="color:#ec4899"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Administrative Boundaries (Chiefdom Level)</div>
+                <div class="p-report-item__meta">GeoJSON · 5.4 MB · 190 chiefdoms · 16 districts · 5 regions</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('SLE_admin_boundaries_chiefdom.geojson')"><i data-lucide="download"></i> GeoJSON</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Outputs Section -->
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="brain-circuit"></i> Model Outputs & Predictions</h2>
+          </div>
+          <div class="p-reports-list">
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(239,68,68,0.12)"><i data-lucide="waves" style="color:#ef4444"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Flood Risk Predictions (7-day rolling)</div>
+                <div class="p-report-item__meta">CSV · 1.8 MB · District-level scores + confidence intervals</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('flood_risk_predictions_7d.csv')"><i data-lucide="download"></i> CSV</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(168,85,247,0.12)"><i data-lucide="bug" style="color:#a855f7"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Malaria Outbreak Probability Scores</div>
+                <div class="p-report-item__meta">CSV · 2.3 MB · Chiefdom-level · 14-day forecast horizon</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('malaria_outbreak_scores_14d.csv')"><i data-lucide="download"></i> CSV</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon" style="background:rgba(249,115,22,0.12)"><i data-lucide="thermometer" style="color:#f97316"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Heat Stress Index Predictions</div>
+                <div class="p-report-item__meta">CSV · 0.9 MB · District-level · WBGT-based classifier</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('heat_stress_predictions.csv')"><i data-lucide="download"></i> CSV</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="na-panel" style="margin-bottom:1.25rem">
+          <div class="na-panel-header">
+            <h2><i data-lucide="file-text"></i> Partner Reports & Policy Briefs</h2>
+          </div>
+          <div class="p-reports-list">
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">CHEWS Monthly Impact Report (Nov 2024)</div>
+                <div class="p-report-item__meta">PDF · 4.2 MB · Published 12 Nov 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('Monthly Impact Report Nov 2024')"><i data-lucide="download"></i> PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">UNICEF Climate Risk Brief — Sierra Leone Children</div>
+                <div class="p-report-item__meta">PDF · 3.8 MB · Published 01 Nov 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('UNICEF Climate Risk Brief')"><i data-lucide="download"></i> PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">WHO Malaria Surge Prediction Report</div>
+                <div class="p-report-item__meta">PDF · 5.1 MB · Published 28 Oct 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('WHO Malaria Surge Report')"><i data-lucide="download"></i> PDF</button>
+            </div>
+            <div class="p-report-item">
+              <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
+              <div class="p-report-item__info">
+                <div class="p-report-item__name">Quarterly M&E Dashboard Summary (Q3 2024)</div>
+                <div class="p-report-item__meta">PDF · 6.3 MB · Published 15 Oct 2024</div>
+              </div>
+              <button class="btn btn--primary btn--sm" onclick="downloadReport('Q3 2024 M&E Summary')"><i data-lucide="download"></i> PDF</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Access -->
+        <div class="na-panel">
+          <div class="na-panel-header">
+            <h2><i data-lucide="code"></i> Programmatic Access (REST API)</h2>
+          </div>
+          <div style="padding:1.25rem">
+            <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:1rem">Use the CHEWS REST API to pull real-time predictions, datasets, and alert feeds into your own tools and dashboards.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+              <div style="background:var(--surface-2);padding:1rem;border-radius:var(--radius-xs)">
+                <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-bright)">Situation Room Endpoint</div>
+                <code style="font-size:0.75rem;color:var(--accent);word-break:break-all">GET /api/situation-room</code>
+              </div>
+              <div style="background:var(--surface-2);padding:1rem;border-radius:var(--radius-xs)">
+                <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-bright)">Forecast Endpoint</div>
+                <code style="font-size:0.75rem;color:var(--accent);word-break:break-all">GET /api/forecasts?district=all&horizon=7d</code>
+              </div>
+              <div style="background:var(--surface-2);padding:1rem;border-radius:var(--radius-xs)">
+                <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-bright)">Alerts Feed</div>
+                <code style="font-size:0.75rem;color:var(--accent);word-break:break-all">GET /api/alerts?severity=critical,high</code>
+              </div>
+              <div style="background:var(--surface-2);padding:1rem;border-radius:var(--radius-xs)">
+                <div style="font-weight:600;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-bright)">Dataset Export</div>
+                <code style="font-size:0.75rem;color:var(--accent);word-break:break-all">GET /api/datasets/climate-health?format=csv</code>
+              </div>
+            </div>
+            <div style="background:var(--map-shell-bg);padding:1rem;border-radius:var(--radius-xs);font-family:monospace;font-size:0.8rem;color:var(--accent);overflow-x:auto;margin-bottom:1rem">
+              curl -X GET "https://safetysphere-chews.vercel.app/api/forecasts" \<br/>
+              &nbsp;&nbsp;-H "Authorization: Bearer chews_live_partner_key_2024" \<br/>
+              &nbsp;&nbsp;-H "Accept: application/json"
+            </div>
+            <button class="btn btn--secondary btn--sm" onclick="alert('API Token copied to clipboard!')"><i data-lucide="copy"></i> Copy Partner API Key</button>
+            <button class="btn btn--ghost btn--sm" style="margin-left:0.5rem" onclick="alert('Opening API Docs...')"><i data-lucide="external-link"></i> Full API Documentation</button>
+          </div>
+        </div>
+      </div>
+
       <footer class="footer">
         <p>CHEWS v4.0 · SafetySphere · Partner Intelligence Dashboard · Sierra Leone</p>
       </footer>
