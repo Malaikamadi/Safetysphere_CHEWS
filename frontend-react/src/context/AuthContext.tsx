@@ -31,7 +31,7 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
     fullName: 'National Administrator',
     initials: 'NA',
     subtitle: 'National Level · Sierra Leone',
-    homePath: '/',
+    homePath: '/situation-room',
   },
   district: {
     name: 'district',
@@ -59,7 +59,7 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
 // ── Sidebar navigation config ──────────────────────────────────────────────
 export const SIDEBAR_CONFIG: Record<Role, NavItem[]> = {
   admin: [
-    { label: 'Command Center', icon: 'crosshair', url: '/' },
+    { label: 'Command Center', icon: 'crosshair', url: '/situation-room' },
     {
       label: 'Strategic Planning', icon: 'map', subnav: [
         { label: 'National Risk Atlas', url: '/strategic#atlas' },

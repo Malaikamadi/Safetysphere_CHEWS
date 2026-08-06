@@ -30,7 +30,7 @@ export default function App() {
 
           {/* Protected — all share AppLayout */}
           <Route element={<AppLayout title="CHEWS" subtitle="Climate & Health Early Warning System" />}>
-            <Route path="/" element={<RootRedirect />} />
+            <Route path="/" element={<Navigate to="/situation-room" replace />} />
             <Route path="/situation-room" element={<SituationRoom />} />
             <Route path="/early-warning" element={<EarlyWarning />} />
             <Route path="/strategic" element={<Strategic />} />
