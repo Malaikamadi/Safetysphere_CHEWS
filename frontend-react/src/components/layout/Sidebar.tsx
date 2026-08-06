@@ -1,8 +1,20 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { createIcons, icons } from 'lucide'
-import { useEffect, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { useState } from 'react'
 import { useAuth, SIDEBAR_CONFIG, type NavItem } from '../../context/AuthContext'
 import styles from './Sidebar.module.css'
+
+// Simple text-icon mapping using emoji/unicode for nav items
+const NAV_ICONS: Record<string, string> = {
+  crosshair: '⊕', map: '🗺', zap: '⚡', hospital: '🏥', users: '👥',
+  'bar-chart-2': '📊', cpu: '🤖', settings: '⚙', home: '🏠', bell: '🔔',
+  'user-check': '✅', 'message-square': '💬', activity: '📈', user: '👤',
+  'trending-up': '📉', 'pie-chart': '🥧', 'file-text': '📄', download: '⬇',
+}
+
+function NavIcon({ name }: { name: string }) {
+  return <span style={{ fontSize: '0.9rem' }}>{NAV_ICONS[name] ?? '•'}</span>
+}
 
 function NavGroup({ item }: { item: NavItem }) {
   const location = useLocation()
@@ -12,9 +24,12 @@ function NavGroup({ item }: { item: NavItem }) {
   return (
     <div className={styles.navSection}>
       <button className={styles.groupToggle} onClick={() => setOpen(o => !o)}>
-        <span className={styles.navIcon}><i data-lucide={item.icon} /></span>
+        <span className={styles.navIcon}><NavIcon name={item.icon} /></span>
         <span className={styles.navLabel}>{item.label}</span>
-        <i data-lucide="chevron-down" className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`} />
+        <ChevronDown
+          size={14}
+          className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`}
+        />
       </button>
       {open && (
         <div className={styles.subnav}>
@@ -37,10 +52,6 @@ function NavGroup({ item }: { item: NavItem }) {
 
 export default function Sidebar() {
   const { role, roleConfig, district, logout } = useAuth()
-
-  useEffect(() => {
-    createIcons({ icons })
-  })
 
   if (!role || !roleConfig) return null
 
@@ -77,7 +88,7 @@ export default function Sidebar() {
                   `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
                 }
               >
-                <span className={styles.navIcon}><i data-lucide={item.icon} /></span>
+                <span className={styles.navIcon}><NavIcon name={item.icon} /></span>
                 <span className={styles.navLabel}>{item.label}</span>
               </NavLink>
             </div>

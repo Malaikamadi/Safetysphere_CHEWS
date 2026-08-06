@@ -1,0 +1,36 @@
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+.desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+.kpiGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+.cardTitle { font-size: 0.9375rem; font-weight: 600; color: var(--text-bright); margin-bottom: var(--space-4); }
+
+.readinessBars { display: flex; flex-direction: column; gap: var(--space-3); }
+.readinessRow { display: grid; grid-template-columns: 140px 1fr 40px; align-items: center; gap: var(--space-3); }
+.readinessLabel { font-size: 0.8rem; color: var(--text-secondary); }
+.readinessTrack { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+.readinessFill  { height: 100%; border-radius: 4px; transition: width var(--transition-slow); }
+.readinessVal   { font-size: 0.8rem; font-weight: 700; color: var(--text-bright); text-align: right; }
+
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4); }
+.formField { display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.input { padding: 8px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.875rem; font-family: var(--font); transition: border-color var(--transition); }
+.input:focus { outline: none; border-color: var(--blue); }
+.runBtn { width: 100%; padding: 10px; background: var(--blue); color: white; border: none; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 600; font-family: var(--font); cursor: pointer; transition: background var(--transition); }
+.runBtn:hover:not(:disabled) { background: var(--blue-dark); }
+.runBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.forecastOutput { margin-top: var(--space-4); padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); display: flex; flex-direction: column; gap: var(--space-2); }
+.forecastScore { font-size: 0.875rem; color: var(--text-secondary); }
+.forecastScore strong { color: var(--text-bright); }
+.forecastExplain { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+.errorMsg { margin-top: var(--space-3); font-size: 0.8rem; color: var(--red); }
+
+.table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+.table th { text-align: left; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 10px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+.table td { padding: 9px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: middle; }
+.table tr:last-child td { border-bottom: none; }
+.typCell { font-size: 0.75rem; color: var(--text-muted); }
+.miniBar { height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; display: inline-block; width: 60px; vertical-align: middle; margin-right: 6px; }
+.miniBar div { height: 100%; border-radius: 3px; }
+.miniBarVal { font-size: 0.75rem; font-weight: 700; color: var(--text-bright); }

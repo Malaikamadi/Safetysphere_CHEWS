@@ -1,0 +1,29 @@
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+.desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+.cardTitle { font-size: 0.9375rem; font-weight: 600; color: var(--text-bright); }
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.formField { display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.input { padding: 9px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.875rem; font-family: var(--font); }
+.input:focus { outline: none; border-color: var(--blue); }
+.runBtn { padding: 10px; background: var(--blue); color: white; border: none; border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 600; font-family: var(--font); cursor: pointer; transition: background var(--transition); }
+.runBtn:hover:not(:disabled) { background: var(--blue-dark); }
+.runBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.triageResult { padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.triageTop { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); font-size: 0.875rem; color: var(--text-secondary); }
+.triageScore { font-weight: 700; color: var(--text-bright); margin-left: auto; }
+.recommendation { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: var(--space-3); }
+.actionList { padding-left: var(--space-4); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.8; }
+.errorMsg { font-size: 0.8rem; color: var(--red); }
+.chatMessages { flex: 1; min-height: 80px; }
+.chatAnswer { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); }
+.chatLabel { font-size: 0.7rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.chatAnswer p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.65; white-space: pre-line; }
+.chatInputRow { display: flex; gap: var(--space-2); }
+.sendBtn { padding: 9px 18px; background: var(--blue); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; font-family: var(--font); cursor: pointer; transition: background var(--transition); }
+.sendBtn:hover:not(:disabled) { background: var(--blue-dark); }
+.sendBtn:disabled { opacity: 0.5; }
+.quickTags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.quickTag { padding: 4px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-full); font-size: 0.75rem; color: var(--text-secondary); cursor: pointer; font-family: var(--font); transition: all var(--transition); }
+.quickTag:hover { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }

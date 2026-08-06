@@ -1,0 +1,37 @@
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+.desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+.kpiGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+
+.modelGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+.modelCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+.modelValidation { opacity: 0.75; border-style: dashed; }
+.modelHeader { display: flex; align-items: center; justify-content: space-between; }
+.modelName { font-size: 0.9375rem; font-weight: 700; color: var(--text-bright); }
+.modelStatus { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); text-transform: uppercase; letter-spacing: 0.06em; }
+.statusProd { background: var(--green-light); color: var(--green); }
+.statusVal  { background: var(--orange-light); color: var(--orange); }
+.modelAlgo { font-size: 0.775rem; color: var(--text-muted); font-family: var(--font-mono); }
+.modelDesc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+.modelScore { display: flex; align-items: center; gap: var(--space-3); margin-top: auto; }
+.metricLabel { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+.metricValue { font-size: 1rem; font-weight: 800; color: var(--text-bright); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.scoreBar { flex: 1; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
+.scoreFill { height: 100%; border-radius: 3px; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+.cardTitle { font-size: 0.9375rem; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+.cardDesc  { font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-4); }
+
+.featureBars { display: flex; flex-direction: column; gap: var(--space-3); }
+.featureRow { display: grid; grid-template-columns: 220px 1fr 40px; align-items: center; gap: var(--space-3); }
+.featureName  { font-size: 0.8125rem; color: var(--text-secondary); }
+.featureTrack { height: 10px; background: var(--bg-secondary); border-radius: 5px; overflow: hidden; }
+.featureFill  { height: 100%; background: var(--blue); border-radius: 5px; transition: width var(--transition-slow); }
+.featurePct   { font-size: 0.8rem; font-weight: 700; color: var(--text-bright); text-align: right; }
+
+.dataSourcesCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+.sourceGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-4); }
+.sourceItem { padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border); }
+.sourceName    { font-size: 0.875rem; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+.sourceDesc    { font-size: 0.775rem; color: var(--text-secondary); margin-bottom: 4px; }
+.sourceRecords { font-size: 0.725rem; font-family: var(--font-mono); color: var(--blue); }

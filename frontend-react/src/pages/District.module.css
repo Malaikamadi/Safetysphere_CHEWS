@@ -1,0 +1,23 @@
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+.desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+.kpiGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+.cardTitle { font-size: 0.9375rem; font-weight: 600; color: var(--text-bright); margin-bottom: var(--space-4); }
+
+.facilityList { display: flex; flex-direction: column; gap: var(--space-3); }
+.facilityItem { padding: var(--space-3); background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.facilityTop { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.facilityName { font-size: 0.8125rem; font-weight: 600; color: var(--text-bright); }
+.facilityStats { display: flex; gap: var(--space-4); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+.facilityBar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.facilityBar div { height: 100%; border-radius: 2px; transition: width var(--transition-slow); }
+
+.reportsList { display: flex; flex-direction: column; gap: var(--space-3); }
+.reportItem { padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.reportHeader { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+.reporterName { font-size: 0.8rem; font-weight: 700; color: var(--text-bright); }
+.reportLocation { font-size: 0.75rem; color: var(--text-muted); }
+.reportTime { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+.verified { font-size: 0.7rem; font-weight: 700; color: var(--green); }
+.reportText { font-size: 0.8125rem; color: var(--text-secondary); }
