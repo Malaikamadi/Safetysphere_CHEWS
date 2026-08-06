@@ -1,0 +1,52 @@
+.page { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.pageHeader { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+.desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+.onlinePill { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--green); padding: 6px 14px; border-radius: var(--radius-full); border: 1px solid var(--green); flex-shrink: 0; }
+.kpiGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+
+.tabs { display: flex; gap: var(--space-1); border-bottom: 1px solid var(--border); }
+.tab { padding: 8px 16px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: var(--font); transition: all var(--transition); margin-bottom: -1px; }
+.tab:hover { color: var(--text); }
+.tabActive { color: var(--blue) !important; border-bottom-color: var(--blue); font-weight: 600; }
+
+/* Alerts */
+.alertsList { display: flex; flex-direction: column; gap: var(--space-3); }
+.alertCard { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); padding: var(--space-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); border-left: 4px solid transparent; }
+.alert_critical { border-left-color: var(--red); background: color-mix(in srgb, var(--red) 4%, var(--surface)); }
+.alert_high     { border-left-color: var(--red); }
+.alert_moderate { border-left-color: var(--orange); }
+.alert_low      { border-left-color: var(--green); }
+.alertLeft { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.alertTitle { font-size: 0.9rem; font-weight: 600; color: var(--text-bright); }
+.alertDesc  { font-size: 0.8rem; color: var(--text-secondary); }
+.alertRight { text-align: right; flex-shrink: 0; }
+.alertDistrict { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; }
+.alertTime     { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Forecast */
+.forecastGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.forecastCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.forecastPeriod { font-size: 0.8125rem; font-weight: 700; color: var(--text-bright); margin-bottom: var(--space-1); }
+.forecastRow { display: grid; grid-template-columns: 80px 1fr 36px; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-secondary); }
+.forecastBar { height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
+.forecastFill { height: 100%; border-radius: 3px; transition: width var(--transition-slow); }
+.forecastVal { font-size: 0.75rem; font-weight: 700; color: var(--text-bright); text-align: right; }
+.forecastMeta { font-size: 0.7rem; color: var(--text-muted); margin-top: auto; }
+
+/* Sensors */
+.sensorGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4); }
+.sensorCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.sensorOffline { opacity: 0.6; }
+.sensorHeader { display: flex; justify-content: space-between; align-items: center; }
+.sensorName { font-size: 0.8125rem; font-weight: 600; color: var(--text-bright); }
+.sensorStatus { font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 2px; }
+.statusOnline  { background: var(--green-light); color: var(--green); }
+.statusOffline { background: var(--red-light); color: var(--red); }
+.sensorReadings { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.sensorReading { display: flex; flex-direction: column; font-size: 0.7rem; color: var(--text-muted); }
+.sensorReading strong { font-size: 0.8rem; color: var(--text-bright); margin-top: 1px; }
+.sensorFooter { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: var(--space-2); }
+
+/* Map */
+.mapWrapper { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }

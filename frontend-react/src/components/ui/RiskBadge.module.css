@@ -1,0 +1,15 @@
+.badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.low      { background: var(--risk-low-bg);      color: var(--risk-low); }
+.moderate { background: var(--risk-moderate-bg);  color: var(--risk-moderate); }
+.high     { background: var(--risk-high-bg);      color: var(--risk-high); }
+.critical { background: var(--risk-critical-bg);  color: var(--risk-critical); }
+.extreme  { background: var(--risk-extreme-bg);   color: var(--risk-extreme); }
