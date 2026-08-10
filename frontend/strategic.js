@@ -8,11 +8,15 @@ if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar-
 // Tab switching
 function switchTab(tab) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
+  // Legacy tab-btn support
   document.querySelectorAll(".tab-btn").forEach(b => { b.classList.remove("active-tab"); b.classList.add("btn--ghost"); b.classList.remove("btn--secondary"); });
+  const legacyBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  if (legacyBtn) { legacyBtn.classList.add("active-tab", "btn--secondary"); legacyBtn.classList.remove("btn--ghost"); }
+  // New sp-nav-card support
+  document.querySelectorAll(".sp-nav-card").forEach(c => c.classList.remove("sp-nav-card--active"));
+  const navCard = document.querySelector(`.sp-nav-card[data-tab="${tab}"]`);
+  if (navCard) navCard.classList.add("sp-nav-card--active");
   document.getElementById("tab-" + tab).classList.remove("hidden");
-  const activeBtn = document.querySelector(`[data-tab="${tab}"]`);
-  activeBtn.classList.add("active-tab", "btn--secondary");
-  activeBtn.classList.remove("btn--ghost");
 }
 
 function renderResult(containerId, data, title) {
@@ -156,7 +160,7 @@ document.getElementById("carbon-form").addEventListener("submit", e => {
 
 document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
 
-const FLOOD_TABS = ["atlas", "vulnerability", "hazard", "pollution", "carbon"];
+const FLOOD_TABS = ["atlas", "hazard", "vulnerability", "population", "pollution", "carbon", "trends", "scenarios", "ranking", "alerts", "recommendations", "reports"];
 
 /** Parse hashes like `#atlas`, `#atlas/kroo_bay`, `#hazard`. */
 function parsePlanningHash(hash) {
@@ -524,6 +528,7 @@ window.addEventListener("hashchange", () => {
 });
 
 const _origSwitchTab = switchTab;
+let trendsDrawn = false, alertsRendered = false, recsRendered = false;
 switchTab = function (tab) {
   _origSwitchTab(tab);
   if (tab === "atlas") {
@@ -531,4 +536,200 @@ switchTab = function (tab) {
     if (!parsePlanningHash(location.hash).zoneId)
       syncAtlasHash(null);
   }
+  if (tab === "trends" && !trendsDrawn) {
+    setTimeout(drawAllTrendCharts, 100);
+    trendsDrawn = true;
+  }
+  if (tab === "alerts" && !alertsRendered) {
+    renderStrategicAlerts();
+    alertsRendered = true;
+  }
+  if (tab === "recommendations" && !recsRendered) {
+    renderAiRecommendations();
+    recsRendered = true;
+  }
+  if (window.lucide) lucide.createIcons();
 };
+
+// =====================================================================
+// Historical Trend Charts (Tab 7)
+// =====================================================================
+function drawTrendChart(canvasId, labels, datasets, maxVal, unit) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = 220 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '220px';
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 220;
+  const pL = 55, pR = 20, pT = 25, pB = 35;
+  const cW = W - pL - pR, cH = H - pT - pB;
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface-1').trim() || '#0f1729';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pT + (cH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(pL + cW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxVal - (maxVal / 4) * i) + (unit || ''), pL - 8, y + 4);
+  }
+  datasets.forEach(ds => {
+    ctx.strokeStyle = ds.color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ds.data.forEach((v, i) => {
+      const x = pL + (cW / (ds.data.length - 1)) * i;
+      const y = pT + cH * (1 - v / maxVal);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ds.data.forEach((v, i) => {
+      const x = pL + (cW / (ds.data.length - 1)) * i;
+      const y = pT + cH * (1 - v / maxVal);
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = ds.color; ctx.fill();
+      ctx.strokeStyle = '#0f1729'; ctx.lineWidth = 2; ctx.stroke();
+    });
+  });
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  labels.forEach((l, i) => ctx.fillText(l, pL + (cW / (labels.length - 1)) * i, H - 8));
+  datasets.forEach((ds, idx) => {
+    const lx = pL + 10 + idx * 110;
+    ctx.fillStyle = ds.color; ctx.fillRect(lx, pT + 2, 10, 10);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.textAlign = 'left';
+    ctx.fillText(ds.label, lx + 14, pT + 11);
+  });
+}
+
+function drawAllTrendCharts() {
+  const years = ['2020', '2021', '2022', '2023', '2024'];
+  drawTrendChart('sp-rainfall-trend', years, [
+    { label: 'Koinadugu', color: '#ef4444', data: [2400, 2650, 2800, 3100, 3250] },
+    { label: 'Bombali', color: '#f97316', data: [2100, 2300, 2450, 2600, 2780] },
+    { label: 'National Avg', color: '#6f8faa', data: [2000, 2150, 2280, 2400, 2520] }
+  ], 3500, 'mm');
+  drawTrendChart('sp-flood-trend', years, [
+    { label: 'Major Events', color: '#ef4444', data: [3, 5, 4, 7, 9] },
+    { label: 'Minor Events', color: '#facc15', data: [12, 15, 18, 22, 28] }
+  ], 35, '');
+  drawTrendChart('sp-malaria-trend', years, [
+    { label: 'Reported Cases', color: '#a855f7', data: [84000, 92000, 88000, 96000, 102000] },
+    { label: 'Under-5 Cases', color: '#ec4899', data: [32000, 36000, 34000, 38000, 41000] }
+  ], 120000, '');
+  drawTrendChart('sp-disruption-trend', years, [
+    { label: 'Facilities Disrupted', color: '#f97316', data: [18, 24, 22, 32, 38] },
+    { label: 'Days Lost', color: '#ef4444', data: [45, 62, 58, 84, 102] }
+  ], 120, '');
+}
+
+// =====================================================================
+// Scenario Analysis (Tab 8)
+// =====================================================================
+function runScenarioAnalysis() {
+  const rainPct = +document.getElementById('sc2-rain').value;
+  const tempC = +document.getElementById('sc2-temp').value;
+  const seaCm = +document.getElementById('sc2-sea').value;
+  const districts = [
+    { name: 'Koinadugu', base: 0.82, pop: 185000, fac: 12 },
+    { name: 'Bombali', base: 0.76, pop: 450000, fac: 18 },
+    { name: 'Port Loko', base: 0.72, pop: 520000, fac: 22 },
+    { name: 'Kenema', base: 0.68, pop: 610000, fac: 26 },
+    { name: 'Bo', base: 0.65, pop: 575000, fac: 20 },
+    { name: 'W. Area Urban', base: 0.42, pop: 1050000, fac: 42 }
+  ];
+  const delta = (rainPct / 100) * 0.3 + (tempC / 5) * 0.2 + (seaCm / 100) * 0.15;
+  let totalAddPop = 0, totalAddFac = 0;
+  const rows = districts.map(d => {
+    const proj = Math.min(1, d.base + delta * (d.base / 0.7));
+    const change = proj - d.base;
+    const addPop = Math.round(d.pop * change * 0.4);
+    const addFac = Math.max(0, Math.round(d.fac * change * 0.5));
+    totalAddPop += addPop; totalAddFac += addFac;
+    const cls = proj >= 0.75 ? 'high' : proj >= 0.6 ? 'med' : 'low';
+    return `<tr><td><strong>${d.name}</strong></td><td>${d.base.toFixed(2)}</td><td><span class="na-district-badge na-district-badge--${cls}">${proj.toFixed(2)}</span></td><td style="color:${change > 0 ? 'var(--danger)' : 'var(--accent)'}">${change > 0 ? '+' : ''}${(change * 100).toFixed(1)}%</td><td>${addPop > 0 ? '+' : ''}${addPop.toLocaleString()}</td><td>${addFac > 0 ? '+' : ''}${addFac}</td></tr>`;
+  });
+  document.getElementById('sc2-results').style.display = 'block';
+  document.getElementById('sc2-pop').textContent = '+' + totalAddPop.toLocaleString();
+  document.getElementById('sc2-fac').textContent = '+' + totalAddFac;
+  document.getElementById('sc2-flood').textContent = '+' + (delta * 100 * 0.6).toFixed(1) + '%';
+  document.getElementById('sc2-malaria').textContent = '+' + (delta * 100 * 0.4).toFixed(1) + '%';
+  document.getElementById('sc2-tbody').innerHTML = rows.join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+// =====================================================================
+// Strategic Alerts (Tab 10)
+// =====================================================================
+function renderStrategicAlerts() {
+  const alerts = [
+    { severity: 'critical', title: 'Severe Flood Risk — Koinadugu', location: 'Kabala, Koinadugu District', impact: '42,800 children under 5 at risk; 12 health facilities may be inaccessible', validity: 'Valid until 18 Nov 2024, 18:00 UTC', icon: 'waves' },
+    { severity: 'critical', title: 'Malaria Outbreak Threshold Exceeded — Port Loko', location: 'Port Loko Town & surrounding chiefdoms', impact: 'Case rate 2.3× above seasonal baseline; 118,600 vulnerable population', validity: 'Valid until 20 Nov 2024, 00:00 UTC', icon: 'bug' },
+    { severity: 'critical', title: 'Flash Flood Warning — Western Area', location: 'Kroo Bay & Susan\'s Bay, Freetown', impact: '25,300 residents in flood-prone informal settlements', validity: 'Valid until 15 Nov 2024, 12:00 UTC', icon: 'cloud-rain' },
+    { severity: 'high', title: 'Heat Stress Advisory — Kenema', location: 'Kenema Town, Kenema District', impact: 'WBGT forecast 34°C; 26 health facilities with no cooling', validity: 'Valid 15–19 Nov 2024', icon: 'thermometer' },
+    { severity: 'high', title: 'Air Quality Deterioration — Freetown', location: 'Western Area Urban', impact: 'PM2.5 at 58 µg/m³ (WHO limit: 15); 215,000 children exposed', validity: 'Valid until 16 Nov 2024', icon: 'wind' },
+    { severity: 'high', title: 'River Level Warning — Kambia', location: 'Great Scarcies River, Kambia Town', impact: 'River at 87% bankfull; 17,000 downstream population', validity: 'Valid until 17 Nov 2024', icon: 'waves' },
+    { severity: 'high', title: 'Supply Chain Disruption Risk — Bombali', location: 'Makeni–Kabala road corridor', impact: '18 facilities dependent on road; medical supply delivery at risk', validity: 'Valid 14–21 Nov 2024', icon: 'truck' },
+    { severity: 'high', title: 'Cholera Risk Elevation — Bo', location: 'Bo Town, Bo District', impact: 'Post-flood contamination risk; 128,000 population in catchment', validity: 'Valid until 18 Nov 2024', icon: 'droplets' },
+    { severity: 'moderate', title: 'Soil Saturation Warning — Moyamba', location: 'Moyamba District', impact: 'Soil at 92% saturation; landslide risk in hilly terrain', validity: 'Valid until 20 Nov 2024', icon: 'mountain' },
+    { severity: 'moderate', title: 'Mosquito Breeding Conditions — Tonkolili', location: 'Magburaka, Tonkolili District', impact: 'Standing water + humidity creating ideal conditions', validity: 'Valid 15–22 Nov 2024', icon: 'bug' },
+  ];
+  const feed = document.getElementById('sp-alerts-feed');
+  if (!feed) return;
+  feed.innerHTML = alerts.map(a => {
+    const borderColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'high' ? '#f97316' : '#facc15';
+    const bgColor = a.severity === 'critical' ? 'rgba(239,68,68,0.06)' : a.severity === 'high' ? 'rgba(249,115,22,0.06)' : 'rgba(250,204,21,0.06)';
+    return `<div class="na-panel" style="margin-bottom:0.75rem;border-left:3px solid ${borderColor};background:${bgColor}">
+      <div style="padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+        <div style="min-width:36px;height:36px;border-radius:8px;background:${borderColor}20;display:flex;align-items:center;justify-content:center"><i data-lucide="${a.icon}" style="width:18px;height:18px;color:${borderColor}"></i></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem">
+            <div style="font-weight:600;font-size:0.9rem;color:var(--text-bright)">${a.title}</div>
+            <span class="na-district-badge na-district-badge--${a.severity === 'critical' ? 'high' : a.severity === 'high' ? 'med' : 'low'}" style="font-size:0.7rem">${a.severity.toUpperCase()}</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-bottom:0.25rem"><i data-lucide="map-pin" style="width:12px;height:12px;vertical-align:middle"></i> ${a.location}</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-bottom:0.25rem"><i data-lucide="target" style="width:12px;height:12px;vertical-align:middle"></i> ${a.impact}</div>
+          <div style="font-size:0.75rem;color:var(--text-dim)"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle"></i> ${a.validity}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// AI Recommendations (Tab 11)
+// =====================================================================
+function renderAiRecommendations() {
+  const recs = [
+    { priority: 'Critical', color: '#ef4444', title: 'Deploy mobile clinics to Koinadugu flood zones', detail: 'Pre-position 4 mobile health teams with antimalarials, ORS, and emergency obstetric kits in Kabala and surrounding chiefdoms. Est. 42,800 children under 5 at direct risk.', resources: '4 mobile teams, 3,000 mosquito nets, 500 ORS kits', icon: 'truck' },
+    { priority: 'Critical', color: '#ef4444', title: 'Activate flood evacuation protocol for Kroo Bay & Susan\'s Bay', detail: 'Community-level alert broadcasts via CHW network. Coordinate with NDMA for temporary shelter at 3 pre-identified sites.', resources: '12 CHWs, 3 shelter sites, emergency water supply', icon: 'alert-triangle' },
+    { priority: 'High', color: '#f97316', title: 'Pre-position medical supplies in Bombali District', detail: '18 facilities at risk of supply chain disruption due to road flooding on Makeni–Kabala corridor. 72-hour deployment window.', resources: 'Emergency medical supplies for 18 facilities, alternative transport', icon: 'package' },
+    { priority: 'High', color: '#f97316', title: 'Malaria surge response — Port Loko', detail: 'Case rate 2.3× above seasonal baseline. Recommend immediate indoor residual spraying and LLIN distribution in 6 chiefdoms.', resources: '6,000 LLINs, IRS supplies for 6 chiefdoms, 22 CHW teams', icon: 'bug' },
+    { priority: 'High', color: '#f97316', title: 'Heat stress mitigation — Kenema health facilities', detail: '26 facilities lack cooling. Priority: install fans/shade structures at 8 maternity wards with highest patient volume.', resources: '8 ventilation units, shade structures, electrolyte supplies', icon: 'thermometer' },
+    { priority: 'Moderate', color: '#facc15', title: 'Community outreach — Waterloo malaria prevention', detail: 'Waterloo community vulnerability score 0.82. Recommend CHW door-to-door campaign for net usage compliance and early symptom reporting.', resources: '6 CHW teams, IEC materials, rapid diagnostic tests', icon: 'users' },
+  ];
+  const container = document.getElementById('sp-ai-recs');
+  if (!container) return;
+  container.innerHTML = recs.map(r => `
+    <div style="padding:1.25rem;border-left:3px solid ${r.color};background:${r.color}08;margin-bottom:0.75rem;border-radius:0 var(--radius-xs) var(--radius-xs) 0">
+      <div style="display:flex;gap:1rem;align-items:flex-start">
+        <div style="min-width:40px;height:40px;border-radius:10px;background:${r.color}18;display:flex;align-items:center;justify-content:center"><i data-lucide="${r.icon}" style="width:20px;height:20px;color:${r.color}"></i></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+            <div style="font-weight:700;font-size:0.95rem;color:var(--text-bright)">${r.title}</div>
+            <span style="font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:4px;background:${r.color}20;color:${r.color};font-weight:600">${r.priority}</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.5rem;line-height:1.5">${r.detail}</p>
+          <div style="font-size:0.78rem;color:var(--accent);background:var(--surface-2);padding:0.5rem 0.75rem;border-radius:var(--radius-xs)"><i data-lucide="package" style="width:12px;height:12px;vertical-align:middle"></i> <strong>Resources:</strong> ${r.resources}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}

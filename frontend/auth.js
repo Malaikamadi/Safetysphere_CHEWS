@@ -29,10 +29,10 @@ const SIDEBAR_CONFIG = {
   admin: [
     { label: 'Command Center', icon: 'crosshair', url: 'index.html' },
     { label: 'Strategic Planning', icon: 'map', subnav: [
-      { label: 'National Risk Atlas', url: 'strategic.html#atlas' },
-      { label: 'Facility Vulnerability', url: 'strategic.html#vulnerability' },
-      { label: 'Pollution Monitoring', url: 'strategic.html#pollution' },
-      { label: 'Carbon Dashboard', url: 'strategic.html#carbon' }
+      { label: 'Risk & Hazard Maps', url: 'strategic.html#atlas' },
+      { label: 'Vulnerability Assessment', url: 'strategic.html#vulnerability' },
+      { label: 'Analysis & Trends', url: 'strategic.html#trends' },
+      { label: 'Alerts & Reports', url: 'strategic.html#alerts' }
     ]},
     { label: 'Early Warning', icon: 'zap', subnav: [
       { label: 'Live Operations', url: 'early-warning.html' },
