@@ -6077,81 +6077,150 @@ body.eoc-emergency-mode .eoc-banner {
 
 .eoc-body .main-content { margin-left: 0 !important; }
 
-/* Strategic Planning — Card Navigation Grid */
-.sp-nav-grid {
+/* Strategic Planning — Mockup Redesign */
+.sp-atlas-layout {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.25rem;
 }
-.sp-nav-group {
-  background: var(--surface-2);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem;
-}
-.sp-nav-group__label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-dim);
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-.sp-nav-group__label i {
-  width: 12px;
-  height: 12px;
-  color: var(--accent);
-}
-.sp-nav-group__items {
+.sp-atlas-map-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
 }
-.sp-nav-card {
+.sp-atlas-map-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.sp-atlas-map-body {
+  display: flex;
+  height: 480px;
+}
+.sp-map-sidebar {
+  width: 240px;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+.sp-map-section {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.sp-map-section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+.sp-legend-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  background: var(--surface-1);
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+.sp-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.sp-district-row {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.sp-district-row:last-child {
+  border-bottom: none;
+}
+.sp-dist-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-right: 1rem;
+}
+.sp-dist-info {
+  flex: 1;
+}
+.sp-dist-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.sp-dist-sub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+.sp-dist-score {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.sp-score-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+.sp-score-card {
+  background: var(--surface-2);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xs);
-  color: var(--text-bright);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
+  padding: 1rem;
 }
-.sp-nav-card i {
-  width: 16px;
-  height: 16px;
+.sp-score-label {
+  font-size: 0.75rem;
   color: var(--text-dim);
-  transition: color 0.2s ease;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
 }
-.sp-nav-card:hover {
+.sp-score-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sp-score-badge {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+}
+
+.sp-report-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.sp-report-card:hover {
   background: var(--surface-3);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255,255,255,0.2);
 }
-.sp-nav-card--active {
-  background: rgba(56, 189, 248, 0.08);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.sp-nav-card--active i {
-  color: var(--accent);
+.sp-report-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-dim);
+  font-weight: 600;
 }
 @media (max-width: 1024px) {
-  .sp-nav-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .sp-nav-grid {
-    grid-template-columns: 1fr;
-  }
+  .sp-atlas-layout { grid-template-columns: 1fr; }
+  .sp-score-cards { grid-template-columns: repeat(3, 1fr); }
 }

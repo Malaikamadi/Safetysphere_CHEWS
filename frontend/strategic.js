@@ -5,18 +5,14 @@ const API = "/api";
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");
 if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar--open")); }
 
-// Tab switching
+// View switching
 function switchTab(tab) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.add("hidden"));
-  // Legacy tab-btn support
-  document.querySelectorAll(".tab-btn").forEach(b => { b.classList.remove("active-tab"); b.classList.add("btn--ghost"); b.classList.remove("btn--secondary"); });
-  const legacyBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
-  if (legacyBtn) { legacyBtn.classList.add("active-tab", "btn--secondary"); legacyBtn.classList.remove("btn--ghost"); }
-  // New sp-nav-card support
-  document.querySelectorAll(".sp-nav-card").forEach(c => c.classList.remove("sp-nav-card--active"));
-  const navCard = document.querySelector(`.sp-nav-card[data-tab="${tab}"]`);
-  if (navCard) navCard.classList.add("sp-nav-card--active");
-  document.getElementById("tab-" + tab).classList.remove("hidden");
+  
+  const targetView = document.getElementById("view-" + tab);
+  if (targetView) {
+    targetView.classList.remove("hidden");
+  }
 }
 
 function renderResult(containerId, data, title) {
@@ -554,7 +550,7 @@ switchTab = function (tab) {
 // =====================================================================
 // Historical Trend Charts (Tab 7)
 // =====================================================================
-function drawTrendChart(canvasId, labels, datasets, maxVal, unit) {
+function drawTrendChart(canvasId, labels, datasets, maxVal, unit, isK = false) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
@@ -578,7 +574,9 @@ function drawTrendChart(canvasId, labels, datasets, maxVal, unit) {
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
     ctx.font = '11px Inter, sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(Math.round(maxVal - (maxVal / 4) * i) + (unit || ''), pL - 8, y + 4);
+    const rawVal = maxVal - (maxVal / 4) * i;
+    const valText = isK && rawVal > 0 ? (rawVal/1000) + 'K' : Math.round(rawVal);
+    ctx.fillText(valText + (unit || ''), pL - 8, y + 4);
   }
   datasets.forEach(ds => {
     ctx.strokeStyle = ds.color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
@@ -612,22 +610,24 @@ function drawTrendChart(canvasId, labels, datasets, maxVal, unit) {
 function drawAllTrendCharts() {
   const years = ['2020', '2021', '2022', '2023', '2024'];
   drawTrendChart('sp-rainfall-trend', years, [
-    { label: 'Koinadugu', color: '#ef4444', data: [2400, 2650, 2800, 3100, 3250] },
-    { label: 'Bombali', color: '#f97316', data: [2100, 2300, 2450, 2600, 2780] },
-    { label: 'National Avg', color: '#6f8faa', data: [2000, 2150, 2280, 2400, 2520] }
-  ], 3500, 'mm');
+    { label: 'Koinadugu', color: '#0ea5e9', data: [2100, 2300, 2500, 2700, 2900] },
+    { label: 'Bombali', color: '#f97316', data: [1700, 1850, 2000, 2200, 2400] },
+    { label: 'National Avg', color: '#10b981', data: [1300, 1450, 1600, 1750, 1900] }
+  ], 3500, '');
   drawTrendChart('sp-flood-trend', years, [
-    { label: 'Major Events', color: '#ef4444', data: [3, 5, 4, 7, 9] },
-    { label: 'Minor Events', color: '#facc15', data: [12, 15, 18, 22, 28] }
+    { label: 'Major Events', color: '#ef4444', data: [12, 14, 18, 22, 28] },
+    { label: 'Minor Events', color: '#facc15', data: [18, 22, 25, 29, 32] }
   ], 35, '');
   drawTrendChart('sp-malaria-trend', years, [
-    { label: 'Reported Cases', color: '#a855f7', data: [84000, 92000, 88000, 96000, 102000] },
-    { label: 'Under-5 Cases', color: '#ec4899', data: [32000, 36000, 34000, 38000, 41000] }
-  ], 120000, '');
+    { label: 'Koinadugu', color: '#0ea5e9', data: [32000, 28000, 36000, 42000, 46000] },
+    { label: 'Bombali', color: '#f97316', data: [25000, 22000, 28000, 34000, 38000] },
+    { label: 'National Avg', color: '#10b981', data: [15000, 18000, 21000, 24000, 28000] }
+  ], 50000, '', true);
   drawTrendChart('sp-disruption-trend', years, [
-    { label: 'Facilities Disrupted', color: '#f97316', data: [18, 24, 22, 32, 38] },
-    { label: 'Days Lost', color: '#ef4444', data: [45, 62, 58, 84, 102] }
-  ], 120, '');
+    { label: 'Koinadugu', color: '#0ea5e9', data: [28, 35, 42, 48, 55] },
+    { label: 'Bombali', color: '#f97316', data: [20, 25, 32, 38, 45] },
+    { label: 'National Avg', color: '#10b981', data: [12, 18, 22, 26, 32] }
+  ], 60, '');
 }
 
 // =====================================================================
@@ -670,33 +670,31 @@ function runScenarioAnalysis() {
 // =====================================================================
 function renderStrategicAlerts() {
   const alerts = [
-    { severity: 'critical', title: 'Severe Flood Risk — Koinadugu', location: 'Kabala, Koinadugu District', impact: '42,800 children under 5 at risk; 12 health facilities may be inaccessible', validity: 'Valid until 18 Nov 2024, 18:00 UTC', icon: 'waves' },
-    { severity: 'critical', title: 'Malaria Outbreak Threshold Exceeded — Port Loko', location: 'Port Loko Town & surrounding chiefdoms', impact: 'Case rate 2.3× above seasonal baseline; 118,600 vulnerable population', validity: 'Valid until 20 Nov 2024, 00:00 UTC', icon: 'bug' },
-    { severity: 'critical', title: 'Flash Flood Warning — Western Area', location: 'Kroo Bay & Susan\'s Bay, Freetown', impact: '25,300 residents in flood-prone informal settlements', validity: 'Valid until 15 Nov 2024, 12:00 UTC', icon: 'cloud-rain' },
-    { severity: 'high', title: 'Heat Stress Advisory — Kenema', location: 'Kenema Town, Kenema District', impact: 'WBGT forecast 34°C; 26 health facilities with no cooling', validity: 'Valid 15–19 Nov 2024', icon: 'thermometer' },
-    { severity: 'high', title: 'Air Quality Deterioration — Freetown', location: 'Western Area Urban', impact: 'PM2.5 at 58 µg/m³ (WHO limit: 15); 215,000 children exposed', validity: 'Valid until 16 Nov 2024', icon: 'wind' },
-    { severity: 'high', title: 'River Level Warning — Kambia', location: 'Great Scarcies River, Kambia Town', impact: 'River at 87% bankfull; 17,000 downstream population', validity: 'Valid until 17 Nov 2024', icon: 'waves' },
-    { severity: 'high', title: 'Supply Chain Disruption Risk — Bombali', location: 'Makeni–Kabala road corridor', impact: '18 facilities dependent on road; medical supply delivery at risk', validity: 'Valid 14–21 Nov 2024', icon: 'truck' },
-    { severity: 'high', title: 'Cholera Risk Elevation — Bo', location: 'Bo Town, Bo District', impact: 'Post-flood contamination risk; 128,000 population in catchment', validity: 'Valid until 18 Nov 2024', icon: 'droplets' },
-    { severity: 'moderate', title: 'Soil Saturation Warning — Moyamba', location: 'Moyamba District', impact: 'Soil at 92% saturation; landslide risk in hilly terrain', validity: 'Valid until 20 Nov 2024', icon: 'mountain' },
-    { severity: 'moderate', title: 'Mosquito Breeding Conditions — Tonkolili', location: 'Magburaka, Tonkolili District', impact: 'Standing water + humidity creating ideal conditions', validity: 'Valid 15–22 Nov 2024', icon: 'bug' },
+    { severity: 'critical', title: 'Very High Flood Risk Predicted in Koinadugu District', impact: 'Heavy rainfall expected in next 24-48 hours. Communities along Rokel River at high risk.', validity: 'Aug 14, 2025 18:00', affected: '12 Communities', icon: 'triangle-alert' },
+    { severity: 'high', title: 'Soil Saturation Above Threshold in 7 Districts', impact: 'High soil moisture increases flood potential in low-lying areas.', validity: 'Aug 15, 2025 06:00', affected: '7 Districts', icon: 'alert-circle' },
+    { severity: 'moderate', title: 'River Levels Rising in 3 Basins', impact: 'Water levels rising in Rokel, Moa and Sewa river basins.', validity: 'Aug 13, 2025 12:00', affected: '3 Basins', icon: 'clock' },
+    { severity: 'info', title: 'New Climate Forecast Available', impact: 'Updated seasonal forecast and rainfall outlook available.', validity: 'Aug 20, 2025 00:00', affected: 'All Districts', icon: 'info' }
   ];
   const feed = document.getElementById('sp-alerts-feed');
   if (!feed) return;
   feed.innerHTML = alerts.map(a => {
-    const borderColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'high' ? '#f97316' : '#facc15';
-    const bgColor = a.severity === 'critical' ? 'rgba(239,68,68,0.06)' : a.severity === 'high' ? 'rgba(249,115,22,0.06)' : 'rgba(250,204,21,0.06)';
+    const borderColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'high' ? '#f97316' : a.severity === 'moderate' ? '#facc15' : '#38bdf8';
+    const bgColor = a.severity === 'critical' ? 'rgba(239,68,68,0.06)' : a.severity === 'high' ? 'rgba(249,115,22,0.06)' : a.severity === 'moderate' ? 'rgba(250,204,21,0.06)' : 'rgba(56,189,248,0.06)';
+    const badgeHtml = a.severity === 'info' ? `<span class="na-district-badge" style="font-size:0.7rem;color:var(--accent);border-color:rgba(56,189,248,0.3)">Info</span>` : `<span class="na-district-badge na-district-badge--${a.severity === 'critical' ? 'high' : a.severity === 'high' ? 'med' : 'low'}" style="font-size:0.7rem">${a.severity.charAt(0).toUpperCase() + a.severity.slice(1)}</span>`;
+    
     return `<div class="na-panel" style="margin-bottom:0.75rem;border-left:3px solid ${borderColor};background:${bgColor}">
       <div style="padding:1rem;display:flex;gap:1rem;align-items:flex-start">
         <div style="min-width:36px;height:36px;border-radius:8px;background:${borderColor}20;display:flex;align-items:center;justify-content:center"><i data-lucide="${a.icon}" style="width:18px;height:18px;color:${borderColor}"></i></div>
         <div style="flex:1">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem">
             <div style="font-weight:600;font-size:0.9rem;color:var(--text-bright)">${a.title}</div>
-            <span class="na-district-badge na-district-badge--${a.severity === 'critical' ? 'high' : a.severity === 'high' ? 'med' : 'low'}" style="font-size:0.7rem">${a.severity.toUpperCase()}</span>
+            ${badgeHtml}
           </div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-bottom:0.25rem"><i data-lucide="map-pin" style="width:12px;height:12px;vertical-align:middle"></i> ${a.location}</div>
-          <div style="font-size:0.8rem;color:var(--text-dim);margin-bottom:0.25rem"><i data-lucide="target" style="width:12px;height:12px;vertical-align:middle"></i> ${a.impact}</div>
-          <div style="font-size:0.75rem;color:var(--text-dim)"><i data-lucide="clock" style="width:12px;height:12px;vertical-align:middle"></i> ${a.validity}</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);margin-bottom:0.75rem">${a.impact}</div>
+          <div style="display:flex;gap:3rem;font-size:0.75rem;color:var(--text-dim)">
+             <div><span style="display:block;margin-bottom:0.2rem;opacity:0.7">Valid until</span><span style="color:var(--text-bright)">${a.validity}</span></div>
+             <div><span style="display:block;margin-bottom:0.2rem;opacity:0.7">Affected</span><span style="color:var(--text-bright)"><i data-lucide="users" style="width:10px;height:10px;vertical-align:middle;margin-right:2px"></i> ${a.affected}</span></div>
+          </div>
         </div>
       </div>
     </div>`;

@@ -32,487 +32,247 @@
     <main class="main-content">
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
-        <div><div class="topbar__title">Strategic Planning</div><div class="topbar__subtitle">Hazard Mapping & Vulnerability Assessment</div></div>
+        <div><div class="topbar__title">Strategic Planning</div><div class="topbar__subtitle">Hazard Maps, Vulnerability, Trends, and Reports</div></div>
         <div class="topbar__actions"><button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
       <div class="page fade-in">
-        <h1 class="page-heading"><i data-lucide="map"></i> Strategic Planning</h1>
-        <p class="page-desc">Map climate hazards, assess vulnerability, rank districts, generate AI recommendations, and export strategic reports.</p>
-
-        <!-- Navigation Grid -->
-        <div class="sp-nav-grid">
-          <!-- Group 1: Risk & Hazard Maps -->
-          <div class="sp-nav-group">
-            <div class="sp-nav-group__label"><i data-lucide="map-pinned"></i> Risk & Hazard Maps</div>
-            <div class="sp-nav-group__items">
-              <button class="sp-nav-card sp-nav-card--active" data-tab="atlas" onclick="switchTab('atlas')">
-                <i data-lucide="map-pinned"></i><span>Flood Atlas</span>
-              </button>
-              <button class="sp-nav-card" data-tab="hazard" onclick="switchTab('hazard')">
-                <i data-lucide="map"></i><span>Hazard Map</span>
-              </button>
-            </div>
+        <!-- ════════════ VIEW 1: RISK & HAZARD MAPS ════════════ -->
+        <div id="view-atlas" class="tab-content">
+          <div class="na-kpi-strip" style="grid-template-columns: repeat(6, 1fr); margin-bottom:1.25rem">
+            <div class="na-kpi-card"><div class="na-kpi-card__label">Communities Monitored</div><div class="na-kpi-card__value" style="color:var(--accent)">1,472</div><div class="na-kpi-card__sub" style="color:var(--accent)"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 12% vs last period</div></div>
+            <div class="na-kpi-card"><div class="na-kpi-card__label">Population at Risk</div><div class="na-kpi-card__value" style="color:var(--warning)">2.6M</div><div class="na-kpi-card__sub" style="color:var(--warning)"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 8% vs last period</div></div>
+            <div class="na-kpi-card"><div class="na-kpi-card__label">High & Severe Zones</div><div class="na-kpi-card__value" style="color:var(--danger)">38</div><div class="na-kpi-card__sub" style="color:var(--danger)"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 6 vs last period</div></div>
+            <div class="na-kpi-card"><div class="na-kpi-card__label">Avg Rainfall (24h)</div><div class="na-kpi-card__value">214 mm</div><div class="na-kpi-card__sub"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 18% vs avg</div></div>
+            <div class="na-kpi-card"><div class="na-kpi-card__label">Soil Saturation</div><div class="na-kpi-card__value">78%</div><div class="na-kpi-card__sub">High across 7 districts</div></div>
+            <div class="na-kpi-card"><div class="na-kpi-card__label">River Stage</div><div class="na-kpi-card__value">1.82 m</div><div class="na-kpi-card__sub"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 0.23 m vs yesterday</div></div>
           </div>
 
-          <!-- Group 2: Vulnerability -->
-          <div class="sp-nav-group">
-            <div class="sp-nav-group__label"><i data-lucide="shield"></i> Vulnerability</div>
-            <div class="sp-nav-group__items">
-              <button class="sp-nav-card" data-tab="vulnerability" onclick="switchTab('vulnerability')">
-                <i data-lucide="hospital"></i><span>Facilities</span>
-              </button>
-              <button class="sp-nav-card" data-tab="population" onclick="switchTab('population')">
-                <i data-lucide="users"></i><span>Population</span>
-              </button>
-              <button class="sp-nav-card" data-tab="pollution" onclick="switchTab('pollution')">
-                <i data-lucide="wind"></i><span>Pollution</span>
-              </button>
-              <button class="sp-nav-card" data-tab="carbon" onclick="switchTab('carbon')">
-                <i data-lucide="leaf"></i><span>Carbon</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Group 3: Analysis -->
-          <div class="sp-nav-group">
-            <div class="sp-nav-group__label"><i data-lucide="bar-chart-2"></i> Analysis</div>
-            <div class="sp-nav-group__items">
-              <button class="sp-nav-card" data-tab="trends" onclick="switchTab('trends')">
-                <i data-lucide="bar-chart-2"></i><span>Trends</span>
-              </button>
-              <button class="sp-nav-card" data-tab="scenarios" onclick="switchTab('scenarios')">
-                <i data-lucide="git-branch"></i><span>Scenarios</span>
-              </button>
-              <button class="sp-nav-card" data-tab="ranking" onclick="switchTab('ranking')">
-                <i data-lucide="award"></i><span>District Rank</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Group 4: Decisions -->
-          <div class="sp-nav-group">
-            <div class="sp-nav-group__label"><i data-lucide="zap"></i> Decisions</div>
-            <div class="sp-nav-group__items">
-              <button class="sp-nav-card" data-tab="alerts" onclick="switchTab('alerts')">
-                <i data-lucide="alert-triangle"></i><span>Alerts</span>
-              </button>
-              <button class="sp-nav-card" data-tab="recommendations" onclick="switchTab('recommendations')">
-                <i data-lucide="brain-circuit"></i><span>AI Recs</span>
-              </button>
-              <button class="sp-nav-card" data-tab="reports" onclick="switchTab('reports')">
-                <i data-lucide="file-text"></i><span>Reports</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 1: FLOOD RISK ATLAS ════════════ -->
-        <div id="tab-atlas" class="tab-content">
-          <div class="atlas-kpis">
-            <div class="atlas-kpi"><div class="atlas-kpi__label">Communities monitored</div><div class="atlas-kpi__value" id="kpi-zones">—</div><div class="atlas-kpi__sub" id="kpi-districts">—</div></div>
-            <div class="atlas-kpi atlas-kpi--warning"><div class="atlas-kpi__label">Population at risk</div><div class="atlas-kpi__value" id="kpi-pop-risk">—</div><div class="atlas-kpi__sub">in zones at Moderate+ risk</div></div>
-            <div class="atlas-kpi atlas-kpi--danger"><div class="atlas-kpi__label">High & severe zones</div><div class="atlas-kpi__value" id="kpi-high">—</div><div class="atlas-kpi__sub" id="kpi-severe">—</div></div>
-            <div class="atlas-kpi atlas-kpi--info"><div class="atlas-kpi__label">Avg rainfall now</div><div class="atlas-kpi__value" id="kpi-rain">—</div><div class="atlas-kpi__sub">mm/hr · 24h: <span id="kpi-rain-24">—</span> mm</div></div>
-            <div class="atlas-kpi atlas-kpi--info"><div class="atlas-kpi__label">Soil saturation</div><div class="atlas-kpi__value" id="kpi-sat">—</div><div class="atlas-kpi__sub">avg across districts</div></div>
-            <div class="atlas-kpi"><div class="atlas-kpi__label">River stage</div><div class="atlas-kpi__value" id="kpi-river">—</div><div class="atlas-kpi__sub">% of bankfull</div></div>
-          </div>
-
-          <div class="atlas-grid">
-            <div class="card card--glow-blue atlas-map-card">
-              <div class="card__header">
+          <div class="sp-atlas-layout">
+            <div class="na-panel sp-atlas-map-panel">
+              <div class="sp-atlas-map-header">
                 <div>
-                  <div class="card__title"><i data-lucide="map"></i> Sierra Leone Flood Atlas</div>
-                  <div class="card__desc">Live per-community flood risk derived from district rainfall, soil saturation, elevation and drainage. <span id="atlas-updated" class="text-dim">—</span></div>
-                  <p id="atlas-meta" class="atlas-meta text-dim" style="margin-top:0.45rem;display:none;"></p>
+                  <h2 style="font-size:1.15rem;margin-bottom:0.25rem;color:var(--text-bright);font-weight:600">Sierra Leone Flood Risk Atlas</h2>
+                  <div style="font-size:0.85rem;color:var(--text-dim)">Live flood risk derived from rainfall, soil saturation, elevation and drainage.</div>
                 </div>
-                <button class="btn btn--sm btn--ghost" id="atlas-refresh"><i data-lucide="refresh-cw"></i> Refresh</button>
+                <div style="display:flex;gap:0.5rem">
+                  <button class="btn btn--ghost btn--sm"><i data-lucide="expand"></i></button>
+                  <button class="btn btn--ghost btn--sm" id="atlas-refresh"><i data-lucide="refresh-cw"></i></button>
+                </div>
               </div>
-              <div id="flood-map" class="flood-map"></div>
-              <div class="atlas-legend">
-                <span class="atlas-legend__title">Risk level</span>
-                <span class="atlas-legend__chip" data-level="Low"><span class="atlas-legend__dot"></span>Low</span>
-                <span class="atlas-legend__chip" data-level="Moderate"><span class="atlas-legend__dot"></span>Moderate</span>
-                <span class="atlas-legend__chip" data-level="High"><span class="atlas-legend__dot"></span>High</span>
-                <span class="atlas-legend__chip" data-level="Severe"><span class="atlas-legend__dot"></span>Severe</span>
-                <span class="atlas-legend__chip" data-level="Extreme"><span class="atlas-legend__dot"></span>Extreme</span>
-              </div>
-            </div>
-            <div class="atlas-side">
-              <div class="card card--glow-amber">
-                <div class="card__header"><div><div class="card__title"><i data-lucide="sliders-horizontal"></i> Scenario simulator</div><div class="card__desc">Push the dashboard signals and watch every zone re-predict.</div></div></div>
-                <div class="scenario">
-                  <div class="scenario__row"><label class="scenario__label">Rainfall intensity ×<span id="sc-rain-val">1.0</span></label><input type="range" id="sc-rain" class="scenario__slider" min="0" max="5" step="0.1" value="1.0" /></div>
-                  <div class="scenario__row"><label class="scenario__label">24h rainfall ×<span id="sc-rain24-val">1.0</span></label><input type="range" id="sc-rain24" class="scenario__slider" min="0" max="5" step="0.1" value="1.0" /></div>
-                  <div class="scenario__row"><label class="scenario__label">Saturation offset <span id="sc-sat-val">+0</span>%</label><input type="range" id="sc-sat" class="scenario__slider" min="-50" max="50" step="1" value="0" /></div>
-                  <div class="scenario__actions">
-                    <button class="btn btn--primary btn--sm" id="sc-run"><i data-lucide="play"></i> Run scenario</button>
-                    <button class="btn btn--ghost btn--sm" id="sc-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+              <div class="sp-atlas-map-body">
+                <div class="sp-map-sidebar">
+                  <div class="sp-map-section">
+                    <div class="sp-map-section-title">Risk Level</div>
+                    <div class="sp-legend-item"><span class="sp-legend-dot" style="background:var(--danger)"></span> Very High</div>
+                    <div class="sp-legend-item"><span class="sp-legend-dot" style="background:#f97316"></span> High</div>
+                    <div class="sp-legend-item"><span class="sp-legend-dot" style="background:var(--warning)"></span> Moderate</div>
+                    <div class="sp-legend-item"><span class="sp-legend-dot" style="background:var(--accent)"></span> Low</div>
+                    <div class="sp-legend-item"><span class="sp-legend-dot" style="background:var(--success)"></span> Very Low</div>
                   </div>
-                  <div class="scenario__delta" id="sc-delta"></div>
+                  <div class="sp-map-section">
+                    <div class="sp-map-section-title">Map Layers</div>
+                    <label class="form-checkbox" style="font-size:0.85rem;margin-bottom:0.4rem"><input type="checkbox" checked /> Flood Risk</label>
+                    <label class="form-checkbox" style="font-size:0.85rem;margin-bottom:0.4rem"><input type="checkbox" checked /> Rainfall (24h)</label>
+                    <label class="form-checkbox" style="font-size:0.85rem;margin-bottom:0.4rem"><input type="checkbox" checked /> Soil Saturation</label>
+                    <label class="form-checkbox" style="font-size:0.85rem;margin-bottom:0.4rem"><input type="checkbox" /> River Network</label>
+                    <label class="form-checkbox" style="font-size:0.85rem"><input type="checkbox" /> Health Facilities</label>
+                  </div>
+                  <div class="sp-map-section" style="border-bottom:none;margin-top:auto">
+                    <div class="sp-map-section-title">System Status</div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.25rem">
+                      <span style="color:var(--text-dim)">Data Sources</span><span style="color:var(--text-bright)">8 / 9 Online</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.5rem">
+                      <span style="color:var(--text-dim)">Last Updated</span><span style="color:var(--accent)">2 min ago</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.25rem">
+                      <span style="color:var(--text-dim)">Model Confidence</span><span style="color:var(--success)">87%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-bar__fill" style="width:87%;background:var(--success)"></div></div>
+                  </div>
                 </div>
-              </div>
-              <div class="card" id="zone-detail-card">
-                <div class="card__header"><div><div class="card__title"><i data-lucide="info"></i> Zone detail</div><div class="card__desc" id="zone-detail-hint">Click any community on the map.</div></div></div>
-                <div class="zone-detail" id="zone-detail" style="display:none"></div>
+                <div id="flood-map" style="flex:1;border-radius:0 0 var(--radius-sm) 0"></div>
               </div>
             </div>
-          </div>
-          <div class="card mt-1">
-            <div class="card__header"><div><div class="card__title"><i data-lucide="alert-triangle"></i> Top 10 highest-risk communities right now</div><div class="card__desc">Click a row to focus the map and load its 24h forecast.</div></div></div>
-            <div class="zone-table-wrap">
-              <table class="zone-table" id="zone-table">
-                <thead><tr><th>#</th><th>Community</th><th>District</th><th>Risk</th><th>Level</th><th>Population</th><th>Drivers</th></tr></thead>
-                <tbody id="zone-table-body"><tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:2rem">Loading…</td></tr></tbody>
-              </table>
+            
+            <div class="na-panel">
+              <div class="na-panel-header">
+                 <h2>Top 5 At-Risk Districts</h2>
+                 <a href="#" class="na-view-all">View all</a>
+              </div>
+              <div style="padding:1rem 0">
+                <div class="sp-district-row">
+                  <div class="sp-dist-rank">1</div>
+                  <div class="sp-dist-info"><div class="sp-dist-name">Koinadugu</div><div class="sp-dist-sub">Very High</div></div>
+                  <div class="sp-dist-score" style="color:var(--danger)">0.92</div>
+                </div>
+                <div class="sp-district-row">
+                  <div class="sp-dist-rank">2</div>
+                  <div class="sp-dist-info"><div class="sp-dist-name">Bombali</div><div class="sp-dist-sub">High</div></div>
+                  <div class="sp-dist-score" style="color:#f97316">0.88</div>
+                </div>
+                <div class="sp-district-row">
+                  <div class="sp-dist-rank">3</div>
+                  <div class="sp-dist-info"><div class="sp-dist-name">Port Loko</div><div class="sp-dist-sub">High</div></div>
+                  <div class="sp-dist-score" style="color:#f97316">0.81</div>
+                </div>
+                <div class="sp-district-row">
+                  <div class="sp-dist-rank" style="color:var(--warning)">4</div>
+                  <div class="sp-dist-info"><div class="sp-dist-name">Tonkolili</div><div class="sp-dist-sub">Moderate</div></div>
+                  <div class="sp-dist-score" style="color:var(--warning)">0.67</div>
+                </div>
+                <div class="sp-district-row">
+                  <div class="sp-dist-rank" style="color:var(--warning)">5</div>
+                  <div class="sp-dist-info"><div class="sp-dist-name">Kono</div><div class="sp-dist-sub">Moderate</div></div>
+                  <div class="sp-dist-score" style="color:var(--warning)">0.62</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- ════════════ TAB 2: CLIMATE & HEALTH HAZARD MAP ════════════ -->
-        <div id="tab-hazard" class="tab-content hidden">
-          <div class="na-kpi-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:1.25rem">
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Flood Risk</div><div class="na-kpi-card__value" style="color:#6f8faa">High</div><div class="na-kpi-card__sub">4 districts affected</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Heat Stress</div><div class="na-kpi-card__value" style="color:#f97316">Moderate</div><div class="na-kpi-card__sub">Avg WBGT: 28.4°C</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Air Quality</div><div class="na-kpi-card__value" style="color:#facc15">Moderate</div><div class="na-kpi-card__sub">PM2.5: 32 µg/m³</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Malaria Risk</div><div class="na-kpi-card__value" style="color:#ef4444">High</div><div class="na-kpi-card__sub">6 districts above threshold</div></div>
-          </div>
-          <div class="card card--glow-blue">
-            <div class="card__header"><div><div class="card__title"><i data-lucide="map"></i> Multi-Layer Climate & Health Hazard Map</div><div class="card__desc">Enter location and environmental data to generate a multi-hazard risk assessment.</div></div></div>
-            <form id="hazard-form" autocomplete="off">
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="map-pin"></i> Location</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Location Name</label><input type="text" id="h-name" class="form-input" value="Community Health Center" /></div>
-                  <div class="form-group"><label class="form-label">Latitude</label><input type="number" id="h-lat" class="form-input" value="8.484" step="0.001" /></div>
-                  <div class="form-group"><label class="form-label">Longitude</label><input type="number" id="h-lng" class="form-input" value="-13.234" step="0.001" /></div>
-                </div>
-              </div>
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="globe"></i> Environmental Data</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Rainfall (mm/month)</label><input type="number" id="h-rain" class="form-input" value="100" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" id="h-temp" class="form-input" value="28" /></div>
-                  <div class="form-group"><label class="form-label">Humidity (%)</label><input type="number" id="h-hum" class="form-input" value="70" min="0" max="100" /></div>
-                  <div class="form-group"><label class="form-label">PM2.5 (μg/m³)</label><input type="number" id="h-pm25" class="form-input" value="20" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Rainfall Intensity (mm/hr)</label><input type="number" id="h-intensity" class="form-input" value="5" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Elevation (m)</label><input type="number" id="h-elev" class="form-input" value="50" min="0" /></div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn--primary btn--full">Generate Hazard Map</button>
-            </form>
-            <div class="hidden mt-1" id="hazard-result"></div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 3: FACILITY VULNERABILITY SCORE ════════════ -->
-        <div id="tab-vulnerability" class="tab-content hidden">
-          <div class="card card--glow-green">
-            <div class="card__header"><div><div class="card__title"><i data-lucide="hospital"></i> Facility Vulnerability Score</div><div class="card__desc">Composite assessment — hazard exposure, infrastructure, staffing, water/power, road access, emergency preparedness.</div></div></div>
-            <form id="vuln-form" autocomplete="off">
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="building"></i> Facility Details</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Facility Type</label><select id="v-facility-type" class="form-input form-select"><option value="health_center">Health Center</option><option value="hospital">Hospital</option><option value="clinic">Clinic</option><option value="school">School</option></select></div>
-                  <div class="form-group"><label class="form-label">Building Type</label><select id="v-building-type" class="form-input form-select"><option value="semi_permanent">Semi-Permanent</option><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="open_air">Open Air</option></select></div>
-                  <div class="form-group"><label class="form-label">Staff Count</label><input type="number" id="v-staff" class="form-input" value="5" min="0" /></div>
-                </div>
-                <div class="form__grid form__grid--3" style="margin-top:0.75rem">
-                  <div class="form-group"><label class="form-label">Water Source</label><select id="v-water" class="form-input form-select"><option value="borehole">Borehole</option><option value="piped">Piped</option><option value="well">Well</option><option value="surface">Surface Water</option></select></div>
-                  <div class="form-group"><label class="form-label">Power Source</label><select id="v-power" class="form-input form-select"><option value="grid_unreliable">Grid (Unreliable)</option><option value="grid_reliable">Grid (Reliable)</option><option value="solar">Solar</option><option value="generator">Generator</option><option value="none">None</option></select></div>
-                  <div class="form-group"><label class="form-label">Road Access</label><select id="v-road" class="form-input form-select"><option value="paved">Paved</option><option value="unpaved">Unpaved</option><option value="footpath">Footpath</option><option value="none">None</option></select></div>
-                </div>
-              </div>
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="users"></i> Population</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Children &lt;5</label><input type="number" id="v-under5" class="form-input" value="10" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Pregnant Women</label><input type="number" id="v-pregnant" class="form-input" value="5" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Total Population</label><input type="number" id="v-total" class="form-input" value="200" min="1" /></div>
-                </div>
-              </div>
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="zap"></i> Hazard Exposure (0–1)</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Flood Risk</label><input type="number" id="v-flood" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
-                  <div class="form-group"><label class="form-label">Heat Risk</label><input type="number" id="v-heat" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
-                  <div class="form-group"><label class="form-label">Air Quality Risk</label><input type="number" id="v-aq" class="form-input" value="0.3" min="0" max="1" step="0.05" /></div>
-                </div>
-              </div>
-              <label class="form-checkbox" style="margin-bottom:1rem"><input type="checkbox" id="v-plan" /> Has emergency preparedness plan</label>
-              <button type="submit" class="btn btn--primary btn--full">Assess Vulnerability</button>
-            </form>
-            <div class="hidden mt-1" id="vuln-result"></div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 4: POPULATION VULNERABILITY ════════════ -->
-        <div id="tab-population" class="tab-content hidden">
-          <div class="na-kpi-strip" style="grid-template-columns: repeat(5, 1fr); margin-bottom:1.25rem">
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Total Population Exposed</div><div class="na-kpi-card__value" style="color:var(--danger)">1.82M</div><div class="na-kpi-card__sub">in Moderate+ risk zones</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Children Under 5</div><div class="na-kpi-card__value" style="color:var(--warning)">412K</div><div class="na-kpi-card__sub">22.6% of exposed pop.</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Pregnant Women</div><div class="na-kpi-card__value" style="color:#ec4899">89K</div><div class="na-kpi-card__sub">4.9% of exposed pop.</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Vulnerable Communities</div><div class="na-kpi-card__value">38</div><div class="na-kpi-card__sub">with score ≥ 0.70</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Avg Pop. Density</div><div class="na-kpi-card__value">104/km²</div><div class="na-kpi-card__sub">national average</div></div>
-          </div>
-
-          <div class="na-panel" style="margin-bottom:1.25rem">
-            <div class="na-panel-header"><h2><i data-lucide="users"></i> Vulnerable Population by District</h2></div>
-            <div style="padding:1rem;overflow-x:auto">
-              <table class="na-district-table" id="sp-pop-table">
-                <thead><tr><th>District</th><th>Population</th><th>Children &lt;5</th><th>Pregnant Women</th><th>Pop. Density</th><th>Vulnerability Score</th><th>Status</th></tr></thead>
-                <tbody>
-                  <tr><td><strong>Koinadugu</strong></td><td>185,000</td><td>42,800</td><td>9,100</td><td>18/km²</td><td><span class="na-district-score na-district-score--high">0.82</span></td><td><span class="na-district-badge na-district-badge--high">Critical</span></td></tr>
-                  <tr><td><strong>Bombali</strong></td><td>450,000</td><td>101,000</td><td>22,100</td><td>52/km²</td><td><span class="na-district-score na-district-score--high">0.76</span></td><td><span class="na-district-badge na-district-badge--high">High Risk</span></td></tr>
-                  <tr><td><strong>Port Loko</strong></td><td>520,000</td><td>118,600</td><td>25,500</td><td>94/km²</td><td><span class="na-district-score na-district-score--med">0.68</span></td><td><span class="na-district-badge na-district-badge--med">Moderate</span></td></tr>
-                  <tr><td><strong>Kenema</strong></td><td>610,000</td><td>136,200</td><td>29,900</td><td>97/km²</td><td><span class="na-district-score na-district-score--med">0.65</span></td><td><span class="na-district-badge na-district-badge--med">Moderate</span></td></tr>
-                  <tr><td><strong>Bo</strong></td><td>575,000</td><td>128,000</td><td>28,200</td><td>82/km²</td><td><span class="na-district-score na-district-score--med">0.61</span></td><td><span class="na-district-badge na-district-badge--med">Moderate</span></td></tr>
-                  <tr><td><strong>Western Area Urban</strong></td><td>1,050,000</td><td>215,000</td><td>51,500</td><td>1,894/km²</td><td><span class="na-district-score na-district-score--low">0.42</span></td><td><span class="na-district-badge na-district-badge--low">Low Risk</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
+        <!-- ════════════ VIEW 2: VULNERABILITY ASSESSMENT ════════════ -->
+        <div id="view-vulnerability" class="tab-content hidden">
           <div class="na-panel">
-            <div class="na-panel-header"><h2><i data-lucide="shield-alert"></i> Most Vulnerable Communities</h2></div>
+            <div style="padding:1.5rem">
+              <h2 style="font-size:1.25rem;color:var(--text-bright);display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">
+                <i data-lucide="hospital"></i> Facility Vulnerability Score
+              </h2>
+              <div style="color:var(--text-dim);font-size:0.85rem;margin-bottom:1.5rem">Composite assessment — hazard exposure, infrastructure, staffing, water/power, road access, emergency preparedness.</div>
+              
+              <div style="background:var(--surface-2);border-radius:var(--radius-sm);border:1px solid var(--border-color);padding:1.25rem;margin-bottom:1.5rem">
+                <div style="font-size:0.8rem;text-transform:uppercase;color:var(--accent);letter-spacing:0.05em;margin-bottom:1rem;display:flex;align-items:center;gap:0.35rem">
+                  <i data-lucide="building" style="width:14px;height:14px"></i> Facility Details
+                </div>
+                <div class="form__grid form__grid--3">
+                  <div class="form-group"><label class="form-label" style="font-size:0.75rem">Facility Type</label><select class="form-input form-select"><option>Health Center</option></select></div>
+                  <div class="form-group"><label class="form-label" style="font-size:0.75rem">Building Type</label><select class="form-input form-select"><option>Semi-Permanent</option></select></div>
+                  <div class="form-group"><label class="form-label" style="font-size:0.75rem">Staff Count</label><input type="number" class="form-input" value="5" /></div>
+                  <div class="form-group" style="margin-top:0.75rem"><label class="form-label" style="font-size:0.75rem">Water Source</label><select class="form-input form-select"><option>Borehole</option></select></div>
+                  <div class="form-group" style="margin-top:0.75rem"><label class="form-label" style="font-size:0.75rem">Power Source</label><select class="form-input form-select"><option>Grid (Unreliable)</option></select></div>
+                  <div class="form-group" style="margin-top:0.75rem"><label class="form-label" style="font-size:0.75rem">Road Access</label><select class="form-input form-select"><option>Paved</option></select></div>
+                </div>
+              </div>
+
+              <div class="sp-score-cards">
+                <div class="sp-score-card">
+                  <div class="sp-score-label">Overall Vulnerability Score</div>
+                  <div class="sp-score-value">68 / 100 <span class="sp-score-badge" style="color:var(--danger)">High</span></div>
+                  <div class="progress-bar mt-1"><div class="progress-bar__fill" style="width:68%;background:var(--danger)"></div></div>
+                </div>
+                <div class="sp-score-card">
+                  <div class="sp-score-label">Hazard Exposure</div>
+                  <div class="sp-score-value">72 / 100 <span class="sp-score-badge" style="color:#f97316">High</span></div>
+                  <div class="progress-bar mt-1"><div class="progress-bar__fill" style="width:72%;background:#f97316"></div></div>
+                </div>
+                <div class="sp-score-card">
+                  <div class="sp-score-label">Infrastructure</div>
+                  <div class="sp-score-value">61 / 100 <span class="sp-score-badge" style="color:var(--warning)">Moderate</span></div>
+                  <div class="progress-bar mt-1"><div class="progress-bar__fill" style="width:61%;background:var(--warning)"></div></div>
+                </div>
+                <div class="sp-score-card">
+                  <div class="sp-score-label">Emergency Preparedness</div>
+                  <div class="sp-score-value">56 / 100 <span class="sp-score-badge" style="color:var(--warning)">Moderate</span></div>
+                  <div class="progress-bar mt-1"><div class="progress-bar__fill" style="width:56%;background:var(--warning)"></div></div>
+                </div>
+                <div class="sp-score-card">
+                  <div class="sp-score-label">Service Capacity</div>
+                  <div class="sp-score-value">65 / 100 <span class="sp-score-badge" style="color:#f97316">High</span></div>
+                  <div class="progress-bar mt-1"><div class="progress-bar__fill" style="width:65%;background:#f97316"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="na-panel mt-1">
+            <div class="na-panel-header"><h2>Nearby Facilities</h2></div>
             <div style="padding:1rem;overflow-x:auto">
               <table class="na-district-table">
-                <thead><tr><th>#</th><th>Community</th><th>District</th><th>Population</th><th>Children &lt;5</th><th>Primary Hazard</th><th>Vulnerability</th></tr></thead>
+                <thead><tr><th>Facility Name</th><th>Type</th><th>District</th><th>Vulnerability Score</th><th>Risk Level</th><th>Status</th></tr></thead>
                 <tbody>
-                  <tr><td>1</td><td><strong>Kroo Bay</strong></td><td>Western Area Urban</td><td>11,500</td><td>2,800</td><td>Flood</td><td><span class="na-district-badge na-district-badge--high">0.94</span></td></tr>
-                  <tr><td>2</td><td><strong>Susan's Bay</strong></td><td>Western Area Urban</td><td>13,800</td><td>3,200</td><td>Flood</td><td><span class="na-district-badge na-district-badge--high">0.91</span></td></tr>
-                  <tr><td>3</td><td><strong>Kambia Town</strong></td><td>Kambia</td><td>17,000</td><td>4,100</td><td>River Flood</td><td><span class="na-district-badge na-district-badge--high">0.87</span></td></tr>
-                  <tr><td>4</td><td><strong>Waterloo</strong></td><td>Western Area Rural</td><td>39,000</td><td>9,100</td><td>Malaria</td><td><span class="na-district-badge na-district-badge--high">0.82</span></td></tr>
-                  <tr><td>5</td><td><strong>Kabala</strong></td><td>Koinadugu</td><td>22,000</td><td>5,400</td><td>Flood + Malaria</td><td><span class="na-district-badge na-district-badge--high">0.79</span></td></tr>
+                  <tr><td>Koinadugu Health Center</td><td>Health Center</td><td>Koinadugu</td><td>82</td><td><span class="na-district-badge na-district-badge--high" style="color:var(--danger);border-color:var(--danger)">Very High</span></td><td><span style="color:var(--success)">Active</span></td></tr>
+                  <tr><td>Kabala CHC</td><td>CHC</td><td>Koinadugu</td><td>71</td><td><span class="na-district-badge na-district-badge--med" style="color:#f97316;border-color:#f97316">High</span></td><td><span style="color:var(--success)">Active</span></td></tr>
+                  <tr><td>Bombali Health Post</td><td>Health Post</td><td>Bombali</td><td>54</td><td><span class="na-district-badge na-district-badge--med" style="color:var(--warning);border-color:var(--warning)">Moderate</span></td><td><span style="color:var(--success)">Active</span></td></tr>
+                  <tr><td>Port Loko CHC</td><td>CHC</td><td>Port Loko</td><td>48</td><td><span class="na-district-badge na-district-badge--med" style="color:var(--warning);border-color:var(--warning)">Moderate</span></td><td><span style="color:var(--success)">Active</span></td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- ════════════ TAB 5: POLLUTION HOTSPOTS ════════════ -->
-        <div id="tab-pollution" class="tab-content hidden">
-          <div class="na-kpi-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:1.25rem">
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Pollution Hotspots</div><div class="na-kpi-card__value" style="color:#ef4444">8</div><div class="na-kpi-card__sub">communities above WHO limits</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Avg PM2.5</div><div class="na-kpi-card__value" style="color:#f97316">32 µg/m³</div><div class="na-kpi-card__sub">WHO guideline: 15 µg/m³</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Population Affected</div><div class="na-kpi-card__value">245K</div><div class="na-kpi-card__sub">in hotspot zones</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Health Impact Score</div><div class="na-kpi-card__value" style="color:var(--warning)">0.64</div><div class="na-kpi-card__sub">moderate respiratory risk</div></div>
-          </div>
-          <div class="card card--glow-amber">
-            <div class="card__header"><div><div class="card__title"><i data-lucide="wind"></i> Pollution Hotspot Assessment</div><div class="card__desc">Assess air pollutant concentrations and identify health hotspots.</div></div></div>
-            <form id="pollution-form" autocomplete="off">
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="factory"></i> Pollutant Concentrations</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">PM2.5 (μg/m³)</label><input type="number" id="p-pm25" class="form-input" value="35" min="0" step="0.1" /></div>
-                  <div class="form-group"><label class="form-label">PM10 (μg/m³)</label><input type="number" id="p-pm10" class="form-input" value="50" min="0" step="0.1" /></div>
-                  <div class="form-group"><label class="form-label">Ozone O₃ (ppb)</label><input type="number" id="p-o3" class="form-input" value="40" min="0" step="0.1" /></div>
-                  <div class="form-group"><label class="form-label">NO₂ (ppb)</label><input type="number" id="p-no2" class="form-input" value="30" min="0" step="0.1" /></div>
-                  <div class="form-group"><label class="form-label">SO₂ (ppb)</label><input type="number" id="p-so2" class="form-input" value="10" min="0" step="0.1" /></div>
+        <!-- ════════════ VIEW 3: ANALYSIS & TRENDS ════════════ -->
+        <div id="view-trends" class="tab-content hidden">
+          <div class="sp-filter-bar">
+             <div style="display:flex;gap:1rem">
+                <div class="form-group" style="margin:0">
+                   <label class="form-label" style="font-size:0.7rem;margin-bottom:0.2rem">Time Range</label>
+                   <select class="form-input form-select" style="padding:0.4rem 0.5rem;font-size:0.8rem;background:transparent;width:150px"><option>Last 5 Years</option></select>
                 </div>
-              </div>
-              <div style="display:flex;gap:1.5rem;margin-bottom:1rem">
-                <label class="form-checkbox"><input type="checkbox" id="p-children" checked /> Children present</label>
-                <label class="form-checkbox"><input type="checkbox" id="p-resp" /> Respiratory conditions</label>
-              </div>
-              <button type="submit" class="btn btn--primary btn--full">Assess Pollution</button>
-            </form>
-            <div class="hidden mt-1" id="pollution-result"></div>
+                <div class="form-group" style="margin:0">
+                   <label class="form-label" style="font-size:0.7rem;margin-bottom:0.2rem">District</label>
+                   <select class="form-input form-select" style="padding:0.4rem 0.5rem;font-size:0.8rem;background:transparent;width:150px"><option>All Districts</option></select>
+                </div>
+             </div>
+             <button class="btn btn--secondary btn--sm"><i data-lucide="download"></i> Export Report</button>
           </div>
-        </div>
 
-        <!-- ════════════ TAB 6: CARBON FOOTPRINT ════════════ -->
-        <div id="tab-carbon" class="tab-content hidden">
-          <div class="na-kpi-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:1.25rem">
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Total Facility Emissions</div><div class="na-kpi-card__value" style="color:var(--warning)">842 tCO₂e</div><div class="na-kpi-card__sub">annual estimate (286 facilities)</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Avg per Facility</div><div class="na-kpi-card__value">2.94 tCO₂e</div><div class="na-kpi-card__sub">per year</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Generator Reliance</div><div class="na-kpi-card__value" style="color:#ef4444">68%</div><div class="na-kpi-card__sub">facilities using diesel gen</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Reduction Potential</div><div class="na-kpi-card__value" style="color:var(--accent)">34%</div><div class="na-kpi-card__sub">with solar transition</div></div>
-          </div>
-          <div class="card card--glow-purple">
-            <div class="card__header"><div><div class="card__title"><i data-lucide="leaf"></i> Carbon Footprint Estimator</div><div class="card__desc">Estimate facility-level greenhouse gas emissions (Scope 1, 2, 3).</div></div></div>
-            <form id="carbon-form" autocomplete="off">
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="building"></i> Facility</div>
-                <div class="form__grid">
-                  <div class="form-group"><label class="form-label">Facility Type</label><select id="c-type" class="form-input form-select"><option value="health_center">Health Center</option><option value="hospital">Hospital</option><option value="clinic">Clinic</option><option value="school">School</option></select></div>
-                  <div class="form-group"><label class="form-label">Floor Area (m²)</label><input type="number" id="c-area" class="form-input" value="200" min="1" /></div>
-                </div>
-              </div>
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="fuel"></i> Fuel Consumption (monthly)</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Diesel (liters)</label><input type="number" id="c-diesel" class="form-input" value="0" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Charcoal (kg)</label><input type="number" id="c-charcoal" class="form-input" value="0" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Kerosene (liters)</label><input type="number" id="c-kerosene" class="form-input" value="0" min="0" /></div>
-                </div>
-              </div>
-              <div class="form__section">
-                <div class="form__section-title"><i data-lucide="zap"></i> Electricity</div>
-                <div class="form__grid form__grid--3">
-                  <div class="form-group"><label class="form-label">Grid Electricity (kWh)</label><input type="number" id="c-elec" class="form-input" value="150" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Generator Hours</label><input type="number" id="c-gen" class="form-input" value="40" min="0" /></div>
-                  <div class="form-group"><label class="form-label">Solar kWh</label><input type="number" id="c-solar" class="form-input" value="0" min="0" /></div>
-                </div>
-                <label class="form-checkbox" style="margin-top:0.5rem"><input type="checkbox" id="c-has-solar" /> Has solar panels</label>
-              </div>
-              <button type="submit" class="btn btn--primary btn--full">Estimate Carbon Footprint</button>
-            </form>
-            <div class="hidden mt-1" id="carbon-result"></div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 7: HISTORICAL TRENDS ════════════ -->
-        <div id="tab-trends" class="tab-content hidden">
           <div class="na-bottom-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:1.25rem">
             <div class="na-panel">
-              <div class="na-panel-header"><h2><i data-lucide="cloud-rain"></i> Annual Rainfall Trends (5 Years)</h2></div>
+              <div class="na-panel-header" style="border-bottom:none;padding-bottom:0"><h2>Annual Rainfall Trends (mm)</h2></div>
               <div style="padding:1rem"><canvas id="sp-rainfall-trend" style="width:100%;height:220px"></canvas></div>
             </div>
             <div class="na-panel">
-              <div class="na-panel-header"><h2><i data-lucide="waves"></i> Flood Events by Year</h2></div>
+              <div class="na-panel-header" style="border-bottom:none;padding-bottom:0"><h2>Flood Events by Year</h2></div>
               <div style="padding:1rem"><canvas id="sp-flood-trend" style="width:100%;height:220px"></canvas></div>
             </div>
           </div>
           <div class="na-bottom-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:1.25rem">
             <div class="na-panel">
-              <div class="na-panel-header"><h2><i data-lucide="bug"></i> Malaria Case Trends</h2></div>
+              <div class="na-panel-header" style="border-bottom:none;padding-bottom:0"><h2>Malaria Case Trends <span style="font-size:0.7rem;color:var(--text-dim);font-weight:normal;display:block;margin-top:0.2rem">(Confirmed Cases)</span></h2></div>
               <div style="padding:1rem"><canvas id="sp-malaria-trend" style="width:100%;height:220px"></canvas></div>
             </div>
             <div class="na-panel">
-              <div class="na-panel-header"><h2><i data-lucide="hospital"></i> Health Facility Disruptions</h2></div>
+              <div class="na-panel-header" style="border-bottom:none;padding-bottom:0"><h2>Health Facility Disruptions <span style="font-size:0.7rem;color:var(--text-dim);font-weight:normal;display:block;margin-top:0.2rem">(Days of Disruption)</span></h2></div>
               <div style="padding:1rem"><canvas id="sp-disruption-trend" style="width:100%;height:220px"></canvas></div>
             </div>
           </div>
         </div>
 
-        <!-- ════════════ TAB 8: SCENARIO ANALYSIS ════════════ -->
-        <div id="tab-scenarios" class="tab-content hidden">
+        <!-- ════════════ VIEW 4: ALERTS & REPORTS ════════════ -->
+        <div id="view-alerts" class="tab-content hidden">
+          <div class="na-kpi-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:1.25rem">
+            <div class="na-kpi-card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2)"><div class="na-kpi-card__label" style="color:var(--text-bright)"><i data-lucide="triangle-alert" style="color:var(--danger);width:14px;height:14px;vertical-align:middle;margin-right:0.25rem"></i> Critical Alerts</div><div class="na-kpi-card__value" style="color:var(--danger);display:flex;align-items:center;gap:0.5rem"><i data-lucide="flame" style="width:24px;height:24px"></i> 4</div><div class="na-kpi-card__sub" style="color:var(--text-dim)">Require immediate action</div></div>
+            <div class="na-kpi-card" style="background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.2)"><div class="na-kpi-card__label" style="color:var(--text-bright)"><i data-lucide="alert-circle" style="color:#f97316;width:14px;height:14px;vertical-align:middle;margin-right:0.25rem"></i> High Alerts</div><div class="na-kpi-card__value" style="color:#f97316;display:flex;align-items:center;gap:0.5rem"><i data-lucide="activity" style="width:24px;height:24px"></i> 7</div><div class="na-kpi-card__sub" style="color:var(--text-dim)">High priority</div></div>
+            <div class="na-kpi-card" style="background:rgba(250,204,21,0.08);border-color:rgba(250,204,21,0.2)"><div class="na-kpi-card__label" style="color:var(--text-bright)"><i data-lucide="clock" style="color:var(--warning);width:14px;height:14px;vertical-align:middle;margin-right:0.25rem"></i> Moderate Alerts</div><div class="na-kpi-card__value" style="color:var(--warning);display:flex;align-items:center;gap:0.5rem"><i data-lucide="eye" style="width:24px;height:24px"></i> 12</div><div class="na-kpi-card__sub" style="color:var(--text-dim)">Monitor closely</div></div>
+            <div class="na-kpi-card" style="background:rgba(56,189,248,0.08);border-color:rgba(56,189,248,0.2)"><div class="na-kpi-card__label" style="color:var(--text-bright)"><i data-lucide="info" style="color:var(--accent);width:14px;height:14px;vertical-align:middle;margin-right:0.25rem"></i> Informational</div><div class="na-kpi-card__value" style="color:var(--accent);display:flex;align-items:center;gap:0.5rem"><i data-lucide="info" style="width:24px;height:24px"></i> 5</div><div class="na-kpi-card__sub" style="color:var(--text-dim)">For your awareness</div></div>
+          </div>
+          
           <div class="na-panel" style="margin-bottom:1.25rem">
-            <div class="na-panel-header"><h2><i data-lucide="git-branch"></i> "What-If" Climate Scenario Analysis</h2></div>
-            <div style="padding:1.25rem">
-              <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:1.25rem">Adjust climate variables to model projected risk changes across districts. Impacts on population and facilities are estimated using current CHEWS models.</p>
-              <div class="form__grid form__grid--3" style="margin-bottom:1rem">
-                <div class="form-group"><label class="form-label">Rainfall Change (%)</label><input type="range" id="sc2-rain" class="scenario__slider" min="-50" max="100" value="20" oninput="document.getElementById('sc2-rain-val').textContent=this.value+'%'" /><div class="text-dim" style="font-size:0.8rem;text-align:center"><span id="sc2-rain-val">20%</span></div></div>
-                <div class="form-group"><label class="form-label">Temperature Change (°C)</label><input type="range" id="sc2-temp" class="scenario__slider" min="-2" max="5" step="0.5" value="1.5" oninput="document.getElementById('sc2-temp-val').textContent=this.value+'°C'" /><div class="text-dim" style="font-size:0.8rem;text-align:center"><span id="sc2-temp-val">1.5°C</span></div></div>
-                <div class="form-group"><label class="form-label">Sea Level Rise (cm)</label><input type="range" id="sc2-sea" class="scenario__slider" min="0" max="100" value="15" oninput="document.getElementById('sc2-sea-val').textContent=this.value+'cm'" /><div class="text-dim" style="font-size:0.8rem;text-align:center"><span id="sc2-sea-val">15cm</span></div></div>
-              </div>
-              <button class="btn btn--primary" id="sc2-run" onclick="runScenarioAnalysis()"><i data-lucide="play"></i> Run Scenario</button>
-            </div>
-          </div>
-
-          <div id="sc2-results" style="display:none">
-            <div class="na-kpi-strip" style="grid-template-columns: repeat(4, 1fr); margin-bottom:1.25rem">
-              <div class="na-kpi-card"><div class="na-kpi-card__label">Additional Pop. at Risk</div><div class="na-kpi-card__value" style="color:var(--danger)" id="sc2-pop">—</div><div class="na-kpi-card__sub">above current baseline</div></div>
-              <div class="na-kpi-card"><div class="na-kpi-card__label">Facilities Impacted</div><div class="na-kpi-card__value" style="color:var(--warning)" id="sc2-fac">—</div><div class="na-kpi-card__sub">at elevated risk</div></div>
-              <div class="na-kpi-card"><div class="na-kpi-card__label">Flood Risk Δ</div><div class="na-kpi-card__value" id="sc2-flood">—</div><div class="na-kpi-card__sub">change from baseline</div></div>
-              <div class="na-kpi-card"><div class="na-kpi-card__label">Malaria Risk Δ</div><div class="na-kpi-card__value" id="sc2-malaria">—</div><div class="na-kpi-card__sub">change from baseline</div></div>
-            </div>
-            <div class="na-panel">
-              <div class="na-panel-header"><h2><i data-lucide="map-pin"></i> District Impact Projection</h2></div>
-              <div style="padding:1rem;overflow-x:auto">
-                <table class="na-district-table" id="sc2-table">
-                  <thead><tr><th>District</th><th>Current Risk</th><th>Projected Risk</th><th>Δ Change</th><th>Pop. Affected</th><th>Facilities at Risk</th></tr></thead>
-                  <tbody id="sc2-tbody"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 9: DISTRICT PRIORITY & RANKING ════════════ -->
-        <div id="tab-ranking" class="tab-content hidden">
-          <div class="na-panel" style="margin-bottom:1.25rem">
-            <div class="na-panel-header"><h2><i data-lucide="award"></i> District Priority Ranking — Overall Climate-Health Risk</h2></div>
-            <div style="padding:1rem;overflow-x:auto">
-              <table class="na-district-table" id="sp-ranking-table">
-                <thead><tr><th>Rank</th><th>District</th><th>Flood Risk</th><th>Malaria Risk</th><th>Heat Risk</th><th>AQ Risk</th><th>Vulnerable Pop.</th><th>Priority Facilities</th><th>Overall Score</th></tr></thead>
-                <tbody>
-                  <tr><td>1</td><td><strong>Koinadugu</strong></td><td><span class="na-district-score na-district-score--high">0.82</span></td><td><span class="na-district-score na-district-score--high">0.74</span></td><td>0.45</td><td>0.38</td><td>42,800</td><td>12</td><td><span class="na-district-badge na-district-badge--high">0.82</span></td></tr>
-                  <tr><td>2</td><td><strong>Bombali</strong></td><td><span class="na-district-score na-district-score--high">0.76</span></td><td><span class="na-district-score na-district-score--med">0.68</span></td><td>0.52</td><td>0.41</td><td>101,000</td><td>18</td><td><span class="na-district-badge na-district-badge--high">0.76</span></td></tr>
-                  <tr><td>3</td><td><strong>Port Loko</strong></td><td><span class="na-district-score na-district-score--med">0.72</span></td><td><span class="na-district-score na-district-score--high">0.79</span></td><td>0.48</td><td>0.35</td><td>118,600</td><td>22</td><td><span class="na-district-badge na-district-badge--med">0.72</span></td></tr>
-                  <tr><td>4</td><td><strong>Kenema</strong></td><td><span class="na-district-score na-district-score--med">0.68</span></td><td><span class="na-district-score na-district-score--high">0.81</span></td><td>0.56</td><td>0.42</td><td>136,200</td><td>26</td><td><span class="na-district-badge na-district-badge--med">0.68</span></td></tr>
-                  <tr><td>5</td><td><strong>Bo</strong></td><td><span class="na-district-score na-district-score--med">0.65</span></td><td><span class="na-district-score na-district-score--med">0.62</span></td><td>0.51</td><td>0.44</td><td>128,000</td><td>20</td><td><span class="na-district-badge na-district-badge--med">0.65</span></td></tr>
-                  <tr><td>6</td><td><strong>W. Area Urban</strong></td><td><span class="na-district-score na-district-score--low">0.42</span></td><td><span class="na-district-score na-district-score--low">0.51</span></td><td>0.62</td><td>0.58</td><td>215,000</td><td>42</td><td><span class="na-district-badge na-district-badge--low">0.48</span></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 10: STRATEGIC ALERTS ════════════ -->
-        <div id="tab-alerts" class="tab-content hidden">
-          <div class="na-kpi-strip" style="grid-template-columns: repeat(3, 1fr); margin-bottom:1.25rem">
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Critical Alerts</div><div class="na-kpi-card__value" style="color:#ef4444">3</div><div class="na-kpi-card__sub">requiring immediate action</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">High Priority</div><div class="na-kpi-card__value" style="color:#f97316">5</div><div class="na-kpi-card__sub">48-hour response window</div></div>
-            <div class="na-kpi-card"><div class="na-kpi-card__label">Moderate Watch</div><div class="na-kpi-card__value" style="color:#facc15">8</div><div class="na-kpi-card__sub">monitoring in progress</div></div>
-          </div>
-          <div id="sp-alerts-feed"></div>
-        </div>
-
-        <!-- ════════════ TAB 11: AI RECOMMENDATIONS ════════════ -->
-        <div id="tab-recommendations" class="tab-content hidden">
-          <div class="na-panel" style="margin-bottom:1.25rem">
-            <div class="na-panel-header"><h2><i data-lucide="brain-circuit"></i> AI-Generated Priority Interventions</h2></div>
-            <div id="sp-ai-recs"></div>
-          </div>
-        </div>
-
-        <!-- ════════════ TAB 12: STRATEGIC REPORTS ════════════ -->
-        <div id="tab-reports" class="tab-content hidden">
-          <div class="na-panel" style="margin-bottom:1.25rem">
-            <div class="na-panel-header">
-              <h2><i data-lucide="file-text"></i> Strategic Reports & Bulletins</h2>
-              <button class="btn btn--primary btn--sm" onclick="alert('Generating PDF report...')"><i data-lucide="download"></i> Export PDF</button>
-            </div>
-            <div class="p-reports-list">
-              <div class="p-report-item">
-                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
-                <div class="p-report-item__info"><div class="p-report-item__name">Weekly Climate-Health Bulletin — Week 45, 2024</div><div class="p-report-item__meta">PDF · Auto-generated · 12 Nov 2024</div></div>
-                <button class="btn btn--primary btn--sm" onclick="alert('Downloading bulletin...')"><i data-lucide="download"></i> PDF</button>
-              </div>
-              <div class="p-report-item">
-                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
-                <div class="p-report-item__info"><div class="p-report-item__name">Monthly Strategic Summary — October 2024</div><div class="p-report-item__meta">PDF · Published 01 Nov 2024</div></div>
-                <button class="btn btn--primary btn--sm" onclick="alert('Downloading report...')"><i data-lucide="download"></i> PDF</button>
-              </div>
-              <div class="p-report-item">
-                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
-                <div class="p-report-item__info"><div class="p-report-item__name">Koinadugu District Risk Assessment</div><div class="p-report-item__meta">PDF · 8.2 MB · Updated 10 Nov 2024</div></div>
-                <button class="btn btn--primary btn--sm" onclick="alert('Downloading report...')"><i data-lucide="download"></i> PDF</button>
-              </div>
-              <div class="p-report-item">
-                <div class="p-report-item__icon"><i data-lucide="file-bar-chart"></i></div>
-                <div class="p-report-item__info"><div class="p-report-item__name">Bombali District Risk Assessment</div><div class="p-report-item__meta">PDF · 7.4 MB · Updated 10 Nov 2024</div></div>
-                <button class="btn btn--primary btn--sm" onclick="alert('Downloading report...')"><i data-lucide="download"></i> PDF</button>
-              </div>
-            </div>
+            <div class="na-panel-header"><h2>Active Alerts</h2> <button class="btn btn--ghost btn--sm">View All Alerts</button></div>
+            <div id="sp-alerts-feed"></div>
           </div>
 
           <div class="na-panel">
-            <div class="na-panel-header"><h2><i data-lucide="cpu"></i> Data & AI Methodology Summary</h2></div>
-            <div style="padding:1.25rem">
-              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
-                <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
-                  <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="database" style="width:14px;height:14px;vertical-align:middle"></i> Data Sources</div>
-                  <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
-                    <li>DHIS2 Weekly Case Reports</li><li>Master Facility List (MoHS)</li><li>ERA5/CHIRPS Climate Data</li><li>MODIS Land Surface Temp</li><li>CHW Surveillance Logs</li>
-                  </ul>
+             <div class="na-panel-header" style="border-bottom:none"><h2>Quick Reports</h2></div>
+             <div style="padding:0 1rem 1rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
+                <div class="sp-report-card">
+                   <div style="font-weight:600;font-size:0.85rem;color:var(--text-bright);margin-bottom:0.75rem">District Risk Report</div>
+                   <div class="sp-report-badge">PDF</div>
                 </div>
-                <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
-                  <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="brain-circuit" style="width:14px;height:14px;vertical-align:middle"></i> AI Models</div>
-                  <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
-                    <li>XGBoost Spatial — Flood Risk</li><li>LSTM Ensemble — Malaria</li><li>Random Forest — Heat Stress</li><li>Composite Vulnerability Scorer</li>
-                  </ul>
+                <div class="sp-report-card">
+                   <div style="font-weight:600;font-size:0.85rem;color:var(--text-bright);margin-bottom:0.75rem">Facility Vulnerability Report</div>
+                   <div class="sp-report-badge">PDF</div>
                 </div>
-                <div style="padding:1rem;background:var(--surface-2);border-radius:var(--radius-xs)">
-                  <div style="font-weight:600;margin-bottom:0.5rem;color:var(--accent)"><i data-lucide="settings" style="width:14px;height:14px;vertical-align:middle"></i> Methodology</div>
-                  <ul style="font-size:0.8rem;color:var(--text-dim);list-style:disc;padding-left:1rem;line-height:1.6">
-                    <li>7-day rolling prediction window</li><li>District-level aggregation</li><li>WHO threshold calibration</li><li>Monthly model retraining</li>
-                  </ul>
+                <div class="sp-report-card">
+                   <div style="font-weight:600;font-size:0.85rem;color:var(--text-bright);margin-bottom:0.75rem">Climate & Health Report</div>
+                   <div class="sp-report-badge">PDF</div>
                 </div>
-              </div>
-            </div>
+                <div class="sp-report-card">
+                   <div style="font-weight:600;font-size:0.85rem;color:var(--text-bright);margin-bottom:0.75rem">Data Export</div>
+                   <div class="sp-report-badge" style="border-color:rgba(56,189,248,0.3);color:var(--accent)">CSV</div>
+                </div>
+             </div>
           </div>
         </div>
 
