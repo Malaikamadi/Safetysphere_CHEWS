@@ -89,7 +89,8 @@ async function postForm(url, payload, resultId) {
 }
 
 // Vulnerability
-document.getElementById("vuln-form").addEventListener("submit", e => {
+const vulnForm = document.getElementById("vuln-form");
+if (vulnForm) vulnForm.addEventListener("submit", e => {
   e.preventDefault();
   postForm(`${API}/strategic/vulnerability-score`, {
     facility_type: document.getElementById("v-facility-type").value,
