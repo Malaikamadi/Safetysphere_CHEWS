@@ -110,7 +110,8 @@ if (vulnForm) vulnForm.addEventListener("submit", e => {
 });
 
 // Hazard Map
-document.getElementById("hazard-form").addEventListener("submit", e => {
+const hazardForm = document.getElementById("hazard-form");
+if (hazardForm) hazardForm.addEventListener("submit", e => {
   e.preventDefault();
   postForm(`${API}/strategic/hazard-map`, {
     location_name: document.getElementById("h-name").value,
@@ -126,7 +127,8 @@ document.getElementById("hazard-form").addEventListener("submit", e => {
 });
 
 // Pollution
-document.getElementById("pollution-form").addEventListener("submit", e => {
+const pollutionForm = document.getElementById("pollution-form");
+if (pollutionForm) pollutionForm.addEventListener("submit", e => {
   e.preventDefault();
   postForm(`${API}/strategic/pollution-hotspot`, {
     pm25: +document.getElementById("p-pm25").value,
@@ -140,7 +142,8 @@ document.getElementById("pollution-form").addEventListener("submit", e => {
 });
 
 // Carbon
-document.getElementById("carbon-form").addEventListener("submit", e => {
+const carbonForm = document.getElementById("carbon-form");
+if (carbonForm) carbonForm.addEventListener("submit", e => {
   e.preventDefault();
   postForm(`${API}/strategic/carbon-footprint`, {
     facility_type: document.getElementById("c-type").value,
