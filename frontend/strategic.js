@@ -254,16 +254,6 @@ const FloodAtlas = {
       attributionControl: true,
     });
 
-    // Carto Dark Matter tiles to match the dark UI.
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 19,
-      }
-    ).addTo(this.map);
 
     this.layer = L.layerGroup().addTo(this.map);
 
@@ -353,22 +343,58 @@ const FloodAtlas = {
       updated.textContent = `Updated ${ts.toLocaleTimeString()} · ${tag}`;
     }
 
-    // Map markers
-    if (this.layer) this.layer.clearLayers();
-    snap.zones.forEach(z => {
-      const color = this.riskColor(z.prediction.risk_level);
-      const m = L.circleMarker([z.lat, z.lng], {
-        radius: this.riskRadius(z.prediction.risk_score),
-        color: color,
-        weight: 2,
-        opacity: 0.9,
-        fillColor: color,
-        fillOpacity: 0.55,
+    // Map markers/Choropleth
+    const drawChoropleth = (geojson) => {
+      if (this.layer) this.layer.clearLayers();
+      
+      const geoLayer = L.geoJSON(geojson, {
+        style: (feature) => {
+          // Find matching zone in backend data
+          // Feature name might be in feature.properties.shapeName
+          const districtName = feature.properties.shapeName || feature.properties.ADM2_EN || feature.properties.name || "";
+          const z = snap.zones.find(zone => districtName.toLowerCase().includes(zone.name.toLowerCase()) || zone.name.toLowerCase().includes(districtName.toLowerCase()));
+          
+          if (!z) return { color: "#333", weight: 1, fillColor: "#222", fillOpacity: 0.8 };
+          
+          const color = this.riskColor(z.prediction.risk_level);
+          return {
+            color: "#ffffff",
+            weight: 1.5,
+            fillColor: color,
+            fillOpacity: 0.85
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          const districtName = feature.properties.shapeName || feature.properties.ADM2_EN || feature.properties.name || "";
+          const z = snap.zones.find(zone => districtName.toLowerCase().includes(zone.name.toLowerCase()) || zone.name.toLowerCase().includes(districtName.toLowerCase()));
+          
+          if (z) {
+            layer.bindTooltip(`<strong>${z.name}</strong><br>${z.prediction.risk_level} · ${z.prediction.risk_score.toFixed(2)}`, { sticky: true });
+            layer.on("click", () => this.selectZone(z.id));
+          } else {
+            layer.bindTooltip(`<strong>${districtName}</strong><br>No data`, { sticky: true });
+          }
+        }
       });
-      m.bindTooltip(`<strong>${z.name}</strong><br>${z.prediction.risk_level} · ${z.prediction.risk_score.toFixed(2)}`, { sticky: true });
-      m.on("click", () => this.selectZone(z.id));
-      m.addTo(this.layer);
-    });
+      geoLayer.addTo(this.layer);
+      
+      if (this.map && !this._fittedGeojson) {
+        this.map.fitBounds(geoLayer.getBounds(), { padding: [20, 20] });
+        this._fittedGeojson = true;
+      }
+    };
+
+    if (!this.geojsonData) {
+      fetch('sierra-leone-districts.geojson')
+        .then(res => res.json())
+        .then(data => {
+          this.geojsonData = data;
+          drawChoropleth(data);
+        })
+        .catch(err => console.error("Failed to load map geojson", err));
+    } else {
+      drawChoropleth(this.geojsonData);
+    }
 
     if (snap.bounds && this.map && !this._fitted) {
       this.map.fitBounds([snap.bounds.south_west, snap.bounds.north_east], { padding: [20, 20] });
