@@ -149,6 +149,7 @@ function renderSidebar() {
   if (!perms || !config) return;
 
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const currentHash = window.location.hash || '';
   
   const district = getDistrict();
   let subtitle = perms.name;
@@ -170,8 +171,12 @@ function renderSidebar() {
             </button>
             <div class="nav-group__content">
               ${item.subnav.map(sub => {
-                const isActive = currentPath.includes(sub.url.split('#')[0]);
-                return `<a href="${sub.url}" class="nav-sublink ${isActive ? 'is-active' : ''}">${sub.label}</a>`;
+                const subPage = sub.url.split('#')[0];
+                const subHash = sub.url.includes('#') ? '#' + sub.url.split('#')[1] : '';
+                const pageMatch = currentPath.includes(subPage);
+                const hashMatch = subHash ? currentHash === subHash : !currentHash;
+                const isActive = pageMatch && hashMatch;
+                return `<a href="${sub.url}" class="nav-sublink ${isActive ? 'is-active' : ''}" data-tab="${subHash.replace('#','')}">${sub.label}</a>`;
               }).join('')}
             </div>
           </div>

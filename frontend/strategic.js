@@ -527,6 +527,15 @@ const _origSwitchTab = switchTab;
 let trendsDrawn = false, alertsRendered = false, recsRendered = false;
 switchTab = function (tab) {
   _origSwitchTab(tab);
+
+  // Sync sidebar sub-link active states
+  document.querySelectorAll('.nav-sublink').forEach(link => {
+    const linkTab = link.getAttribute('data-tab');
+    if (linkTab) {
+      link.classList.toggle('is-active', linkTab === tab);
+    }
+  });
+
   if (tab === "atlas") {
     maybeBootAtlas();
     if (!parsePlanningHash(location.hash).zoneId)
@@ -546,6 +555,24 @@ switchTab = function (tab) {
   }
   if (window.lucide) lucide.createIcons();
 };
+
+// Intercept sidebar sub-link clicks for in-page tab switching
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('click', (e) => {
+    const sublink = e.target.closest('.nav-sublink[data-tab]');
+    if (!sublink) return;
+    const tab = sublink.getAttribute('data-tab');
+    const href = sublink.getAttribute('href') || '';
+    const targetPage = href.split('#')[0];
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    // Only intercept if we're on the same page
+    if (currentPage.includes(targetPage) && tab) {
+      e.preventDefault();
+      window.location.hash = '#' + tab;
+      switchTab(tab);
+    }
+  });
+});
 
 // =====================================================================
 // Historical Trend Charts (Tab 7)

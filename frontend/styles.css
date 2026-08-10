@@ -954,27 +954,39 @@ body {
 .nav-group__content {
   display: none;
   flex-direction: column;
-  padding-left: 2.8rem;
+  padding-left: 1.2rem;
   padding-right: 0.75rem;
-  margin-top: 0.15rem;
+  margin-top: 0.35rem;
   margin-bottom: 0.5rem;
-  gap: 0.15rem;
+  gap: 0.2rem;
 }
 .nav-group.is-expanded .nav-group__content {
   display: flex;
 }
 .nav-sublink {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
   text-decoration: none;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-xs);
-  transition: var(--transition);
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
+  position: relative;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
 }
-.nav-sublink:hover, .nav-sublink.is-active {
-  color: var(--accent);
+.nav-sublink:hover {
+  color: var(--text-bright);
   background: rgba(125, 159, 134, 0.08);
+  border-color: rgba(125, 159, 134, 0.12);
+}
+.nav-sublink.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(125, 159, 134, 0.35), rgba(86, 130, 98, 0.45));
+  border-color: rgba(125, 159, 134, 0.3);
+  box-shadow: 0 0 12px rgba(125, 159, 134, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-weight: 600;
 }
 
 /* ============================================================
