@@ -554,7 +554,7 @@ window.addEventListener("hashchange", () => {
 });
 
 const _origSwitchTab = switchTab;
-let trendsDrawn = false, alertsRendered = false, recsRendered = false;
+let trendsDrawn = false, alertsRendered = false, recsRendered = false, prioritiesRendered = false;
 switchTab = function (tab) {
   _origSwitchTab(tab);
 
@@ -583,6 +583,10 @@ switchTab = function (tab) {
     renderAiRecommendations();
     recsRendered = true;
   }
+  if (tab === "priorities" && !prioritiesRendered) {
+    renderDistrictPriorities();
+    prioritiesRendered = true;
+  }
   if (window.lucide) lucide.createIcons();
 };
 
@@ -603,6 +607,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// DISTRICT PRIORITIES
+// ═══════════════════════════════════════════════════════════════════
+
+async function renderDistrictPriorities() {
+  const loading = document.getElementById("priorities-loading");
+  const content = document.getElementById("priorities-content");
+  const list = document.getElementById("priorities-list");
+  
+  if (!loading || !content || !list) return;
+
+  try {
+    const res = await fetch(`${API}/strategic/district-priorities`);
+    if (!res.ok) throw new Error("Failed to load priorities");
+    const data = await res.json();
+    
+    loading.classList.add("hidden");
+    content.classList.remove("hidden");
+    
+    list.innerHTML = data.map((d, index) => {
+      const priorityColors = { Urgent: "var(--danger)", High: "var(--orange)", Moderate: "var(--warning)", Low: "var(--success)" };
+      const priorityColor = priorityColors[d.priority_level] || "var(--text)";
+      const readinessPct = (d.avg_readiness_score * 100).toFixed(0);
+      
+      return `
+        <div class="result-panel" style="border-left: 4px solid ${priorityColor}; padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1rem;">
+            <div>
+              <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-bright)">
+                <span style="color: var(--text-dim); margin-right: 0.5rem">#${index + 1}</span> ${d.district}
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-dim)">${d.region} Region · ${d.total_facilities} Facilities</div>
+            </div>
+            <div style="text-align: right">
+              <div style="font-size: 1.5rem; font-weight: 800; color: ${priorityColor}">${d.priority_score.toFixed(2)}</div>
+              <div class="risk-badge risk-badge--${d.priority_level === 'Urgent' ? 'critical' : d.priority_level === 'High' ? 'high' : d.priority_level === 'Moderate' ? 'moderate' : 'low'}" style="font-size: 0.75rem">${d.priority_level} Priority</div>
+            </div>
+          </div>
+          
+          <div class="grid-4" style="margin-bottom: 1rem;">
+            <div class="metric">
+              <div class="metric__label">Avg Readiness</div>
+              <div class="metric__value" style="color: ${d.avg_readiness_score < 0.5 ? 'var(--warning)' : 'var(--success)'}">${readinessPct}%</div>
+            </div>
+            <div class="metric">
+              <div class="metric__label">Critical Facilities</div>
+              <div class="metric__value" style="color: ${d.critical_facilities > 0 ? 'var(--danger)' : 'var(--text-bright)'}">${d.critical_facilities}</div>
+            </div>
+            <div class="metric">
+              <div class="metric__label">Flood Risk</div>
+              <div class="metric__value" style="color: ${d.flood_risk_level === 'High' ? 'var(--danger)' : 'var(--text-bright)'}">${d.flood_risk_level}</div>
+            </div>
+            <div class="metric">
+              <div class="metric__label">Basic Infra Gaps</div>
+              <div class="metric__value" style="font-size:0.9rem">${d.total_facilities - d.facilities_with_power} no power<br>${d.total_facilities - d.facilities_with_water} no water</div>
+            </div>
+          </div>
+          
+          <div style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600; margin-bottom: 0.5rem;">Recommended Strategic Actions:</div>
+          <ul class="result-list result-list--info" style="font-size: 0.8rem">
+            ${d.recommended_actions.map(a => `<li>${a}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }).join("");
+    if (window.lucide) lucide.createIcons();
+    
+  } catch (err) {
+    loading.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span>`;
+  }
+}
 
 // =====================================================================
 // Historical Trend Charts (Tab 7)

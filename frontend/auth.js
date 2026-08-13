@@ -30,6 +30,7 @@ const SIDEBAR_CONFIG = {
     { label: 'Command Center', icon: 'crosshair', url: 'index.html' },
     { label: 'Strategic Planning', icon: 'map', subnav: [
       { label: 'Risk & Hazard Maps', url: 'strategic.html#atlas' },
+      { label: 'District Priorities', url: 'strategic.html#priorities' },
       { label: 'Vulnerability Assessment', url: 'strategic.html#vulnerability' },
       { label: 'Analysis & Trends', url: 'strategic.html#trends' },
       { label: 'Alerts & Reports', url: 'strategic.html#alerts' }
@@ -41,8 +42,8 @@ const SIDEBAR_CONFIG = {
       { label: 'Sensor Network', url: 'early-warning.html#sensors' }
     ]},
     { label: 'Healthcare Readiness', icon: 'hospital', subnav: [
+      { label: 'Facility Explorer', url: 'healthcare.html#facilities' },
       { label: 'Disease Forecast', url: 'healthcare.html#forecast' },
-      { label: 'Facility Readiness', url: 'healthcare.html#readiness' },
       { label: 'Surge Planning', url: 'healthcare.html#surge' }
     ]},
     { label: 'Community Intelligence', icon: 'users', subnav: [
@@ -74,7 +75,7 @@ const SIDEBAR_CONFIG = {
       { label: 'Sensor Status', url: 'early-warning.html#sensors' }
     ]},
     { label: 'Healthcare Readiness', icon: 'hospital', subnav: [
-      { label: 'Facility Readiness', url: 'healthcare.html#readiness' },
+      { label: 'Facility Explorer', url: 'healthcare.html#facilities' },
       { label: 'Disease Forecast', url: 'healthcare.html#forecast' },
       { label: 'Surge Planning', url: 'healthcare.html#surge' }
     ]},
