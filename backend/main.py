@@ -51,7 +51,10 @@ async def startup():
     malaria_predictor.initialize()
     healthcare_readiness.initialize()
     community_reports.initialize()
-    facility_mfl.initialize()
+    try:
+        facility_mfl.initialize()
+    except Exception as e:
+        print(f"[CHEWS] MFL init warning (non-fatal): {e}")
     print("[CHEWS] All models initialised. System ready.")
 
 
