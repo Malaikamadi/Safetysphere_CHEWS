@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="auth.js"></script>
   <script>
     requireRole();
@@ -42,14 +43,158 @@
         <p class="page-desc">Forecast disease outbreaks, detect environmental anomalies, and plan for healthcare surges.</p>
 
         <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
-          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="forecast" onclick="switchTab('forecast')"><i data-lucide="trending-up"></i> Disease Forecast</button>
+          <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="facilities" onclick="switchTab('facilities')"><i data-lucide="building-2"></i> Facility Explorer</button>
+          <button class="btn btn--ghost btn--sm tab-btn" data-tab="forecast" onclick="switchTab('forecast')"><i data-lucide="trending-up"></i> Disease Forecast</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="anomaly" onclick="switchTab('anomaly')"><i data-lucide="search"></i> Anomaly Detection</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="surge" onclick="switchTab('surge')"><i data-lucide="hospital"></i> Surge Planning</button>
           <button class="btn btn--ghost btn--sm tab-btn" data-tab="ml-predictions" onclick="switchTab('ml-predictions')"><i data-lucide="brain-circuit"></i> ML Predictions</button>
         </div>
 
+        <!-- FACILITY EXPLORER TAB -->
+        <div id="tab-facilities" class="tab-content">
+          <!-- National Overview Cards -->
+          <div class="mfl-overview-grid" id="mfl-overview">
+            <div class="card card--glow-blue mfl-stat-card">
+              <div class="mfl-stat-card__icon"><i data-lucide="building-2"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-total">—</div>
+              <div class="mfl-stat-card__label">Total Facilities</div>
+            </div>
+            <div class="card card--glow-green mfl-stat-card">
+              <div class="mfl-stat-card__icon"><i data-lucide="shield-check"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-ready">—</div>
+              <div class="mfl-stat-card__label">Ready</div>
+            </div>
+            <div class="card card--glow-amber mfl-stat-card">
+              <div class="mfl-stat-card__icon"><i data-lucide="alert-triangle"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-underprepared">—</div>
+              <div class="mfl-stat-card__label">Under-prepared / Critical</div>
+            </div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--accent-1)">
+              <div class="mfl-stat-card__icon"><i data-lucide="zap"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-power-pct">—</div>
+              <div class="mfl-stat-card__label">With Power</div>
+            </div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--info)">
+              <div class="mfl-stat-card__icon"><i data-lucide="droplets"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-water-pct">—</div>
+              <div class="mfl-stat-card__label">With Water</div>
+            </div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--danger)">
+              <div class="mfl-stat-card__icon"><i data-lucide="cloud-rain"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-flood-exposed">—</div>
+              <div class="mfl-stat-card__label">Flood-Exposed</div>
+            </div>
+          </div>
+
+          <!-- Map + Filter Panel -->
+          <div class="mfl-map-section">
+            <div class="card mfl-filter-panel">
+              <div class="card__header"><div><div class="card__title"><i data-lucide="filter"></i> Filter Facilities</div></div></div>
+              <div class="form-group">
+                <label class="form-label">Search</label>
+                <input type="text" id="mfl-search" class="form-input" placeholder="Facility name, ID, or district…" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">District</label>
+                <select id="mfl-district-filter" class="form-input form-select">
+                  <option value="">All Districts</option>
+                  <option value="Bo">Bo</option>
+                  <option value="Bombali">Bombali</option>
+                  <option value="Bonthe">Bonthe</option>
+                  <option value="Kambia">Kambia</option>
+                  <option value="Kenema">Kenema</option>
+                  <option value="Kono">Kono</option>
+                  <option value="Port Loko">Port Loko</option>
+                  <option value="Tonkolili">Tonkolili</option>
+                  <option value="Western Rural">Western Rural</option>
+                  <option value="Western Urban">Western Urban</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Facility Type</label>
+                <select id="mfl-type-filter" class="form-input form-select">
+                  <option value="">All Types</option>
+                  <option value="MCHP">MCHP</option>
+                  <option value="CHC">CHC</option>
+                  <option value="Primary">Primary</option>
+                  <option value="Secondary">Secondary</option>
+                  <option value="Tertiary">Tertiary</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Readiness Level</label>
+                <select id="mfl-readiness-filter" class="form-input form-select">
+                  <option value="">All Levels</option>
+                  <option value="Ready">🟢 Ready</option>
+                  <option value="Partially Ready">🟡 Partially Ready</option>
+                  <option value="Under-prepared">🟠 Under-prepared</option>
+                  <option value="Critical">🔴 Critical</option>
+                </select>
+              </div>
+              <button class="btn btn--primary btn--full" onclick="applyMflFilters()"><i data-lucide="search"></i> Apply Filters</button>
+              <button class="btn btn--ghost btn--full" style="margin-top:0.5rem" onclick="resetMflFilters()">Reset</button>
+              <div id="mfl-filter-count" style="text-align:center;font-size:0.75rem;color:var(--text-dim);margin-top:0.75rem"></div>
+            </div>
+            <div class="card mfl-map-container">
+              <div class="card__header">
+                <div><div class="card__title"><i data-lucide="map"></i> Facility Map — Sierra Leone</div>
+                <div class="card__desc">Locations are approximate (district centroids) until DHIS2 coordinates are integrated.</div></div>
+              </div>
+              <div id="mfl-map" style="height:500px;border-radius:var(--radius-md);overflow:hidden"></div>
+              <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;font-size:0.72rem;color:var(--text-dim)">
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;margin-right:4px"></span>Ready</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;margin-right:4px"></span>Partially Ready</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f97316;margin-right:4px"></span>Under-prepared</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:4px"></span>Critical</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Facility Table -->
+          <div class="card" style="margin-top:1.5rem">
+            <div class="card__header">
+              <div><div class="card__title"><i data-lucide="list"></i> Facility Registry</div>
+              <div class="card__desc" id="mfl-table-count"></div></div>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="mfl-table" id="mfl-table">
+                <thead>
+                  <tr>
+                    <th>Facility ID</th>
+                    <th>Name</th>
+                    <th>District</th>
+                    <th>Type</th>
+                    <th>Readiness</th>
+                    <th>Beds</th>
+                    <th>Staff</th>
+                    <th>Power</th>
+                    <th>Water</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="mfl-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Data Quality Summary -->
+          <div class="card card--glow-amber" style="margin-top:1.5rem">
+            <div class="card__header"><div><div class="card__title"><i data-lucide="shield-alert"></i> Data Quality Report</div>
+            <div class="card__desc">Assessment of MFL data completeness and integrity.</div></div></div>
+            <div id="mfl-data-quality"></div>
+          </div>
+        </div>
+
+        <!-- Facility Profile Modal -->
+        <div id="mfl-profile-overlay" class="mfl-profile-overlay hidden">
+          <div class="mfl-profile-modal">
+            <button class="mfl-profile-close" onclick="closeFacilityProfile()">&times;</button>
+            <div id="mfl-profile-content"></div>
+          </div>
+        </div>
+
         <!-- FORECAST TAB -->
-        <div id="tab-forecast" class="tab-content">
+        <div id="tab-forecast" class="tab-content hidden">
           <div class="card card--glow-blue">
             <div class="card__header"><div><div class="card__title"><i data-lucide="trending-up"></i> Disease Risk Forecast</div><div class="card__desc">Seasonal-climatological forecast model. Predicts disease onset, surge probability, and peak windows.</div></div></div>
             <form id="forecast-form" autocomplete="off">
@@ -228,6 +373,7 @@
     </main>
   </div>
   <script src="theme.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="healthcare.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>

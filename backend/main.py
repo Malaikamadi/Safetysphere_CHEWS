@@ -7,6 +7,7 @@ from enum import Enum
 
 from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
 from routers import strategic, early_warning, healthcare, point_of_care, situation_room
+from services import facility_mfl
 
 # ========================== App Initialisation =============================
 
@@ -50,6 +51,7 @@ async def startup():
     malaria_predictor.initialize()
     healthcare_readiness.initialize()
     community_reports.initialize()
+    facility_mfl.initialize()
     print("[CHEWS] All models initialised. System ready.")
 
 

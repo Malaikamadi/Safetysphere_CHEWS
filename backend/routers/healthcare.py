@@ -2,14 +2,14 @@
 Healthcare Readiness Router — Area 3
 =======================================
 Endpoints for disease forecasting, anomaly detection, surge planning,
-and trained ML model predictions.
+trained ML model predictions, and Master Facility List (MFL) integration.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from services import forecast_engine
+from services import forecast_engine, facility_mfl
 from models import air_quality, malaria_predictor, healthcare_readiness, community_reports
 
 router = APIRouter(prefix="/healthcare", tags=["Area 3: Healthcare Readiness"])
@@ -270,3 +270,66 @@ async def ml_community_flood(data: CommunityFloodInput):
         "contributing_factors": result.contributing_factors,
         "feature_contributions": result.feature_contributions,
     }
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Master Facility List (MFL) Endpoints
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/facilities/summary")
+async def facilities_summary():
+    """National overview: total facilities, by type, by district, readiness distribution."""
+    return facility_mfl.get_national_summary()
+
+
+@router.get("/facilities/data-quality")
+async def facilities_data_quality():
+    """Data quality report for the MFL dataset."""
+    return facility_mfl.get_data_quality()
+
+
+@router.get("/facilities/geojson")
+async def facilities_geojson(
+    district: Optional[str] = Query(None, description="Filter by district"),
+    facility_type: Optional[str] = Query(None, description="Filter by facility type"),
+):
+    """Export facilities as GeoJSON for map rendering."""
+    return facility_mfl.get_facilities_geojson(district=district, facility_type=facility_type)
+
+
+@router.get("/facilities")
+async def list_facilities(
+    district: Optional[str] = Query(None, description="Filter by district"),
+    facility_type: Optional[str] = Query(None, description="Filter by facility type"),
+    search: Optional[str] = Query(None, description="Search by name, district, or ID"),
+    readiness_level: Optional[str] = Query(None, description="Filter by readiness level"),
+):
+    """List all facilities with optional filters."""
+    facilities = facility_mfl.get_all_facilities(
+        district=district,
+        facility_type=facility_type,
+        search=search,
+        readiness_level=readiness_level,
+    )
+    return {
+        "total": len(facilities),
+        "facilities": facilities,
+    }
+
+
+@router.get("/facilities/{facility_id}")
+async def get_facility(facility_id: str):
+    """Get detailed facility profile by ID."""
+    facility = facility_mfl.get_facility(facility_id)
+    if not facility:
+        raise HTTPException(status_code=404, detail=f"Facility {facility_id} not found")
+    return facility
+
+
+@router.get("/facilities/{facility_id}/early-warning")
+async def facility_early_warning(facility_id: str):
+    """Get early warning / hazard exposure context for a facility."""
+    result = facility_mfl.get_facility_early_warning(facility_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Facility {facility_id} not found")
+    return result

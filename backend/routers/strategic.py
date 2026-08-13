@@ -10,7 +10,7 @@ from typing import Optional
 
 from data import sierra_leone as sl
 from models import air_quality, flood_risk, heat_stress, carbon_accounting
-from services import vulnerability, flood_dashboard
+from services import vulnerability, flood_dashboard, facility_mfl
 
 router = APIRouter(prefix="/strategic", tags=["Area 1: Strategic Planning"])
 
@@ -247,3 +247,14 @@ async def estimate_carbon(data: CarbonInput):
         generator_consumption_lph=data.generator_consumption_lph,
     )
     return result._asdict()
+
+
+# ═══════════════════════════════════════════════════════════════════
+# MFL-Powered District Prioritisation
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/district-priorities")
+async def get_district_priorities():
+    """MFL-powered district prioritization with facility counts, readiness averages, and flood exposure."""
+    return facility_mfl.get_district_priorities()
+
