@@ -27,9 +27,9 @@ def fetch_realtime_weather(lat: float, lon: float) -> Optional[Dict]:
             return cached["data"]
             
     # Prepare API request (Open-Meteo)
-    # Fetching current precipitation and hourly precipitation for the past 24 hours.
+    # Fetching current precipitation and hourly precipitation for the past 24 hours, plus current temperature
     # Open-Meteo is free for non-commercial use and requires no API key.
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=precipitation&hourly=precipitation&past_hours=24&forecast_hours=1&timezone=Africa%2FAbidjan"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=precipitation,temperature_2m&hourly=precipitation&past_hours=24&forecast_hours=1&timezone=Africa%2FAbidjan"
     
     req = urllib.request.Request(url, headers={
         "User-Agent": "CHEWS-Flood-Atlas/1.0"
@@ -40,8 +40,9 @@ def fetch_realtime_weather(lat: float, lon: float) -> Optional[Dict]:
             if response.status == 200:
                 data = json.loads(response.read().decode())
                 
-                # Current precipitation (mm/h)
+                # Current precipitation (mm/h) and temperature
                 current_precip = data.get("current", {}).get("precipitation", 0.0)
+                current_temp = data.get("current", {}).get("temperature_2m", 25.0)
                 
                 # Past 24h precipitation sum
                 hourly_precip = data.get("hourly", {}).get("precipitation", [])
@@ -52,7 +53,8 @@ def fetch_realtime_weather(lat: float, lon: float) -> Optional[Dict]:
                 
                 result = {
                     "rainfall_intensity": float(current_precip),
-                    "rainfall_24h": float(past_24h_precip)
+                    "rainfall_24h": float(past_24h_precip),
+                    "temperature_2m": float(current_temp)
                 }
                 
                 # Store in cache

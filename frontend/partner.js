@@ -2,7 +2,7 @@
  * CHEWS v4.0 — Partner Dashboard Sub-Pages & View Switcher
  */
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "/api";
 
 let partnerMap = null;
 let partnerFullMap = null;

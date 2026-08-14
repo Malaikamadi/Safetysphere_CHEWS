@@ -11,8 +11,11 @@ All data is simulated/demo for Sierra Leone.
 
 import math
 import random
+from datetime import datetime, timedelta
+from typing import Dict, Any
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
+from services import weather_api
 from typing import Optional
 
 router = APIRouter(prefix="/situation-room", tags=["Situation Room"])
@@ -163,13 +166,20 @@ async def get_map_data():
             })
         return features
 
-    # Flood layer
-    flood_scores = {"bo": 0.72, "bonthe": 0.85, "bombali": 0.45, "kailahun": 0.38,
-                    "kambia": 0.78, "kenema": 0.65, "koinadugu": 0.32, "kono": 0.28,
-                    "moyamba": 0.55, "port_loko": 0.82, "pujehun": 0.68, "tonkolili": 0.42,
-                    "western_area_rural": 0.58, "western_area_urban": 0.71}
+    # Flood and Heat layers from real weather data
+    def get_weather_scores(d):
+        weather = weather_api.fetch_realtime_weather(d["lat"], d["lng"])
+        if weather:
+            # Map rainfall to flood score: 0-100mm -> 0.1-0.95
+            flood = min(0.95, 0.1 + (weather["rainfall_24h"] / 100.0) * 0.85)
+            # Map temperature to heat score: 25-40C -> 0.1-0.95
+            heat = min(0.95, max(0.1, (weather["temperature_2m"] - 25.0) / 15.0 * 0.85 + 0.1))
+            return flood, heat
+        return 0.3, 0.3
+        
+    weather_scores_cache = {d["id"]: get_weather_scores(d) for d in DISTRICTS}
 
-    flood_features = make_district_features("flood", lambda d: flood_scores.get(d["id"], 0.3))
+    flood_features = make_district_features("flood", lambda d: weather_scores_cache[d["id"]][0])
 
     # Malaria layer
     malaria_scores = {"bo": 0.78, "bonthe": 0.55, "bombali": 0.62, "kailahun": 0.82,
@@ -180,7 +190,7 @@ async def get_map_data():
     malaria_features = make_district_features("malaria", lambda d: malaria_scores.get(d["id"], 0.4))
 
     # Heat layer
-    heat_features = make_district_features("heat", lambda d: random.uniform(0.3, 0.7))
+    heat_features = make_district_features("heat", lambda d: weather_scores_cache[d["id"]][1])
 
     # Air quality layer
     aq_features = make_district_features("air_quality", lambda d: random.uniform(0.15, 0.65))

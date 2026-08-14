@@ -2,7 +2,7 @@
  * CHEWS v4.0 — District Health Officer Dashboard
  */
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "/api";
 
 // ==================== District Map ====================
 let districtMap = null;

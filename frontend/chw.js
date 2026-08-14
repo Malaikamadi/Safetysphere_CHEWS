@@ -2,7 +2,7 @@
  * CHEWS v4.0 — CHW Mobile Dashboard
  */
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "/api";
 
 // ==================== Tab Navigation ====================
 function initTabs() {
