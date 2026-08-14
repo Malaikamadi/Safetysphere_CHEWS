@@ -40,6 +40,7 @@ from typing import Optional
 
 from data import sierra_leone as sl
 from models import flood_risk
+from services import weather_api
 
 
 # ----------------------------------------------------------------------
@@ -93,8 +94,20 @@ def _district_signal(
     minute_bucket = (now.minute // 12) + now.day
     wobble_rng = random.Random(hash((district_id, now.hour, minute_bucket, rng.random())))
 
-    rainfall_intensity = base_intensity * wobble_rng.uniform(0.65, 1.35)
-    rainfall_24h = base_24h * wobble_rng.uniform(0.75, 1.30)
+    # Attempt to fetch real-time weather data
+    real_weather = None
+    if "centroid" in district:
+        lat, lon = district["centroid"]
+        real_weather = weather_api.fetch_realtime_weather(lat, lon)
+
+    if real_weather:
+        rainfall_intensity = real_weather["rainfall_intensity"]
+        rainfall_24h = real_weather["rainfall_24h"]
+    else:
+        # Fallback to synthetic logic
+        rainfall_intensity = base_intensity * wobble_rng.uniform(0.65, 1.35)
+        rainfall_24h = base_24h * wobble_rng.uniform(0.75, 1.30)
+
     soil_saturation = min(100.0, max(5.0, base_saturation + wobble_rng.uniform(-12, 14)))
 
     # Coastal districts get a tide-stage signal (purely indicative).
