@@ -90,6 +90,7 @@ def evaluate_alert(
         "Watch": ["Prepare response resources", "Alert facility managers", "Review evacuation plans"],
         "Warning": ["Activate response protocols", "Deploy community alerts", "Pre-position supplies"],
         "Emergency": ["ACTIVATE EMERGENCY RESPONSE", "Deploy all available resources", "Coordinate with national authorities"],
+        
     }
 
     alert = Alert(
