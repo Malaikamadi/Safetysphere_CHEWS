@@ -13,6 +13,8 @@ function switchTab(tab) {
   if (targetView) {
     targetView.classList.remove("hidden");
   }
+  
+  if (tab === "atlas") maybeBootAtlas();
 }
 
 function renderResult(containerId, data, title) {
@@ -535,8 +537,8 @@ const FloodAtlas = {
 
 // Boot the atlas the first time its tab becomes active.
 function maybeBootAtlas() {
-  if (!document.getElementById("tab-atlas")) return;
-  if (document.getElementById("tab-atlas").classList.contains("hidden")) return;
+  if (!document.getElementById("view-atlas")) return;
+  if (document.getElementById("view-atlas").classList.contains("hidden")) return;
   FloodAtlas.init();
   // Leaflet sometimes lays out wrong if the container was hidden — nudge it.
   setTimeout(() => FloodAtlas.map?.invalidateSize(), 50);
