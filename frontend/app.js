@@ -46,9 +46,15 @@ function riskColor(score) {
 const menuToggle = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
 if (menuToggle && sidebar) {
-  menuToggle.addEventListener("click", () => sidebar.classList.toggle("sidebar--open"));
+  menuToggle.addEventListener("click", () => {
+    if (window.innerWidth > 900) {
+      document.body.classList.toggle("sidebar-collapsed");
+    } else {
+      sidebar.classList.toggle("sidebar--open");
+    }
+  });
   document.addEventListener("click", (e) => {
-    if (sidebar.classList.contains("sidebar--open") && !sidebar.contains(e.target) && e.target !== menuToggle) {
+    if (sidebar.classList.contains("sidebar--open") && !sidebar.contains(e.target) && e.target !== menuToggle && !menuToggle.contains(e.target)) {
       sidebar.classList.remove("sidebar--open");
     }
   });

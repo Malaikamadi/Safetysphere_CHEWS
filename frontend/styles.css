@@ -393,6 +393,35 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === Desktop Collapsed Sidebar === */
+@media (min-width: 901px) {
+  body.sidebar-collapsed .sidebar {
+    width: 70px;
+  }
+  body.sidebar-collapsed .main-content {
+    margin-left: 70px;
+  }
+  body.sidebar-collapsed .sidebar__title,
+  body.sidebar-collapsed .sidebar__version,
+  body.sidebar-collapsed .nav-link__text,
+  body.sidebar-collapsed .nav-group__chevron,
+  body.sidebar-collapsed .nav-group__content {
+    display: none !important;
+  }
+  body.sidebar-collapsed .nav-link,
+  body.sidebar-collapsed .nav-group__toggle {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+  body.sidebar-collapsed .sidebar__brand {
+    justify-content: center;
+  }
+  body.sidebar-collapsed .sidebar__header {
+    padding: 1.5rem 0.5rem;
+  }
 }
 
 /* === Top Bar === */
@@ -454,9 +483,9 @@ body {
 
 /* === Mobile Menu Toggle === */
 .menu-toggle {
-  display: none;
   background: none; border: none; color: var(--text); font-size: 1.3rem;
   cursor: pointer; padding: 0.5rem;
+  margin-right: 1rem;
 }
 
 /* === Page Container === */
