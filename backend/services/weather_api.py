@@ -36,7 +36,7 @@ def fetch_realtime_weather(lat: float, lon: float) -> Optional[Dict]:
     })
     
     try:
-        with urllib.request.urlopen(req, timeout=5.0) as response:
+        with urllib.request.urlopen(req, timeout=2.0) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode())
                 
