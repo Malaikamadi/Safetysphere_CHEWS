@@ -45,15 +45,15 @@
                 <i data-lucide="map" style="width:16px;height:16px;color:var(--success)"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">Communities Monitored</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">1,472</div>
-              <div class="na-kpi-card__sub" style="color:var(--success);font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 12% vs last period</div>
+              <div class="na-kpi-card__value" id="kpi-zones" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">1,472</div>
+              <div class="na-kpi-card__sub" id="kpi-districts" style="color:var(--success);font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 12% vs last period</div>
             </div>
             <div class="na-kpi-card" style="padding:1rem;">
               <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
                 <i data-lucide="users" style="width:16px;height:16px;color:#f97316"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">Population at Risk</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">2.6M</div>
+              <div class="na-kpi-card__value" id="kpi-pop-risk" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">2.6M</div>
               <div class="na-kpi-card__sub" style="color:#f97316;font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 8% vs last period</div>
             </div>
             <div class="na-kpi-card" style="padding:1rem;">
@@ -61,23 +61,23 @@
                 <i data-lucide="activity" style="width:16px;height:16px;color:var(--danger)"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">High & Severe Zones</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">38</div>
-              <div class="na-kpi-card__sub" style="color:var(--danger);font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-down" style="width:12px;height:12px;vertical-align:middle"></i> 5 vs last period</div>
+              <div class="na-kpi-card__value" id="kpi-high" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">38</div>
+              <div class="na-kpi-card__sub" id="kpi-severe" style="color:var(--danger);font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-down" style="width:12px;height:12px;vertical-align:middle"></i> 5 vs last period</div>
             </div>
             <div class="na-kpi-card" style="padding:1rem;">
               <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
                 <i data-lucide="cloud-rain" style="width:16px;height:16px;color:#60a5fa"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">Avg Rainfall (24h)</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">214 mm</div>
-              <div class="na-kpi-card__sub" style="color:#60a5fa;font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 18% vs avg</div>
+              <div class="na-kpi-card__value" id="kpi-rain" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">214 mm</div>
+              <div class="na-kpi-card__sub" id="kpi-rain-24" style="color:#60a5fa;font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 18% vs avg</div>
             </div>
             <div class="na-kpi-card" style="padding:1rem;">
               <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
                 <i data-lucide="layers" style="width:16px;height:16px;color:#c084fc"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">Soil Saturation</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">78%</div>
+              <div class="na-kpi-card__value" id="kpi-sat" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">78%</div>
               <div class="na-kpi-card__sub" style="color:var(--text-dim);font-weight:500;font-size:0.75rem;">High across 7 districts</div>
             </div>
             <div class="na-kpi-card" style="padding:1rem;">
@@ -85,7 +85,7 @@
                 <i data-lucide="waves" style="width:16px;height:16px;color:#60a5fa"></i>
                 <div class="na-kpi-card__label" style="margin-bottom:0;color:var(--text-dim)">River Stage</div>
               </div>
-              <div class="na-kpi-card__value" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">1.82 m</div>
+              <div class="na-kpi-card__value" id="kpi-river" style="font-size:1.5rem;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;">1.82 m</div>
               <div class="na-kpi-card__sub" style="color:#60a5fa;font-weight:500;font-size:0.75rem;"><i data-lucide="arrow-up" style="width:12px;height:12px;vertical-align:middle"></i> 0.23 m vs yesterday</div>
             </div>
           </div>

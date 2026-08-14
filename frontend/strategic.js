@@ -283,8 +283,8 @@ const FloodAtlas = {
     // Auto-refresh while the Atlas tab is visible.
     this.refresh();
     this.refreshTimer = setInterval(() => {
-      if (!this.scenarioActive && document.getElementById("tab-atlas") &&
-        !document.getElementById("tab-atlas").classList.contains("hidden")) {
+      if (!this.scenarioActive && document.getElementById("view-atlas") &&
+        !document.getElementById("view-atlas").classList.contains("hidden")) {
         this.refresh();
       }
     }, 30000);
@@ -297,7 +297,8 @@ const FloodAtlas = {
       const snap = await res.json();
       if (!this.baselineKpis) this.baselineKpis = snap.kpis;
       this.scenarioActive = false;
-      document.getElementById("sc-delta").innerHTML = "";
+      const scDelta = document.getElementById("sc-delta");
+      if (scDelta) scDelta.innerHTML = "";
       this.render(snap);
     } catch (e) {
       console.warn("flood dashboard unreachable", e);
@@ -308,9 +309,9 @@ const FloodAtlas = {
 
   async runScenario() {
     const body = {
-      rainfall_intensity_mult: +document.getElementById("sc-rain").value,
-      rainfall_24h_mult: +document.getElementById("sc-rain24").value,
-      saturation_offset: +document.getElementById("sc-sat").value,
+      rainfall_intensity_mult: +document.getElementById("sc-rain")?.value || 1.0,
+      rainfall_24h_mult: +document.getElementById("sc-rain24")?.value || 1.0,
+      saturation_offset: +document.getElementById("sc-sat")?.value || 0,
     };
     try {
       const res = await fetch(`${API}/strategic/flood-forecast`, {
@@ -328,20 +329,24 @@ const FloodAtlas = {
   },
 
   render(snap, scenarioBody) {
+    if (!snap || !snap.zones) return;
     this.zonesById = {};
     snap.zones.forEach(z => this.zonesById[z.id] = z);
 
-    // KPI cards
-    const k = snap.kpis;
-    document.getElementById("kpi-zones").textContent = this.fmtInt(k.zones_monitored);
-    document.getElementById("kpi-districts").textContent = `across ${k.districts_monitored} districts`;
-    document.getElementById("kpi-pop-risk").textContent = this.fmtInt(k.population_at_risk);
-    document.getElementById("kpi-high").textContent = this.fmtInt(k.high_risk_zones);
-    document.getElementById("kpi-severe").textContent = `${k.severe_zones} severe / mean risk ${k.mean_zone_risk.toFixed(2)}`;
-    document.getElementById("kpi-rain").textContent = `${k.avg_rainfall_intensity_mm_h.toFixed(1)} mm/h`;
-    document.getElementById("kpi-rain-24").textContent = (snap.districts.reduce((a, d) => a + d.rainfall_24h_mm, 0) / snap.districts.length).toFixed(0);
-    document.getElementById("kpi-sat").textContent = `${k.avg_soil_saturation_pct.toFixed(0)}%`;
-    document.getElementById("kpi-river").textContent = `${k.avg_river_stage_pct_bankfull.toFixed(0)}%`;
+    // KPI cards (safe updating)
+    const k = snap.kpis || {};
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    if (k.zones_monitored !== undefined) setTxt("kpi-zones", this.fmtInt(k.zones_monitored));
+    if (k.districts_monitored !== undefined) setTxt("kpi-districts", `across ${k.districts_monitored} districts`);
+    if (k.population_at_risk !== undefined) setTxt("kpi-pop-risk", this.fmtInt(k.population_at_risk));
+    if (k.high_risk_zones !== undefined) setTxt("kpi-high", this.fmtInt(k.high_risk_zones));
+    if (k.severe_zones !== undefined) setTxt("kpi-severe", `${k.severe_zones} severe / mean risk ${(k.mean_zone_risk || 0).toFixed(2)}`);
+    if (k.avg_rainfall_intensity_mm_h !== undefined) setTxt("kpi-rain", `${(k.avg_rainfall_intensity_mm_h || 0).toFixed(1)} mm/h`);
+    if (snap.districts && snap.districts.length) {
+      setTxt("kpi-rain-24", (snap.districts.reduce((a, d) => a + (d.rainfall_24h_mm || 0), 0) / snap.districts.length).toFixed(0) + " mm");
+    }
+    if (k.avg_soil_saturation_pct !== undefined) setTxt("kpi-sat", `${(k.avg_soil_saturation_pct || 0).toFixed(0)}%`);
+    if (k.avg_river_stage_pct_bankfull !== undefined) setTxt("kpi-river", `${(k.avg_river_stage_pct_bankfull || 0).toFixed(0)}%`);
 
     const updated = document.getElementById("atlas-updated");
     if (updated) {
@@ -422,11 +427,13 @@ const FloodAtlas = {
       const dHigh = k.high_risk_zones - this.baselineKpis.high_risk_zones;
       const dPop = k.population_at_risk - this.baselineKpis.population_at_risk;
       const dMean = k.mean_zone_risk - this.baselineKpis.mean_zone_risk;
-      const sign = (n) => n > 0 ? `+${n}` : `${n}`;
-      document.getElementById("sc-delta").innerHTML = `
-        <div class="scenario__delta-row"><span>Δ high-risk zones</span><strong class="${dHigh > 0 ? 'text-danger' : 'text-success'}">${sign(dHigh)}</strong></div>
-        <div class="scenario__delta-row"><span>Δ population at risk</span><strong class="${dPop > 0 ? 'text-danger' : 'text-success'}">${sign(this.fmtInt(dPop))}</strong></div>
-        <div class="scenario__delta-row"><span>Δ mean risk</span><strong class="${dMean > 0 ? 'text-danger' : 'text-success'}">${dMean >= 0 ? '+' : ''}${dMean.toFixed(3)}</strong></div>`;
+      const scDelta = document.getElementById("sc-delta");
+      if (scDelta) {
+        scDelta.innerHTML = `
+          <div class="scenario__delta-row"><span>Δ high-risk zones</span><strong class="${dHigh > 0 ? 'text-danger' : 'text-success'}">${sign(dHigh)}</strong></div>
+          <div class="scenario__delta-row"><span>Δ population at risk</span><strong class="${dPop > 0 ? 'text-danger' : 'text-success'}">${sign(this.fmtInt(dPop))}</strong></div>
+          <div class="scenario__delta-row"><span>Δ mean risk</span><strong class="${dMean > 0 ? 'text-danger' : 'text-success'}">${dMean >= 0 ? '+' : ''}${dMean.toFixed(3)}</strong></div>`;
+      }
     }
 
     // Refresh selected zone if one was open.

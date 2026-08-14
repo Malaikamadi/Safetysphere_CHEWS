@@ -66,6 +66,7 @@ def evaluate_alert(
         severity = "Advisory"
         threshold_val = thresholds["advisory"]
 
+
     if severity is None:
         return None
 
