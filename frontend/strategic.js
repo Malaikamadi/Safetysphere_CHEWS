@@ -356,34 +356,34 @@ const FloodAtlas = {
       
       const geoLayer = L.geoJSON(geojson, {
         style: (feature) => {
-          // Find matching zone in backend data
-          // Feature name might be in feature.properties.shapeName
-          const districtName = feature.properties.shapeName || feature.properties.ADM2_EN || feature.properties.name || "";
-          const z = snap.zones.find(zone => districtName.toLowerCase().includes(zone.name.toLowerCase()) || zone.name.toLowerCase().includes(districtName.toLowerCase()));
-          
-          if (!z) return { color: "#333", weight: 1, fillColor: "#222", fillOpacity: 0.8 };
-          
-          const color = this.riskColor(z.prediction.risk_level);
-          return {
-            color: "#ffffff",
-            weight: 1.5,
-            fillColor: color,
-            fillOpacity: 0.85
-          };
+          return { color: "#444", weight: 1, fillColor: "#222", fillOpacity: 0.4 };
         },
         onEachFeature: (feature, layer) => {
           const districtName = feature.properties.shapeName || feature.properties.ADM2_EN || feature.properties.name || "";
-          const z = snap.zones.find(zone => districtName.toLowerCase().includes(zone.name.toLowerCase()) || zone.name.toLowerCase().includes(districtName.toLowerCase()));
-          
-          if (z) {
-            layer.bindTooltip(`<strong>${z.name}</strong><br>${z.prediction.risk_level} · ${z.prediction.risk_score.toFixed(2)}`, { sticky: true });
-            layer.on("click", () => this.selectZone(z.id));
-          } else {
-            layer.bindTooltip(`<strong>${districtName}</strong><br>No data`, { sticky: true });
-          }
+          layer.bindTooltip(`<strong>${districtName} District</strong>`, { sticky: true });
         }
       });
       geoLayer.addTo(this.layer);
+      
+      // Draw communities (zones) as markers
+      snap.zones.forEach(z => {
+        if (!z.lat || !z.lng) return;
+        const color = this.riskColor(z.prediction.risk_level);
+        const radius = this.riskRadius(z.prediction.risk_score);
+        
+        const marker = L.circleMarker([z.lat, z.lng], {
+          radius: radius,
+          fillColor: color,
+          color: "#fff",
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.85
+        });
+        
+        marker.bindTooltip(`<strong>${z.name}</strong><br>${z.district_name} District<br>Risk: ${z.prediction.risk_level} (${z.prediction.risk_score.toFixed(2)})`, { sticky: true });
+        marker.on("click", () => this.selectZone(z.id));
+        marker.addTo(this.layer);
+      });
       
       if (this.map && !this._fittedGeojson) {
         this.map.fitBounds(geoLayer.getBounds(), { padding: [20, 20] });
