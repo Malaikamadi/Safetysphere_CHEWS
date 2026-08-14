@@ -462,6 +462,8 @@ body {
 /* === Page Container === */
 .page {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 1.5rem 2rem 2rem;
   max-width: 1200px;
   width: 100%;
@@ -3265,18 +3267,23 @@ body {
 
 /* Main Grid */
 .na-main-grid {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 1rem;
   margin-bottom: 1.25rem;
+  min-height: 0;
 }
 
 /* Map Panel */
 .na-map-panel {
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
+  height: 100%;
 }
 .na-panel-header {
   padding: 0.875rem 1rem;
@@ -3330,7 +3337,8 @@ body {
   flex-shrink: 0;
 }
 .na-map-container {
-  height: 420px;
+  flex: 1;
+  min-height: 420px;
   background: var(--map-shell-bg);
 }
 .na-view-all {
