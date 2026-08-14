@@ -106,6 +106,7 @@ def evaluate_alert(
         actions=actions_map.get(severity, []),
         auto_trigger=severity in ("Warning", "Emergency"),
     )
+     
 
     # Store alert
     _active_alerts.append(alert._asdict())

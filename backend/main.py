@@ -1,32 +1,78 @@
 
 
+import sys
+from pathlib import Path
+
+# Ensure backend directory is in sys.path
+_backend_dir = Path(__file__).resolve().parent
+if str(_backend_dir) not in sys.path:
+    sys.path.insert(0, str(_backend_dir))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from enum import Enum
-import sys
 import traceback
 
-# Resilient imports — capture failures instead of crashing
+# Resilient imports — capture failures per-module instead of crashing
 _import_errors = []
 
+# Individual model imports
+risk_engine = environmental = flood_risk = malaria_predictor = healthcare_readiness = community_reports = None
 try:
-    from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
+    from models import risk_engine
 except Exception as e:
-    _import_errors.append(f"models: {e}")
-    risk_engine = environmental = flood_risk = malaria_predictor = healthcare_readiness = community_reports = None
-
+    _import_errors.append(f"risk_engine: {e}")
 try:
-    from routers import strategic, early_warning, healthcare, point_of_care, situation_room
+    from models import environmental
 except Exception as e:
-    _import_errors.append(f"routers: {e}")
-    strategic = early_warning = healthcare = point_of_care = situation_room = None
+    _import_errors.append(f"environmental: {e}")
+try:
+    from models import flood_risk
+except Exception as e:
+    _import_errors.append(f"flood_risk: {e}")
+try:
+    from models import malaria_predictor
+except Exception as e:
+    _import_errors.append(f"malaria_predictor: {e}")
+try:
+    from models import healthcare_readiness
+except Exception as e:
+    _import_errors.append(f"healthcare_readiness: {e}")
+try:
+    from models import community_reports
+except Exception as e:
+    _import_errors.append(f"community_reports: {e}")
 
+# Individual router imports
+strategic = early_warning = healthcare = point_of_care = situation_room = None
+try:
+    from routers import strategic
+except Exception as e:
+    _import_errors.append(f"strategic router: {e}")
+try:
+    from routers import early_warning
+except Exception as e:
+    _import_errors.append(f"early_warning router: {e}")
+try:
+    from routers import healthcare
+except Exception as e:
+    _import_errors.append(f"healthcare router: {e}")
+try:
+    from routers import point_of_care
+except Exception as e:
+    _import_errors.append(f"point_of_care router: {e}")
+try:
+    from routers import situation_room
+except Exception as e:
+    _import_errors.append(f"situation_room router: {e}")
+
+# Services
+facility_mfl = None
 try:
     from services import facility_mfl
 except Exception as e:
     _import_errors.append(f"facility_mfl: {e}")
-    facility_mfl = None
 
 # ========================== App Initialisation =============================
 
@@ -49,17 +95,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount domain routers only if imports succeeded
+# Mount domain routers under both /api and root to guarantee compatibility
 if strategic:
     app.include_router(strategic.router, prefix="/api")
+    app.include_router(strategic.router)
 if early_warning:
     app.include_router(early_warning.router, prefix="/api")
+    app.include_router(early_warning.router)
 if healthcare:
     app.include_router(healthcare.router, prefix="/api")
+    app.include_router(healthcare.router)
 if point_of_care:
     app.include_router(point_of_care.router, prefix="/api")
+    app.include_router(point_of_care.router)
 if situation_room:
     app.include_router(situation_room.router, prefix="/api")
+    app.include_router(situation_room.router)
 
 
 # ========================== Startup Event ==================================

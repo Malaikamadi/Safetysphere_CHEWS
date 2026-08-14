@@ -12,7 +12,11 @@ from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
-import joblib
+
+try:
+    import joblib
+except ImportError:
+    joblib = None
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -59,17 +63,21 @@ def _load_model():
     """Load the trained model and encoders from disk."""
     global _model, _encoders, _feature_config
 
-    if not MODEL_PATH.exists():
-        print(f"[CHEWS] Malaria model not found at {MODEL_PATH}. Run training first.")
+    if joblib is None or not MODEL_PATH.exists():
+        print(f"[CHEWS] Malaria model or joblib not found. Using heuristic fallback.")
         return False
 
-    _model = joblib.load(MODEL_PATH)
-    _encoders = joblib.load(ENCODERS_PATH)
-    with open(CONFIG_PATH) as f:
-        _feature_config = json.load(f)
+    try:
+        _model = joblib.load(MODEL_PATH)
+        _encoders = joblib.load(ENCODERS_PATH)
+        with open(CONFIG_PATH) as f:
+            _feature_config = json.load(f)
 
-    print(f"[CHEWS] Malaria predictor loaded — {type(_model).__name__}")
-    return True
+        print(f"[CHEWS] Malaria predictor loaded — {type(_model).__name__}")
+        return True
+    except Exception as e:
+        print(f"[CHEWS] Failed to load malaria model: {e}. Using fallback.")
+        return False
 
 
 def initialize():
