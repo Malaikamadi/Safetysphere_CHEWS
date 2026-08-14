@@ -161,7 +161,14 @@ function renderSidebar() {
   config.forEach(item => {
     if (item.subnav) {
       // Group with sub-links
-      const isExpanded = item.subnav.some(sub => currentPath.includes(sub.url.split('#')[0]));
+      const isExpanded = item.subnav.some(sub => {
+        const subPage = sub.url.split('#')[0];
+        const subHash = sub.url.includes('#') ? '#' + sub.url.split('#')[1] : '';
+        const pageMatch = currentPath.includes(subPage);
+        const hashMatch = subHash ? currentHash === subHash : !currentHash;
+        return pageMatch && hashMatch;
+      });
+      
       navHtml += `
         <div class="nav-section">
           <div class="nav-group ${isExpanded ? 'is-expanded' : ''}">
