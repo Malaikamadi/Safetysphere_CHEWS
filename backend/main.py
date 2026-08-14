@@ -4,10 +4,29 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from enum import Enum
+import sys
+import traceback
 
-from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
-from routers import strategic, early_warning, healthcare, point_of_care, situation_room
-from services import facility_mfl
+# Resilient imports — capture failures instead of crashing
+_import_errors = []
+
+try:
+    from models import risk_engine, environmental, flood_risk, malaria_predictor, healthcare_readiness, community_reports
+except Exception as e:
+    _import_errors.append(f"models: {e}")
+    risk_engine = environmental = flood_risk = malaria_predictor = healthcare_readiness = community_reports = None
+
+try:
+    from routers import strategic, early_warning, healthcare, point_of_care, situation_room
+except Exception as e:
+    _import_errors.append(f"routers: {e}")
+    strategic = early_warning = healthcare = point_of_care = situation_room = None
+
+try:
+    from services import facility_mfl
+except Exception as e:
+    _import_errors.append(f"facility_mfl: {e}")
+    facility_mfl = None
 
 # ========================== App Initialisation =============================
 
@@ -30,15 +49,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount domain routers (Strategic Planning, Early Warning, Healthcare
-# Readiness, Point-of-Care). Without this the frontend Strategic and
-# Early Warning pages would only see 404s for /strategic/* and
-# /early-warning/* requests.
-app.include_router(strategic.router)
-app.include_router(early_warning.router)
-app.include_router(healthcare.router)
-app.include_router(point_of_care.router)
-app.include_router(situation_room.router)
+# Mount domain routers only if imports succeeded
+if strategic:
+    app.include_router(strategic.router)
+if early_warning:
+    app.include_router(early_warning.router)
+if healthcare:
+    app.include_router(healthcare.router)
+if point_of_care:
+    app.include_router(point_of_care.router)
+if situation_room:
+    app.include_router(situation_room.router)
 
 
 # ========================== Startup Event ==================================
@@ -46,16 +67,60 @@ app.include_router(situation_room.router)
 @app.on_event("startup")
 async def startup():
     """Initialise ML models at server start."""
-    environmental.initialize()
-    flood_risk.initialize()
-    malaria_predictor.initialize()
-    healthcare_readiness.initialize()
-    community_reports.initialize()
-    try:
-        facility_mfl.initialize()
-    except Exception as e:
-        print(f"[CHEWS] MFL init warning (non-fatal): {e}")
+    if environmental:
+        try:
+            environmental.initialize()
+        except Exception as e:
+            _import_errors.append(f"env init: {e}")
+    if flood_risk:
+        try:
+            flood_risk.initialize()
+        except Exception as e:
+            _import_errors.append(f"flood init: {e}")
+    if malaria_predictor:
+        try:
+            malaria_predictor.initialize()
+        except Exception as e:
+            _import_errors.append(f"malaria init: {e}")
+    if healthcare_readiness:
+        try:
+            healthcare_readiness.initialize()
+        except Exception as e:
+            _import_errors.append(f"hr init: {e}")
+    if community_reports:
+        try:
+            community_reports.initialize()
+        except Exception as e:
+            _import_errors.append(f"cr init: {e}")
+    if facility_mfl:
+        try:
+            facility_mfl.initialize()
+        except Exception as e:
+            _import_errors.append(f"mfl init: {e}")
+    if _import_errors:
+        print(f"[CHEWS] Startup warnings: {_import_errors}")
     print("[CHEWS] All models initialised. System ready.")
+
+
+@app.get("/debug")
+async def debug_info():
+    """Temporary debug endpoint to diagnose Vercel runtime issues."""
+    import os
+    from pathlib import Path
+    base = Path(__file__).resolve().parent
+    data_dir = base / "data"
+    mfl_path = data_dir / "01_raw" / "master_facility_list" / "mfl_readiness_chews_v1.csv"
+    return {
+        "python": sys.version,
+        "cwd": os.getcwd(),
+        "base_dir": str(base),
+        "data_dir_exists": data_dir.exists(),
+        "mfl_exists": mfl_path.exists(),
+        "data_contents": os.listdir(str(data_dir)) if data_dir.exists() else "NOT FOUND",
+        "import_errors": _import_errors,
+        "mfl_initialized": facility_mfl._initialized if facility_mfl else False,
+        "facilities_count": len(facility_mfl._facilities) if facility_mfl else 0,
+    }
 
 
 # ========================== Data Models ====================================
