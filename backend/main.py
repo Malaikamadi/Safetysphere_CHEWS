@@ -51,15 +51,15 @@ app.add_middleware(
 
 # Mount domain routers only if imports succeeded
 if strategic:
-    app.include_router(strategic.router)
+    app.include_router(strategic.router, prefix="/api")
 if early_warning:
-    app.include_router(early_warning.router)
+    app.include_router(early_warning.router, prefix="/api")
 if healthcare:
-    app.include_router(healthcare.router)
+    app.include_router(healthcare.router, prefix="/api")
 if point_of_care:
-    app.include_router(point_of_care.router)
+    app.include_router(point_of_care.router, prefix="/api")
 if situation_room:
-    app.include_router(situation_room.router)
+    app.include_router(situation_room.router, prefix="/api")
 
 
 # ========================== Startup Event ==================================
@@ -102,7 +102,7 @@ async def startup():
     print("[CHEWS] All models initialised. System ready.")
 
 
-@app.get("/debug")
+@app.get("/api/debug")
 async def debug_info():
     """Temporary debug endpoint to diagnose Vercel runtime issues."""
     import os
