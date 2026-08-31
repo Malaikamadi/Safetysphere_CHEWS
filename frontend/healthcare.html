@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <script src="auth.js"></script>
   <script>
     requireRole();
@@ -136,11 +138,11 @@
               </div>
               <div id="mfl-map" class="mfl-map"></div>
               <div class="mfl-legend">
-                <span><span class="mfl-legend__dot" style="background:#ef4444"></span>Hospital</span>
-                <span><span class="mfl-legend__dot" style="background:#22c55e"></span>CHC</span>
-                <span><span class="mfl-legend__dot" style="background:#6366f1"></span>CHP</span>
-                <span><span class="mfl-legend__dot" style="background:#f59e0b"></span>Clinic</span>
-                <span><span class="mfl-legend__dot" style="background:#888"></span>Other</span>
+                <span><img src="img/pin-hospital.svg" alt="" class="mfl-legend__pin" />Hospital</span>
+                <span><img src="img/pin-chc.svg" alt="" class="mfl-legend__pin" />CHC</span>
+                <span><img src="img/pin-chp.svg" alt="" class="mfl-legend__pin" />CHP</span>
+                <span><img src="img/pin-clinic.svg" alt="" class="mfl-legend__pin" />Clinic</span>
+                <span><img src="img/pin-other.svg" alt="" class="mfl-legend__pin" />Other</span>
               </div>
             </div>
           </div>
@@ -292,6 +294,7 @@
   </div>
   <script src="theme.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="healthcare.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>

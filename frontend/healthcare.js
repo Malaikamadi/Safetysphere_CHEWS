@@ -267,6 +267,60 @@ let mflMarkers = null;
 let mflFacilities = [];
 let mflGeojson = null;
 let mflMapInitialized = false;
+let mflPinIcons = {};
+let mflMapped = [];
+
+const MFL_PIN_FILES = {
+  Hospital: { src: "img/pin-hospital.svg", size: [32, 42] },
+  CHC: { src: "img/pin-chc.svg", size: [28, 36] },
+  CHP: { src: "img/pin-chp.svg", size: [26, 34] },
+  Clinic: { src: "img/pin-clinic.svg", size: [26, 34] },
+  Other: { src: "img/pin-other.svg", size: [24, 32] },
+};
+
+function mflPinIcon(type) {
+  const key = MFL_PIN_FILES[type] ? type : "Other";
+  if (mflPinIcons[key]) return mflPinIcons[key];
+  const spec = MFL_PIN_FILES[key];
+  mflPinIcons[key] = L.icon({
+    iconUrl: spec.src,
+    iconSize: spec.size,
+    iconAnchor: [spec.size[0] / 2, spec.size[1] - 1],
+    popupAnchor: [0, -spec.size[1] + 10],
+    className: "mfl-pin",
+  });
+  return mflPinIcons[key];
+}
+
+function hasCoords(f) {
+  const lat = Number(f.latitude);
+  const lng = Number(f.longitude);
+  return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
+function createMflMarkerLayer() {
+  if (window.L && L.markerClusterGroup) {
+    return L.markerClusterGroup({
+      maxClusterRadius: 28,
+      spiderfyOnMaxZoom: true,
+      disableClusteringAtZoom: 9,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      chunkedLoading: true,
+      iconCreateFunction(cluster) {
+        const n = cluster.getChildCount();
+        const size = n > 80 ? "lg" : n > 20 ? "md" : "sm";
+        const px = size === "lg" ? 44 : size === "md" ? 36 : 28;
+        return L.divIcon({
+          html: `<span>${n}</span>`,
+          className: `mfl-cluster mfl-cluster--${size}`,
+          iconSize: [px, px],
+        });
+      },
+    });
+  }
+  return L.layerGroup();
+}
 
 // --- Load MFL Data ---
 async function loadMflData() {
@@ -313,73 +367,78 @@ function renderMflOverview(summary) {
 
 // --- Initialize Leaflet Map ---
 function initMflMap() {
-  if (mflMapInitialized) { updateMflMapMarkers(); return; }
+  if (mflMapInitialized) {
+    updateMflMapMarkers(mflMapped.length ? mflMapped : mflFacilities);
+    return;
+  }
   const mapEl = document.getElementById("mfl-map");
   if (!mapEl || !window.L) return;
 
-  mflMap = L.map("mfl-map", { zoomControl: true, preferCanvas: true }).setView([8.46, -11.78], 7);
+  mflMap = L.map("mfl-map", { zoomControl: true }).setView([8.46, -11.78], 7);
   if (window.chewsTheme && window.chewsTheme.attachBasemap) {
     window.chewsTheme.attachBasemap(mflMap);
   } else {
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; OSM &copy; CARTO',
+      attribution: "&copy; OSM &copy; CARTO",
       maxZoom: 18,
     }).addTo(mflMap);
   }
 
-  // Sierra Leone boundary
+  if (!mflMap.getPane("mfl-districts")) {
+    mflMap.createPane("mfl-districts");
+    mflMap.getPane("mfl-districts").style.zIndex = 350;
+  }
+
   fetch("sierra-leone-districts.geojson")
     .then(r => r.json())
     .then(geo => {
       L.geoJSON(geo, {
-        style: { color: "rgba(255,255,255,0.2)", weight: 1, fillColor: "rgba(100,149,237,0.05)", fillOpacity: 0.3 },
+        pane: "mfl-districts",
+        interactive: false,
+        style: { color: "rgba(255,255,255,0.28)", weight: 1, fillColor: "transparent", fillOpacity: 0 },
       }).addTo(mflMap);
     })
     .catch(() => {});
 
-  mflMarkers = L.layerGroup().addTo(mflMap);
-  updateMflMapMarkers();
+  mflMarkers = createMflMarkerLayer().addTo(mflMap);
   mflMapInitialized = true;
+  updateMflMapMarkers(mflFacilities);
+  setTimeout(() => mflMap && mflMap.invalidateSize(), 120);
 }
 
-function updateMflMapMarkers() {
+function updateMflMapMarkers(list) {
   if (!mflMarkers || !mflMap) return;
+  const facilities = list || mflFacilities;
+  mflMapped = facilities;
   mflMarkers.clearLayers();
 
-  const typeColors = {
-    Hospital: "#ef4444",
-    CHC: "#22c55e",
-    CHP: "#6366f1",
-    Clinic: "#f59e0b",
-    Other: "#888888",
-  };
-
-  mflFacilities.forEach(f => {
-    if (!f.latitude || !f.longitude) return;
-
-    const color = typeColors[f.facility_type] || "#888888";
-    const radius = f.facility_type === "Hospital" ? 7 : f.facility_type === "CHC" ? 5 : 4;
-
-    const marker = L.circleMarker([f.latitude, f.longitude], {
-      radius: radius,
-      fillColor: color,
-      color: "rgba(255,255,255,0.35)",
-      weight: 1,
-      fillOpacity: 0.8,
+  const markers = [];
+  facilities.forEach(f => {
+    if (!hasCoords(f)) return;
+    const lat = Number(f.latitude);
+    const lng = Number(f.longitude);
+    const marker = L.marker([lat, lng], {
+      icon: mflPinIcon(f.facility_type),
+      title: `${f.facility_name} (${f.facility_type})`,
+      riseOnHover: true,
+      keyboard: false,
     });
-
     const id = String(f.facility_id).replace(/'/g, "\\'");
     marker.bindPopup(`
-      <div style="font-family:Inter,sans-serif;min-width:200px">
-        <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">${f.facility_name}</div>
-        <div style="font-size:0.72rem;color:#888;margin-bottom:6px">${f.facility_code || f.facility_id} · ${f.facility_type} · ${f.district}</div>
-        <div style="font-size:0.72rem;color:#aaa">DHIS2 coordinates</div>
-        <button type="button" onclick="openFacilityProfile('${id}')" style="margin-top:8px;padding:4px 12px;font-size:0.72rem;background:#6366f1;color:white;border:none;border-radius:4px;cursor:pointer">View profile</button>
+      <div class="mfl-popup">
+        <div class="mfl-popup__name">${f.facility_name}</div>
+        <div class="mfl-popup__meta">${f.facility_code || f.facility_id} · ${f.facility_type} · ${f.district}</div>
+        <button type="button" class="btn btn--primary btn--sm" onclick="openFacilityProfile('${id}')">View profile</button>
       </div>
     `);
-
-    mflMarkers.addLayer(marker);
+    markers.push(marker);
   });
+
+  if (typeof mflMarkers.addLayers === "function") {
+    mflMarkers.addLayers(markers);
+  } else {
+    markers.forEach(m => mflMarkers.addLayer(m));
+  }
 }
 
 // --- Render Facility Table ---
@@ -470,14 +529,7 @@ function applyMflFilters() {
 
   mflPage = 1;
   renderMflTable(filtered);
-
-  if (mflMarkers) {
-    mflMarkers.clearLayers();
-    const old = mflFacilities;
-    mflFacilities = filtered;
-    updateMflMapMarkers();
-    mflFacilities = old;
-  }
+  updateMflMapMarkers(filtered);
 
   const countEl = document.getElementById("mfl-filter-count");
   if (countEl) countEl.textContent = `${filtered.length} of ${mflFacilities.length} facilities`;
@@ -489,7 +541,7 @@ function resetMflFilters() {
   document.getElementById("mfl-search").value = "";
   mflPage = 1;
   renderMflTable(mflFacilities);
-  updateMflMapMarkers();
+  updateMflMapMarkers(mflFacilities);
   const countEl = document.getElementById("mfl-filter-count");
   if (countEl) countEl.textContent = "";
 }
