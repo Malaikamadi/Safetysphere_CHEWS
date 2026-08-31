@@ -378,9 +378,10 @@ function initMflMap() {
   if (window.chewsTheme && window.chewsTheme.attachBasemap) {
     window.chewsTheme.attachBasemap(mflMap);
   } else {
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: "&copy; OSM &copy; CARTO",
-      maxZoom: 18,
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap",
+      subdomains: "abc",
+      maxZoom: 19,
     }).addTo(mflMap);
   }
 

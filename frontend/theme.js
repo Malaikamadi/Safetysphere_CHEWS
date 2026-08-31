@@ -1,17 +1,18 @@
 /**
  * CHEWS — dark / light appearance (persists to localStorage).
- * Also swaps CARTO basemaps so maps follow the theme.
+ * Basemaps use OpenStreetMap (no API key). Dark mode inverts the tile pane only.
  */
 (function () {
   const STORAGE_KEY = "chews-theme";
   const listeners = [];
 
-  const TILE = {
-    dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+  const TILE_OPTS = {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: "abc",
+    maxZoom: 19,
   };
-  const ATTRIB =
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
   function currentTheme() {
     return document.documentElement.getAttribute("data-theme") === "light"
@@ -57,18 +58,9 @@
 
   function attachBasemap(map, extraOpts) {
     if (!map || !window.L) return null;
-    const opts = Object.assign(
-      { attribution: ATTRIB, subdomains: "abcd", maxZoom: 19 },
-      extraOpts || {}
-    );
-    let layer = L.tileLayer(TILE[currentTheme()], opts).addTo(map);
-    onChange(function (theme) {
-      if (!map) return;
-      map.removeLayer(layer);
-      layer = L.tileLayer(TILE[theme], opts).addTo(map);
-      if (typeof layer.bringToBack === "function") layer.bringToBack();
-    });
-    return layer;
+    const opts = Object.assign({}, TILE_OPTS, extraOpts || {});
+    if (opts.maxZoom > 19) opts.maxZoom = 19;
+    return L.tileLayer(TILE_URL, opts).addTo(map);
   }
 
   window.chewsTheme = {
@@ -76,6 +68,8 @@
     set: setTheme,
     onChange: onChange,
     attachBasemap: attachBasemap,
+    tileUrl: TILE_URL,
+    tileOpts: TILE_OPTS,
   };
 
   document.addEventListener("DOMContentLoaded", () => {

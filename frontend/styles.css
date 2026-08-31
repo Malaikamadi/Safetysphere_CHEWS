@@ -5173,8 +5173,11 @@ body {
 
 /* Leaflet Custom Overrides */
 .leaflet-container {
-  background: #0b1120 !important;
+  background: var(--map-shell-bg, #121110) !important;
   font-family: inherit !important;
+}
+[data-theme="dark"] .leaflet-container .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.45);
 }
 .leaflet-bar a {
   background-color: rgba(30, 41, 59, 0.8) !important;

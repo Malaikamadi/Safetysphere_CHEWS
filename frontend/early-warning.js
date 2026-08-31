@@ -476,9 +476,10 @@ function initSensorMap() {
   if (window.chewsTheme && window.chewsTheme.attachBasemap) {
     window.chewsTheme.attachBasemap(sensorMap, { maxZoom: 18 });
   } else {
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OSM &copy; CARTO',
-      subdomains: 'abcd', maxZoom: 18
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap",
+      subdomains: "abc",
+      maxZoom: 19,
     }).addTo(sensorMap);
   }
 
@@ -570,9 +571,10 @@ function initLiveMap() {
   if (window.chewsTheme && window.chewsTheme.attachBasemap) {
     window.chewsTheme.attachBasemap(eocMap, { maxZoom: 20 });
   } else {
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OSM contributors &copy; CARTO',
-      subdomains: 'abcd', maxZoom: 20
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap",
+      subdomains: "abc",
+      maxZoom: 19,
     }).addTo(eocMap);
   }
 
