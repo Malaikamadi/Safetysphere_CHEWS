@@ -17,43 +17,44 @@ function switchTab(tab) {
 }
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DISEASE_LABEL = {
+  malaria: "Malaria",
+  cholera: "Cholera",
+  dengue: "Dengue",
+  respiratory: "Acute respiratory infection",
+};
+const STAFF_PER_PATIENT = 1 / 3; // target: 1 clinician per 3 patients
+const SUPPLY_BUFFER_DAYS = 14;
 
-function bindChips() {
-  document.querySelectorAll(".hc-chip[data-target]").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const targetId = chip.getAttribute("data-target");
-      const hidden = document.getElementById(targetId);
-      if (hidden) hidden.value = chip.getAttribute("data-value");
-      chip.parentElement.querySelectorAll(".hc-chip").forEach((c) => c.classList.remove("is-on"));
-      chip.classList.add("is-on");
-      if (targetId === "f-disease") {
-        const wrap = document.getElementById("f-aqi-wrap");
-        if (wrap) wrap.hidden = chip.getAttribute("data-value") !== "respiratory";
-        runForecast();
-      }
-      if (targetId === "s-disease") runSurge();
-    });
-  });
+function diseaseLabel(id) {
+  return DISEASE_LABEL[id] || (id ? id.charAt(0).toUpperCase() + id.slice(1) : "—");
 }
-bindChips();
+
+function adminLabel(selId) {
+  const el = document.getElementById(selId);
+  if (!el) return "National";
+  const opt = el.options[el.selectedIndex];
+  return opt ? opt.text : "National";
+}
 
 function riskClass(level) {
   const k = (level || "").toLowerCase().replace(/\s+/g, "-");
-  if (k === "very-high" || k === "critical" || k === "critical-gap") return "high";
-  if (k === "at-risk") return "high";
-  if (k === "partially-ready") return "moderate";
-  if (k === "ready") return "low";
-  return k;
-}
-
-function listItems(arr) {
-  return (arr || []).map((t) => `<li>${t}</li>`).join("");
+  if (k === "very-high" || k === "critical" || k === "critical-gap") return "critical";
+  if (k === "at-risk" || k === "high") return "high";
+  if (k === "partially-ready" || k === "moderate") return "moderate";
+  if (k === "ready" || k === "low") return "low";
+  return "moderate";
 }
 
 function showResultError(el, msg) {
   if (!el) return;
-  el.innerHTML = `<p class="hc-result__error">${msg}</p>`;
+  el.innerHTML = `<p class="his-output__error">${msg}</p>`;
 }
+
+document.getElementById("f-disease")?.addEventListener("change", () => {
+  const wrap = document.getElementById("f-aqi-wrap");
+  if (wrap) wrap.hidden = document.getElementById("f-disease").value !== "respiratory";
+});
 
 async function runForecast() {
   const el = document.getElementById("forecast-result");
@@ -71,7 +72,7 @@ async function runForecast() {
         aqi: +document.getElementById("f-aqi").value,
       }),
     });
-    if (!res.ok) throw new Error(`Could not load outlook (${res.status})`);
+    if (!res.ok) throw new Error(`Forecast request failed (${res.status})`);
     renderForecast(await res.json());
   } catch (err) {
     showResultError(el, err.message);
@@ -87,54 +88,58 @@ function renderForecast(data) {
   const el = document.getElementById("forecast-result");
   if (!el) return;
   const month = MONTHS[(+document.getElementById("f-month").value || 1) - 1];
-  const lvl = data.predicted_risk_level;
-  const trendColor = { Rising: "var(--danger)", Stable: "var(--text-dim)", Declining: "var(--success)" }[data.risk_trend];
-  const surgeColor = data.surge_probability > 0.6 ? "var(--danger)" : data.surge_probability > 0.4 ? "var(--warning)" : "var(--success)";
+  const cls = riskClass(data.predicted_risk_level);
+  const disease = diseaseLabel(data.disease);
+  const unit = adminLabel("f-admin");
+  const onset = Math.round(data.onset_likelihood * 100);
+  const surge = Math.round(data.surge_probability * 100);
+  const conf = Math.round(data.confidence * 100);
 
   el.innerHTML = `
-    <div class="hc-hero">
-      <div class="hc-hero__kicker">${data.disease} · next 4 weeks from ${month}</div>
-      <div class="hc-hero__row">
-        <div class="hc-hero__level risk-badge risk-badge--${riskClass(lvl)}">${lvl} load</div>
-        <p class="hc-hero__note">Peak season typically ${data.peak_window}. Confidence ${(data.confidence * 100).toFixed(0)}%.</p>
+    <div class="his-banner his-banner--${cls}">
+      <div class="his-banner__mark" aria-hidden="true"></div>
+      <div class="his-banner__body">
+        <div class="his-banner__over">${disease} · ${unit} · 28-day horizon from ${month}</div>
+        <div class="his-banner__title">Projected risk: ${data.predicted_risk_level}</div>
+        <div class="his-banner__sub">Peak transmission period: ${data.peak_window} · Model confidence ${conf}%</div>
       </div>
     </div>
-    <div class="hc-stat-grid">
-      <div class="hc-stat">
-        <div class="hc-stat__label">Trend</div>
-        <div class="hc-stat__value" style="color:${trendColor}">${data.risk_trend}</div>
-        <div class="hc-stat__sub">from recent case counts</div>
+    <div class="his-kpi-row">
+      <div class="his-kpi">
+        <div class="his-kpi__label">Case trend</div>
+        <div class="his-kpi__value">${data.risk_trend}</div>
+        <div class="his-kpi__hint">Current vs previous reporting period</div>
       </div>
-      <div class="hc-stat">
-        <div class="hc-stat__label">Chance of onset</div>
-        <div class="hc-stat__value">${(data.onset_likelihood * 100).toFixed(0)}%</div>
-        <div class="hc-meter"><span style="width:${data.onset_likelihood * 100}%"></span></div>
+      <div class="his-kpi">
+        <div class="his-kpi__label">Probability of seasonal onset</div>
+        <div class="his-kpi__value">${onset}%</div>
+        <div class="his-kpi__bar"><span style="width:${onset}%"></span></div>
       </div>
-      <div class="hc-stat">
-        <div class="hc-stat__label">Chance of surge</div>
-        <div class="hc-stat__value" style="color:${surgeColor}">${(data.surge_probability * 100).toFixed(0)}%</div>
-        <div class="hc-meter"><span style="width:${data.surge_probability * 100}%;background:${surgeColor}"></span></div>
+      <div class="his-kpi">
+        <div class="his-kpi__label">Probability of caseload surge</div>
+        <div class="his-kpi__value">${surge}%</div>
+        <div class="his-kpi__bar"><span style="width:${surge}%"></span></div>
       </div>
-      <div class="hc-stat">
-        <div class="hc-stat__label">Peak window</div>
-        <div class="hc-stat__value hc-stat__value--sm">${data.peak_window}</div>
-        <div class="hc-stat__sub">usual high-transmission months</div>
-      </div>
-    </div>
-    <div class="hc-split">
-      <div class="hc-panel">
-        <h3 class="hc-panel__title">What’s driving this</h3>
-        <ul class="hc-list">${listItems(data.factors)}</ul>
-      </div>
-      <div class="hc-panel">
-        <h3 class="hc-panel__title">What to do</h3>
-        <ul class="hc-list hc-list--do">${listItems(data.recommendations)}</ul>
+      <div class="his-kpi">
+        <div class="his-kpi__label">Peak transmission window</div>
+        <div class="his-kpi__value his-kpi__value--text">${data.peak_window}</div>
+        <div class="his-kpi__hint">Based on climatology for this disease</div>
       </div>
     </div>
+    <div class="his-cols">
+      <div class="his-block">
+        <h3 class="his-block__title">Contributing factors</h3>
+        <ol class="his-ol">${(data.factors || []).map((f) => `<li>${f}</li>`).join("")}</ol>
+      </div>
+      <div class="his-block">
+        <h3 class="his-block__title">Recommended actions</h3>
+        <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
+      </div>
+    </div>
+    <p class="his-footnote">Method: seasonal–climatological rules using rainfall, temperature, humidity and recent case counts. Outputs are planning estimates, not confirmed surveillance. Interpret with DHIS2 / IDSR data and local epidemiology.</p>
   `;
 }
 
-// === Surge Planning ===
 async function runSurge() {
   const el = document.getElementById("surge-result");
   try {
@@ -149,7 +154,7 @@ async function runSurge() {
         supply_days: +document.getElementById("s-supply").value,
       }),
     });
-    if (!res.ok) throw new Error(`Could not load plan (${res.status})`);
+    if (!res.ok) throw new Error(`Capacity request failed (${res.status})`);
     renderSurge(await res.json());
   } catch (err) {
     showResultError(el, err.message);
@@ -161,57 +166,81 @@ document.getElementById("surge-form")?.addEventListener("submit", (e) => {
   runSurge();
 });
 
+function gapStatus(gap) {
+  if (gap > 0) return { cls: "deficit", label: "Deficit" };
+  if (gap < 0) return { cls: "surplus", label: "Surplus" };
+  return { cls: "met", label: "Met" };
+}
+
 function renderSurge(data) {
   const el = document.getElementById("surge-result");
   if (!el) return;
   const beds = +document.getElementById("s-beds").value;
   const staff = +document.getElementById("s-staff").value;
+  const supply = data.supply_days_remaining;
   const expected = data.expected_surge_cases;
-  const bedGap = Math.max(0, expected - beds);
-  const bedSpare = Math.max(0, beds - expected);
-  const bedsShort = bedGap > 0;
-  const staffNeeded = Math.max(0, Math.ceil(expected * 0.3) - staff);
-  const staffShort = staffNeeded > 0 || data.staff_patient_ratio < 0.3;
-  const supplyShort = data.supply_days_remaining < 14;
-  const patientsPerStaff = data.staff_patient_ratio > 0 ? Math.round(1 / data.staff_patient_ratio) : "—";
-  const lvl = data.readiness_level;
-  const lvlColor = { Ready: "var(--success)", "Partially Ready": "var(--warning)", "At Risk": "var(--orange)", "Critical Gap": "var(--danger)" }[lvl] || "var(--text)";
+  const staffRequired = Math.max(1, Math.ceil(expected * STAFF_PER_PATIENT));
+  const rows = [
+    { resource: "Inpatient beds", unit: "beds", available: beds, required: expected, note: `${data.bed_utilization_pct}% projected occupancy` },
+    { resource: "Clinical staff", unit: "persons", available: staff, required: staffRequired, note: "Target ratio 1 clinician : 3 patients" },
+    { resource: "Essential supplies", unit: "days of stock", available: supply, required: SUPPLY_BUFFER_DAYS, note: "Emergency buffer (14 days)" },
+  ].map((r) => {
+    const gap = r.required - r.available;
+    return { ...r, gap, status: gapStatus(gap) };
+  });
+  const hasDeficit = rows.some((r) => r.gap > 0);
+  const cls = riskClass(data.readiness_level);
+  const disease = diseaseLabel(data.disease);
+  const unit = adminLabel("s-admin");
+  const score = Math.round(data.readiness_score * 100);
 
   el.innerHTML = `
-    <div class="hc-hero">
-      <div class="hc-hero__kicker">${data.disease} · ${data.current_cases} cases now → ${expected} expected</div>
-      <div class="hc-hero__row">
-        <div class="hc-hero__level risk-badge risk-badge--${riskClass(lvl)}">${lvl}</div>
-        <p class="hc-hero__note">Readiness <strong style="color:${lvlColor}">${(data.readiness_score * 100).toFixed(0)}%</strong> against the extra load.</p>
+    <div class="his-banner his-banner--${cls}">
+      <div class="his-banner__mark" aria-hidden="true"></div>
+      <div class="his-banner__body">
+        <div class="his-banner__over">${disease} · ${unit} · ${data.current_cases} current cases → ${expected} projected cases</div>
+        <div class="his-banner__title">Facility readiness: ${data.readiness_level} (${score}%)</div>
+        <div class="his-banner__sub">${hasDeficit ? "One or more resources fall below the required level." : "Available resources meet or exceed the projected requirement."}</div>
       </div>
     </div>
-    <div class="hc-need-grid">
-      <div class="hc-need ${bedsShort ? "hc-need--short" : "hc-need--ok"}">
-        <div class="hc-need__label">Beds</div>
-        <div class="hc-need__value">${bedsShort ? bedGap + " short" : bedSpare + " spare"}</div>
-        <div class="hc-need__sub">${expected} expected · ${beds} available · ${data.bed_utilization_pct}% used</div>
+    <div class="his-table-wrap">
+      <table class="his-table">
+        <caption>Surge capacity gap analysis</caption>
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>Unit</th>
+            <th class="his-table__num">Available</th>
+            <th class="his-table__num">Required</th>
+            <th class="his-table__num">Gap</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((r) => `
+            <tr>
+              <td>${r.resource}<div class="his-table__hint">${r.note}</div></td>
+              <td>${r.unit}</td>
+              <td class="his-table__num">${r.available}</td>
+              <td class="his-table__num">${r.required}</td>
+              <td class="his-table__num his-table__gap--${r.status.cls}">${r.gap > 0 ? "+" : ""}${r.gap}</td>
+              <td><span class="his-pill his-pill--${r.status.cls}">${r.status.label}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="his-cols">
+      <div class="his-block">
+        <h3 class="his-block__title">Identified gaps</h3>
+        <ol class="his-ol">${(data.gaps || []).map((f) => `<li>${f}</li>`).join("")}</ol>
       </div>
-      <div class="hc-need ${staffShort ? "hc-need--short" : "hc-need--ok"}">
-        <div class="hc-need__label">Staff</div>
-        <div class="hc-need__value">${staffShort ? (staffNeeded ? staffNeeded + " more" : "thin coverage") : "enough"}</div>
-        <div class="hc-need__sub">${staff} on duty · about 1 staff per ${patientsPerStaff} patients</div>
-      </div>
-      <div class="hc-need ${supplyShort ? "hc-need--short" : "hc-need--ok"}">
-        <div class="hc-need__label">Supplies</div>
-        <div class="hc-need__value">${data.supply_days_remaining} days</div>
-        <div class="hc-need__sub">${supplyShort ? "Below the 14-day buffer — reorder now" : "At or above the 14-day buffer"}</div>
+      <div class="his-block">
+        <h3 class="his-block__title">Recommended actions</h3>
+        <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
       </div>
     </div>
-    <div class="hc-split">
-      <div class="hc-panel">
-        <h3 class="hc-panel__title">Gaps</h3>
-        <ul class="hc-list">${listItems(data.gaps)}</ul>
-      </div>
-      <div class="hc-panel">
-        <h3 class="hc-panel__title">What to do</h3>
-        <ul class="hc-list hc-list--do">${listItems(data.recommendations)}</ul>
-      </div>
-    </div>
+    <p class="his-footnote">Gap = required − available. Positive gap is a deficit. Staffing target is 1 clinician per 3 projected patients. Supply requirement follows a 14-day emergency buffer. Use with the national Master Facility List and logistics management information system.</p>
   `;
 }
 

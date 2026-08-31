@@ -34,13 +34,13 @@
     <main class="main-content">
       <div class="topbar">
         <div><button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button></div>
-        <div><div class="topbar__title">Healthcare Readiness</div><div class="topbar__subtitle">Facilities, disease forecast, and surge planning</div></div>
+        <div><div class="topbar__title">Healthcare Readiness</div><div class="topbar__subtitle">Facility status, caseload forecast, and surge capacity</div></div>
         <div class="topbar__actions"><button type="button" class="theme-toggle btn btn--ghost btn--sm" data-theme-toggle aria-label="Switch theme" title="Appearance"><span class="theme-toggle__when-dark"><i data-lucide="sun"></i></span><span class="theme-toggle__when-light"><i data-lucide="moon"></i></span></button><div class="topbar__badge"><span class="pulse-dot"></span> Live</div></div>
       </div>
 
       <div class="page fade-in">
-        <h1 class="page-heading"><i data-lucide="hospital"></i> Healthcare Readiness</h1>
-        <p class="page-desc">See which facilities can cope, what disease load is coming, and where surge support is needed.</p>
+        <h1 class="page-heading">Healthcare Readiness</h1>
+        <p class="page-desc">Facility status, 28-day disease caseload forecast, and surge capacity against projected demand.</p>
 
         <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
           <button class="btn btn--secondary btn--sm tab-btn active-tab" data-tab="facilities" onclick="switchTab('facilities')"><i data-lucide="building-2"></i> Facility Explorer</button>
@@ -193,23 +193,45 @@
 
         <!-- FORECAST TAB -->
         <div id="tab-forecast" class="tab-content hidden">
-          <div class="hc-brief">
-            <div class="hc-brief__intro">
-              <h2 class="hc-brief__title">What load is coming</h2>
-              <p class="hc-brief__lead">Four-week disease outlook for Sierra Leone, based on season, weather, and recent cases.</p>
-            </div>
+          <section class="his">
+            <header class="his__header">
+              <div>
+                <h2 class="his__title">Disease caseload forecast</h2>
+                <p class="his__meta">28-day projection · Seasonal–climatological model · For planning and pre-positioning</p>
+              </div>
+            </header>
 
-            <form id="forecast-form" class="hc-toolbar" autocomplete="off">
-              <div class="hc-toolbar__row">
-                <div class="hc-chips" role="group" aria-label="Disease">
-                  <button type="button" class="hc-chip is-on" data-target="f-disease" data-value="malaria">Malaria</button>
-                  <button type="button" class="hc-chip" data-target="f-disease" data-value="cholera">Cholera</button>
-                  <button type="button" class="hc-chip" data-target="f-disease" data-value="dengue">Dengue</button>
-                  <button type="button" class="hc-chip" data-target="f-disease" data-value="respiratory">Respiratory</button>
+            <form id="forecast-form" class="his-filters" autocomplete="off">
+              <div class="his-filters__grid">
+                <div class="his-field">
+                  <label class="his-field__label" for="f-country">Country</label>
+                  <select id="f-country" class="form-input form-select" disabled>
+                    <option selected>Sierra Leone</option>
+                  </select>
                 </div>
-                <input type="hidden" id="f-disease" value="malaria" />
-                <div class="hc-toolbar__field">
-                  <label class="form-label" for="f-month">From</label>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-admin">Administrative unit</label>
+                  <select id="f-admin" class="form-input form-select">
+                    <option value="national" selected>National</option>
+                    <option value="Western Area Urban">Western Area Urban</option>
+                    <option value="Western Area Rural">Western Area Rural</option>
+                    <option value="Bo">Bo</option>
+                    <option value="Kenema">Kenema</option>
+                    <option value="Port Loko">Port Loko</option>
+                    <option value="Kambia">Kambia</option>
+                  </select>
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-disease">Disease</label>
+                  <select id="f-disease" class="form-input form-select">
+                    <option value="malaria">Malaria</option>
+                    <option value="cholera">Cholera</option>
+                    <option value="dengue">Dengue</option>
+                    <option value="respiratory">Acute respiratory infection</option>
+                  </select>
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-month">Start month</label>
                   <select id="f-month" class="form-input form-select">
                     <option value="1">January</option><option value="2">February</option><option value="3">March</option>
                     <option value="4">April</option><option value="5">May</option><option value="6">June</option>
@@ -217,56 +239,109 @@
                     <option value="10">October</option><option value="11">November</option><option value="12">December</option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn--primary btn--sm">Update outlook</button>
-              </div>
-              <div class="hc-toolbar__row hc-toolbar__row--conditions">
-                <div class="hc-toolbar__field"><label class="form-label" for="f-rain">Rainfall (mm)</label><input type="number" id="f-rain" class="form-input" value="150" min="0" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="f-temp">Temp (°C)</label><input type="number" id="f-temp" class="form-input" value="28" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="f-hum">Humidity (%)</label><input type="number" id="f-hum" class="form-input" value="75" min="0" max="100" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="f-current">Cases now</label><input type="number" id="f-current" class="form-input" value="15" min="0" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="f-prev">Cases last period</label><input type="number" id="f-prev" class="form-input" value="10" min="0" /></div>
-                <div class="hc-toolbar__field" id="f-aqi-wrap" hidden><label class="form-label" for="f-aqi">AQI</label><input type="number" id="f-aqi" class="form-input" value="50" min="0" max="500" /></div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-rain">Rainfall (mm)</label>
+                  <input type="number" id="f-rain" class="form-input" value="150" min="0" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-temp">Mean temperature (°C)</label>
+                  <input type="number" id="f-temp" class="form-input" value="28" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-hum">Relative humidity (%)</label>
+                  <input type="number" id="f-hum" class="form-input" value="75" min="0" max="100" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-current">Reported cases (current period)</label>
+                  <input type="number" id="f-current" class="form-input" value="15" min="0" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="f-prev">Reported cases (previous period)</label>
+                  <input type="number" id="f-prev" class="form-input" value="10" min="0" />
+                </div>
+                <div class="his-field" id="f-aqi-wrap" hidden>
+                  <label class="his-field__label" for="f-aqi">Air quality index</label>
+                  <input type="number" id="f-aqi" class="form-input" value="50" min="0" max="500" />
+                </div>
+                <div class="his-field his-field--action">
+                  <button type="submit" class="btn btn--primary">Run forecast</button>
+                </div>
               </div>
             </form>
 
-            <div id="forecast-result" class="hc-result">
-              <p class="hc-result__placeholder">Loading outlook…</p>
+            <div id="forecast-result" class="his-output">
+              <p class="his-output__status">Generating forecast…</p>
             </div>
-          </div>
+          </section>
         </div>
 
         <!-- SURGE TAB -->
         <div id="tab-surge" class="tab-content hidden">
-          <div class="hc-brief">
-            <div class="hc-brief__intro">
-              <h2 class="hc-brief__title">Where extra capacity is needed</h2>
-              <p class="hc-brief__lead">Compare expected cases against beds, staff, and supplies. Shortfalls show first.</p>
-            </div>
-
-            <form id="surge-form" class="hc-toolbar" autocomplete="off">
-              <div class="hc-toolbar__row">
-                <div class="hc-chips" role="group" aria-label="Disease">
-                  <button type="button" class="hc-chip is-on" data-target="s-disease" data-value="malaria">Malaria</button>
-                  <button type="button" class="hc-chip" data-target="s-disease" data-value="cholera">Cholera</button>
-                  <button type="button" class="hc-chip" data-target="s-disease" data-value="dengue">Dengue</button>
-                  <button type="button" class="hc-chip" data-target="s-disease" data-value="respiratory">Respiratory</button>
-                </div>
-                <input type="hidden" id="s-disease" value="malaria" />
-                <div class="hc-toolbar__field"><label class="form-label" for="s-current">Cases now</label><input type="number" id="s-current" class="form-input" value="20" min="0" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="s-surge">Extra load (%)</label><input type="number" id="s-surge" class="form-input" value="50" min="0" max="500" /></div>
-                <button type="submit" class="btn btn--primary btn--sm">Update plan</button>
+          <section class="his">
+            <header class="his__header">
+              <div>
+                <h2 class="his__title">Surge capacity assessment</h2>
+                <p class="his__meta">Compare projected caseload with beds, clinical staff and essential supplies · WHO emergency stock buffer: 14 days</p>
               </div>
-              <div class="hc-toolbar__row hc-toolbar__row--conditions">
-                <div class="hc-toolbar__field"><label class="form-label" for="s-beds">Beds</label><input type="number" id="s-beds" class="form-input" value="50" min="1" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="s-staff">Staff on duty</label><input type="number" id="s-staff" class="form-input" value="10" min="1" /></div>
-                <div class="hc-toolbar__field"><label class="form-label" for="s-supply">Supply days</label><input type="number" id="s-supply" class="form-input" value="14" min="0" /></div>
+            </header>
+
+            <form id="surge-form" class="his-filters" autocomplete="off">
+              <div class="his-filters__grid">
+                <div class="his-field">
+                  <label class="his-field__label" for="s-country">Country</label>
+                  <select id="s-country" class="form-input form-select" disabled>
+                    <option selected>Sierra Leone</option>
+                  </select>
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-admin">Administrative unit</label>
+                  <select id="s-admin" class="form-input form-select">
+                    <option value="national" selected>National</option>
+                    <option value="Western Area Urban">Western Area Urban</option>
+                    <option value="Bo">Bo</option>
+                    <option value="Kenema">Kenema</option>
+                    <option value="Port Loko">Port Loko</option>
+                  </select>
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-disease">Disease</label>
+                  <select id="s-disease" class="form-input form-select">
+                    <option value="malaria">Malaria</option>
+                    <option value="cholera">Cholera</option>
+                    <option value="dengue">Dengue</option>
+                    <option value="respiratory">Acute respiratory infection</option>
+                  </select>
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-current">Current caseload</label>
+                  <input type="number" id="s-current" class="form-input" value="20" min="0" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-surge">Projected increase (%)</label>
+                  <input type="number" id="s-surge" class="form-input" value="50" min="0" max="500" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-beds">Beds available</label>
+                  <input type="number" id="s-beds" class="form-input" value="50" min="1" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-staff">Clinical staff available</label>
+                  <input type="number" id="s-staff" class="form-input" value="10" min="1" />
+                </div>
+                <div class="his-field">
+                  <label class="his-field__label" for="s-supply">Essential supplies (days of stock)</label>
+                  <input type="number" id="s-supply" class="form-input" value="14" min="0" />
+                </div>
+                <div class="his-field his-field--action">
+                  <button type="submit" class="btn btn--primary">Assess capacity</button>
+                </div>
               </div>
             </form>
 
-            <div id="surge-result" class="hc-result">
-              <p class="hc-result__placeholder">Loading plan…</p>
+            <div id="surge-result" class="his-output">
+              <p class="his-output__status">Assessing capacity…</p>
             </div>
-          </div>
+          </section>
         </div>
       </div>
       <footer class="footer"><p>CHEWS · SafetySphere · Sierra Leone</p></footer>
