@@ -486,6 +486,7 @@ body {
   background: none; border: none; color: var(--text); font-size: 1.3rem;
   cursor: pointer; padding: 0.5rem;
   margin-right: 1rem;
+  display: none;
 }
 
 /* === Page Container === */
@@ -6391,7 +6392,11 @@ body.eoc-emergency-mode .eoc-banner {
   letter-spacing: 0.03em;
 }
 .mfl-type-badge--mchp { background: rgba(99,102,241,0.15); color: #818cf8; }
+.mfl-type-badge--chp  { background: rgba(99,102,241,0.15); color: #818cf8; }
 .mfl-type-badge--chc  { background: rgba(34,197,94,0.15); color: #4ade80; }
+.mfl-type-badge--hospital { background: rgba(239,68,68,0.15); color: #f87171; }
+.mfl-type-badge--clinic { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.mfl-type-badge--other { background: rgba(148,163,184,0.15); color: #94a3b8; }
 .mfl-type-badge--primary { background: rgba(59,130,246,0.15); color: #60a5fa; }
 .mfl-type-badge--secondary { background: rgba(245,158,11,0.15); color: #fbbf24; }
 .mfl-type-badge--tertiary { background: rgba(239,68,68,0.15); color: #f87171; }
@@ -6750,4 +6755,109 @@ body.eoc-emergency-mode .eoc-banner {
 @media (max-width: 640px) {
   .his-filters__grid, .his-kpi-row, .his-cols, .his-signals { grid-template-columns: 1fr; }
   .his__header { flex-direction: column; }
+}
+
+.mfl-map {
+  height: 500px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.mfl-legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+.mfl-legend__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.mfl-table-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.mfl-pager {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.mfl-pager__label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Cross-screen responsive layout
+   ═══════════════════════════════════════════════════════════════════ */
+.topbar { min-width: 0; gap: 0.5rem; }
+.topbar > div { min-width: 0; }
+.topbar__title, .topbar__subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page-heading { overflow-wrap: anywhere; }
+img, svg, video, canvas, iframe { max-width: 100%; }
+.card, .his, .na-kpi-card { min-width: 0; }
+
+@media (max-width: 1100px) {
+  .page { padding: 1.15rem 1.25rem 1.75rem; }
+  .topbar { padding: 0.7rem 1.15rem; }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    flex-wrap: wrap;
+    row-gap: 0.45rem;
+  }
+  .topbar__subtitle { display: none; }
+  .topbar__badge { display: none; }
+  .page-heading { font-size: 1.45rem; }
+  .mfl-map, .flood-map, #mfl-map { height: 320px !important; }
+  .mfl-profile-modal { padding: 1.25rem; max-height: 90vh; }
+  .his-viewbar { flex-direction: column; align-items: stretch; }
+  .his-viewbar .his-field { min-width: 0; width: 100%; }
+  .login-title { font-size: 2.4rem !important; }
+  .login-subtitle { font-size: 1.05rem !important; }
+  .login-container { padding: 1.25rem !important; }
+  .role-grid { grid-template-columns: 1fr !important; }
+  .eoc-body { overflow: auto; }
+  .eoc-main-content { height: auto; min-height: 100vh; }
+}
+
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+  .page { padding: 0.85rem 0.85rem 1.5rem; }
+  .topbar { padding: 0.55rem 0.75rem; }
+  .topbar__title { font-size: 0.92rem; }
+  .page-heading { font-size: 1.25rem; }
+  .page-desc { font-size: 0.88rem; }
+  .card { padding: 1rem; }
+  .btn { min-height: 2.4rem; }
+  .na-kpi-strip, .p-kpi-strip, .ew-kpi-strip { grid-template-columns: 1fr 1fr; }
+  .mfl-overview-grid { grid-template-columns: 1fr 1fr; }
+  .mfl-stat-card__value { font-size: 1.35rem; }
+  .mfl-map, .flood-map, #mfl-map { height: 260px !important; }
+  .atlas-kpis { grid-template-columns: 1fr 1fr; }
+  .form__grid, .form__grid--3, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .ha-panel { left: 0.5rem; right: 0.5rem; width: auto; }
+  .mfl-profile-overlay { padding: 0.5rem; align-items: flex-end; }
+  .mfl-profile-modal { max-height: 92vh; border-radius: 14px 14px 0 0; }
+  .footer { padding: 1rem 0.75rem; font-size: 0.75rem; text-align: center; }
+}
+
+@media (max-width: 420px) {
+  .na-kpi-strip, .p-kpi-strip, .mfl-overview-grid { grid-template-columns: 1fr; }
+  .topbar__actions { gap: 0.35rem; }
 }

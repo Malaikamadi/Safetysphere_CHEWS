@@ -240,7 +240,23 @@ _ADMIN_CASE_SCALE = {
     "Kenema": 0.18,
     "Port Loko": 0.12,
     "Kambia": 0.09,
+    "Bombali": 0.11,
+    "Bonthe": 0.07,
+    "Falaba": 0.04,
+    "Kailahun": 0.08,
+    "Karene": 0.06,
+    "Koinadugu": 0.05,
+    "Kono": 0.10,
+    "Moyamba": 0.09,
+    "Pujehun": 0.07,
+    "Tonkolili": 0.10,
 }
+
+_FORECAST_DISTRICTS = (
+    "Western Area Urban", "Western Area Rural", "Bo", "Bombali", "Bonthe",
+    "Falaba", "Kailahun", "Kambia", "Karene", "Kenema", "Koinadugu", "Kono",
+    "Moyamba", "Port Loko", "Pujehun", "Tonkolili",
+)
 
 _MFL_DISTRICT = {
     "Western Area Urban": "Western Urban",
@@ -282,15 +298,17 @@ def _mfl_capacity(admin: str) -> dict:
         all_fac = facility_mfl.get_all_facilities()
         key = district.casefold()
         facilities = [f for f in all_fac if (f.get("district") or "").casefold() == key]
-    beds = sum(int(f.get("beds_available") or 0) for f in facilities)
-    staff = sum(int(f.get("health_workers") or 0) for f in facilities)
-    stocks = [float(f.get("malaria_medicine_stock") or 0) for f in facilities]
-    avg_stock = sum(stocks) / len(stocks) if stocks else 0.5
+    by_type: dict[str, int] = {}
+    for f in facilities:
+        t = f.get("facility_type") or "Other"
+        by_type[t] = by_type.get(t, 0) + 1
     return {
-        "beds": max(beds, 1),
-        "staff": max(staff, 1),
-        "supply_days": max(1, int(round(avg_stock * 30))),
         "facility_count": len(facilities),
+        "by_type": by_type,
+        "hospitals": by_type.get("Hospital", 0),
+        "chcs": by_type.get("CHC", 0),
+        "chps": by_type.get("CHP", 0),
+        "clinics": by_type.get("Clinic", 0),
     }
 
 
@@ -302,7 +320,7 @@ async def live_forecast(
     """Live AI caseload forecast — models run on ingested feeds, not user inputs."""
     forecast, sig, month = _run_live_forecast(disease, admin)
     districts = []
-    for name in ("Western Area Urban", "Bo", "Kenema", "Port Loko", "Kambia", "Western Area Rural"):
+    for name in _FORECAST_DISTRICTS:
         fc, _, _ = _run_live_forecast(disease, name)
         districts.append({
             "admin_unit": name,
@@ -330,22 +348,38 @@ async def live_surge(
     disease: str = Query(default="malaria"),
     admin: str = Query(default="national"),
 ):
-    """Live surge capacity against the current AI caseload forecast."""
+    """Live surge view: caseload forecast against the MoH facility network."""
     forecast, sig, _ = _run_live_forecast(disease, admin)
     cap = _mfl_capacity(admin)
     surge_pct = round(forecast["surge_probability"] * 100, 1)
-    assessment = _assess_surge(
-        disease, sig["current_cases"], surge_pct,
-        cap["beds"], cap["staff"], cap["supply_days"],
-    )
-    assessment.update({
+    expected = int(sig["current_cases"] * (1 + forecast["surge_probability"]))
+    n = max(cap["facility_count"], 1)
+    recs = list(forecast.get("recommendations") or [])
+    if cap["hospitals"] == 0 and admin != "national":
+        recs.append("No hospital in the MoH registry for this area — confirm referral to a neighbouring district.")
+    if expected / n > 8:
+        recs.append("Projected caseload is high relative to the number of registered facilities.")
+    if not recs:
+        recs = ["Monitor live caseload against the MoH facility network."]
+    return {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "admin_unit": admin,
-        "facility_count": cap["facility_count"],
+        "disease": disease,
+        "current_cases": sig["current_cases"],
+        "expected_surge_cases": expected,
         "projected_increase_pct": surge_pct,
-        "source": "Master Facility List + live caseload forecast",
-    })
-    return assessment
+        "facility_count": cap["facility_count"],
+        "by_type": cap["by_type"],
+        "hospitals": cap["hospitals"],
+        "chcs": cap["chcs"],
+        "chps": cap["chps"],
+        "clinics": cap["clinics"],
+        "cases_per_facility": round(expected / n, 1),
+        "risk_level": forecast["predicted_risk_level"],
+        "recommendations": recs,
+        "source": "MoH DHIS2 Master Facility List + live caseload forecast",
+        "note": "Bed, staffing and supply stocks are not in the MoH DHIS2 core facility registry.",
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -480,16 +514,30 @@ async def list_facilities(
     search: Optional[str] = Query(None, description="Search by name, district, or ID"),
     readiness_level: Optional[str] = Query(None, description="Filter by readiness level"),
 ):
-    """List all facilities with optional filters."""
+    """List facilities (compact fields for explorer map and table)."""
     facilities = facility_mfl.get_all_facilities(
         district=district,
         facility_type=facility_type,
         search=search,
         readiness_level=readiness_level,
     )
+    compact = [
+        {
+            "facility_id": f["facility_id"],
+            "facility_name": f["facility_name"],
+            "facility_code": f.get("facility_code"),
+            "facility_type": f["facility_type"],
+            "district": f["district"],
+            "latitude": f.get("latitude"),
+            "longitude": f.get("longitude"),
+            "coord_source": f.get("coord_source"),
+        }
+        for f in facilities
+    ]
     return {
-        "total": len(facilities),
-        "facilities": facilities,
+        "total": len(compact),
+        "source": "Ministry of Health DHIS2 core health facilities",
+        "facilities": compact,
     }
 
 

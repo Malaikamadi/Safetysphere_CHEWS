@@ -16,6 +16,9 @@ function switchTab(tab) {
   panel.classList.remove("hidden");
   const btn = document.querySelector(`[data-tab="${tab}"]`);
   if (btn) { btn.classList.add("active-tab", "btn--secondary"); btn.classList.remove("btn--ghost"); }
+  if (tab === "facilities" && mflMap) {
+    setTimeout(() => mflMap.invalidateSize(), 80);
+  }
 }
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -210,75 +213,41 @@ function gapStatus(gap) {
 function renderSurge(data) {
   const el = document.getElementById("surge-result");
   if (!el) return;
-  const beds = data.bed_capacity;
-  const staff = data.staff_available;
-  const supply = data.supply_days_remaining;
   const expected = data.expected_surge_cases;
-  const staffRequired = Math.max(1, Math.ceil(expected * STAFF_PER_PATIENT));
-  const rows = [
-    { resource: "Inpatient beds", unit: "beds", available: beds, required: expected, note: `${data.bed_utilization_pct}% projected occupancy` },
-    { resource: "Clinical staff", unit: "persons", available: staff, required: staffRequired, note: "Target ratio 1 clinician : 3 patients" },
-    { resource: "Essential supplies", unit: "days of stock", available: supply, required: SUPPLY_BUFFER_DAYS, note: "Emergency buffer (14 days)" },
-  ].map((r) => {
-    const gap = r.required - r.available;
-    return { ...r, gap, status: gapStatus(gap) };
-  });
-  const hasDeficit = rows.some((r) => r.gap > 0);
-  const cls = riskClass(data.readiness_level);
+  const cls = riskClass(data.risk_level);
   const disease = diseaseLabel(data.disease);
   const unit = data.admin_unit === "national" ? "National" : (data.admin_unit || adminLabel("s-admin"));
-  const score = Math.round(data.readiness_score * 100);
-  const facilities = data.facility_count ? `${data.facility_count} facilities` : "Master Facility List";
   const increase = data.projected_increase_pct != null ? ` · projected increase ${data.projected_increase_pct}%` : "";
   setLiveStamp("surge-live-stamp", data.updated_at);
+  const rows = [
+    { label: "Hospitals", value: data.hospitals ?? "—" },
+    { label: "Community health centres", value: data.chcs ?? "—" },
+    { label: "Community health posts", value: data.chps ?? "—" },
+    { label: "Clinics", value: data.clinics ?? "—" },
+  ];
 
   el.innerHTML = `
     <div class="his-banner his-banner--${cls}">
       <div class="his-banner__mark" aria-hidden="true"></div>
       <div class="his-banner__body">
-        <div class="his-banner__over">${disease} · ${unit} · ${facilities} · ${data.current_cases} current cases → ${expected} projected cases${increase}</div>
-        <div class="his-banner__title">Facility readiness: ${data.readiness_level} (${score}%)</div>
-        <div class="his-banner__sub">${hasDeficit ? "One or more resources fall below the required level." : "Available resources meet or exceed the projected requirement."}</div>
+        <div class="his-banner__over">${disease} · ${unit} · ${data.facility_count || 0} MoH facilities · ${data.current_cases} current cases → ${expected} projected cases${increase}</div>
+        <div class="his-banner__title">Projected risk: ${data.risk_level}</div>
+        <div class="his-banner__sub">${data.cases_per_facility} projected cases per registered facility</div>
       </div>
     </div>
-    <div class="his-table-wrap">
-      <table class="his-table">
-        <caption>Surge capacity gap analysis</caption>
-        <thead>
-          <tr>
-            <th>Resource</th>
-            <th>Unit</th>
-            <th class="his-table__num">Available</th>
-            <th class="his-table__num">Required</th>
-            <th class="his-table__num">Gap</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map((r) => `
-            <tr>
-              <td>${r.resource}<div class="his-table__hint">${r.note}</div></td>
-              <td>${r.unit}</td>
-              <td class="his-table__num">${r.available}</td>
-              <td class="his-table__num">${r.required}</td>
-              <td class="his-table__num his-table__gap--${r.status.cls}">${r.gap > 0 ? "+" : ""}${r.gap}</td>
-              <td><span class="his-pill his-pill--${r.status.cls}">${r.status.label}</span></td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
+    <div class="his-kpi-row">
+      ${rows.map((r) => `
+        <div class="his-kpi">
+          <div class="his-kpi__label">${r.label}</div>
+          <div class="his-kpi__value">${r.value}</div>
+          <div class="his-kpi__hint">MoH DHIS2 registry</div>
+        </div>`).join("")}
     </div>
-    <div class="his-cols">
-      <div class="his-block">
-        <h3 class="his-block__title">Identified gaps</h3>
-        <ol class="his-ol">${(data.gaps || []).map((f) => `<li>${f}</li>`).join("")}</ol>
-      </div>
-      <div class="his-block">
-        <h3 class="his-block__title">Recommended actions</h3>
-        <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
-      </div>
+    <div class="his-block">
+      <h3 class="his-block__title">Recommended actions</h3>
+      <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
     </div>
-    <p class="his-footnote">${data.source || "Master Facility List + live caseload forecast"} · Gap = required − available. Positive gap is a deficit. Staffing target is 1 clinician per 3 projected patients. Supply requirement follows a 14-day emergency buffer.</p>
+    <p class="his-footnote">${data.source || ""} · ${data.note || "Bed, staffing and supply stocks are not in the MoH DHIS2 core facility registry."}</p>
   `;
 }
 
@@ -332,11 +301,12 @@ async function loadMflData() {
 // --- Render National Overview ---
 function renderMflOverview(summary) {
   const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  const types = summary.by_type || {};
   el("mfl-total", summary.total_facilities);
-  el("mfl-ready", (summary.by_readiness?.["Ready"] || 0) + (summary.by_readiness?.["Partially Ready"] || 0));
-  el("mfl-underprepared", (summary.by_readiness?.["Under-prepared"] || 0) + (summary.by_readiness?.["Critical"] || 0));
-  el("mfl-power-pct", summary.facilities_with_power_pct + "%");
-  el("mfl-water-pct", summary.facilities_with_water_pct + "%");
+  el("mfl-hospitals", types.Hospital || 0);
+  el("mfl-chcs", types.CHC || 0);
+  el("mfl-chps", types.CHP || 0);
+  el("mfl-districts", summary.districts_covered);
   el("mfl-flood-exposed", summary.flood_exposed_facilities);
   if (window.lucide) lucide.createIcons();
 }
@@ -347,7 +317,7 @@ function initMflMap() {
   const mapEl = document.getElementById("mfl-map");
   if (!mapEl || !window.L) return;
 
-  mflMap = L.map("mfl-map", { zoomControl: true }).setView([8.46, -11.78], 7);
+  mflMap = L.map("mfl-map", { zoomControl: true, preferCanvas: true }).setView([8.46, -11.78], 7);
   if (window.chewsTheme && window.chewsTheme.attachBasemap) {
     window.chewsTheme.attachBasemap(mflMap);
   } else {
@@ -376,40 +346,35 @@ function updateMflMapMarkers() {
   if (!mflMarkers || !mflMap) return;
   mflMarkers.clearLayers();
 
-  const readinessColors = {
-    "Ready": "#22c55e",
-    "Partially Ready": "#f59e0b",
-    "Under-prepared": "#f97316",
-    "Critical": "#ef4444",
+  const typeColors = {
+    Hospital: "#ef4444",
+    CHC: "#22c55e",
+    CHP: "#6366f1",
+    Clinic: "#f59e0b",
+    Other: "#888888",
   };
 
   mflFacilities.forEach(f => {
     if (!f.latitude || !f.longitude) return;
 
-    const color = readinessColors[f.readiness_level] || "#888";
-    const radius = f.facility_type === "Tertiary" ? 8 : f.facility_type === "Secondary" ? 7 : 6;
+    const color = typeColors[f.facility_type] || "#888888";
+    const radius = f.facility_type === "Hospital" ? 7 : f.facility_type === "CHC" ? 5 : 4;
 
     const marker = L.circleMarker([f.latitude, f.longitude], {
       radius: radius,
       fillColor: color,
-      color: "rgba(255,255,255,0.4)",
+      color: "rgba(255,255,255,0.35)",
       weight: 1,
-      fillOpacity: 0.85,
+      fillOpacity: 0.8,
     });
 
+    const id = String(f.facility_id).replace(/'/g, "\\'");
     marker.bindPopup(`
       <div style="font-family:Inter,sans-serif;min-width:200px">
         <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">${f.facility_name}</div>
-        <div style="font-size:0.72rem;color:#888;margin-bottom:6px">${f.facility_id} · ${f.facility_type} · ${f.district}</div>
-        <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color}"></span>
-          <span style="font-size:0.78rem;font-weight:600">${f.readiness_level} (${(f.readiness_score * 100).toFixed(0)}%)</span>
-        </div>
-        <div style="font-size:0.72rem;color:#aaa">
-          Beds: ${f.beds_available} · Staff: ${f.health_workers} · Power: ${f.power_availability ? '✓' : '✗'} · Water: ${f.water_availability ? '✓' : '✗'}
-        </div>
-        <div style="font-size:0.65rem;color:#666;margin-top:4px;font-style:italic">${f.coord_source === 'approximate_district_centroid' ? '⚠ Approximate location' : 'DHIS2 coordinates'}</div>
-        <button onclick="openFacilityProfile('${f.facility_id}')" style="margin-top:8px;padding:4px 12px;font-size:0.72rem;background:#6366f1;color:white;border:none;border-radius:4px;cursor:pointer">View Profile</button>
+        <div style="font-size:0.72rem;color:#888;margin-bottom:6px">${f.facility_code || f.facility_id} · ${f.facility_type} · ${f.district}</div>
+        <div style="font-size:0.72rem;color:#aaa">DHIS2 coordinates</div>
+        <button type="button" onclick="openFacilityProfile('${id}')" style="margin-top:8px;padding:4px 12px;font-size:0.72rem;background:#6366f1;color:white;border:none;border-radius:4px;cursor:pointer">View profile</button>
       </div>
     `);
 
@@ -418,42 +383,70 @@ function updateMflMapMarkers() {
 }
 
 // --- Render Facility Table ---
+const MFL_PAGE_SIZE = 50;
+let mflFiltered = [];
+let mflPage = 1;
+
+function typeBadgeClass(type) {
+  const k = (type || "other").toLowerCase();
+  return `mfl-type-badge mfl-type-badge--${k}`;
+}
+
+function escapeAttr(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function renderMflPager(total) {
+  const el = document.getElementById("mfl-pager");
+  if (!el) return;
+  const pages = Math.max(1, Math.ceil(total / MFL_PAGE_SIZE));
+  if (mflPage > pages) mflPage = pages;
+  el.innerHTML = `
+    <button type="button" class="btn btn--ghost btn--sm" ${mflPage <= 1 ? "disabled" : ""} onclick="mflGoPage(${mflPage - 1})">Prev</button>
+    <span class="mfl-pager__label">Page ${mflPage} of ${pages}</span>
+    <button type="button" class="btn btn--ghost btn--sm" ${mflPage >= pages ? "disabled" : ""} onclick="mflGoPage(${mflPage + 1})">Next</button>
+  `;
+}
+
+function mflGoPage(p) {
+  mflPage = p;
+  renderMflTable(mflFiltered);
+}
+window.mflGoPage = mflGoPage;
+
 function renderMflTable(facilities) {
   const tbody = document.getElementById("mfl-table-body");
   const countEl = document.getElementById("mfl-table-count");
   if (!tbody) return;
+  mflFiltered = facilities;
+  const total = facilities.length;
+  if (countEl) countEl.textContent = `Showing ${total} facilities · MoH DHIS2 registry`;
 
-  if (countEl) countEl.textContent = `Showing ${facilities.length} facilities`;
-
-  if (facilities.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-dim)">No facilities match the current filters</td></tr>';
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-dim)">No facilities match the current filters</td></tr>';
+    renderMflPager(0);
     return;
   }
 
-  const readinessColors = {
-    "Ready": "#22c55e", "Partially Ready": "#f59e0b",
-    "Under-prepared": "#f97316", "Critical": "#ef4444",
-  };
+  const start = (mflPage - 1) * MFL_PAGE_SIZE;
+  const pageRows = facilities.slice(start, start + MFL_PAGE_SIZE);
 
-  tbody.innerHTML = facilities.map(f => `
+  tbody.innerHTML = pageRows.map(f => {
+    const id = escapeAttr(f.facility_id);
+    const coords = (f.latitude != null && f.longitude != null)
+      ? `${Number(f.latitude).toFixed(3)}, ${Number(f.longitude).toFixed(3)}`
+      : "—";
+    return `
     <tr>
-      <td style="font-family:monospace;font-size:0.72rem;color:var(--text-dim)">${f.facility_id}</td>
+      <td style="font-family:monospace;font-size:0.72rem;color:var(--text-dim)">${f.facility_code || f.facility_id}</td>
       <td style="font-weight:600">${f.facility_name}</td>
       <td>${f.district}</td>
-      <td><span class="mfl-type-badge mfl-type-badge--${f.facility_type.toLowerCase()}">${f.facility_type}</span></td>
-      <td>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${readinessColors[f.readiness_level] || '#888'}"></span>
-          <span style="font-size:0.78rem">${(f.readiness_score * 100).toFixed(0)}%</span>
-        </div>
-      </td>
-      <td>${f.beds_available}</td>
-      <td>${f.health_workers}</td>
-      <td>${f.power_availability ? '<span style="color:#22c55e">✓</span>' : '<span style="color:#ef4444">✗</span>'}</td>
-      <td>${f.water_availability ? '<span style="color:#22c55e">✓</span>' : '<span style="color:#ef4444">✗</span>'}</td>
-      <td><button class="btn btn--ghost btn--sm" onclick="openFacilityProfile('${f.facility_id}')" style="font-size:0.7rem;padding:0.2rem 0.6rem"><i data-lucide="eye" style="width:12px;height:12px"></i> View</button></td>
-    </tr>
-  `).join("");
+      <td><span class="${typeBadgeClass(f.facility_type)}">${f.facility_type}</span></td>
+      <td class="his-table__num" style="text-align:left;font-weight:400">${coords}</td>
+      <td><button class="btn btn--ghost btn--sm" onclick="openFacilityProfile('${id}')" style="font-size:0.7rem;padding:0.2rem 0.6rem">View</button></td>
+    </tr>`;
+  }).join("");
+  renderMflPager(total);
   if (window.lucide) lucide.createIcons();
 }
 
@@ -461,24 +454,23 @@ function renderMflTable(facilities) {
 function applyMflFilters() {
   const district = document.getElementById("mfl-district-filter").value;
   const type = document.getElementById("mfl-type-filter").value;
-  const readiness = document.getElementById("mfl-readiness-filter").value;
   const search = document.getElementById("mfl-search").value.toLowerCase().trim();
 
   let filtered = mflFacilities;
   if (district) filtered = filtered.filter(f => f.district === district);
   if (type) filtered = filtered.filter(f => f.facility_type === type);
-  if (readiness) filtered = filtered.filter(f => f.readiness_level === readiness);
   if (search) {
     filtered = filtered.filter(f =>
       f.facility_name.toLowerCase().includes(search) ||
-      f.district.toLowerCase().includes(search) ||
-      f.facility_id.toLowerCase().includes(search)
+      (f.district || "").toLowerCase().includes(search) ||
+      (f.facility_id || "").toLowerCase().includes(search) ||
+      (f.facility_code || "").toLowerCase().includes(search)
     );
   }
 
+  mflPage = 1;
   renderMflTable(filtered);
 
-  // Update map
   if (mflMarkers) {
     mflMarkers.clearLayers();
     const old = mflFacilities;
@@ -494,8 +486,8 @@ function applyMflFilters() {
 function resetMflFilters() {
   document.getElementById("mfl-district-filter").value = "";
   document.getElementById("mfl-type-filter").value = "";
-  document.getElementById("mfl-readiness-filter").value = "";
   document.getElementById("mfl-search").value = "";
+  mflPage = 1;
   renderMflTable(mflFacilities);
   updateMflMapMarkers();
   const countEl = document.getElementById("mfl-filter-count");
@@ -556,70 +548,37 @@ document.addEventListener("keydown", (e) => {
 function renderFacilityProfile(profile, earlyWarning) {
   const content = document.getElementById("mfl-profile-content");
   if (!content) return;
-
-  const readinessColors = {
-    "Ready": "#22c55e", "Partially Ready": "#f59e0b",
-    "Under-prepared": "#f97316", "Critical": "#ef4444",
-  };
-  const color = readinessColors[profile.readiness_level] || "#888";
-  const pct = (profile.readiness_score * 100).toFixed(0);
+  const coords = (profile.latitude != null && profile.longitude != null)
+    ? `${Number(profile.latitude).toFixed(5)}, ${Number(profile.longitude).toFixed(5)}`
+    : "Data not available";
+  const na = (v) => (v == null || v === "" ? "Data not available" : v);
 
   let html = `
-    <!-- Header -->
     <div style="text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
       <div style="font-size:1.3rem;font-weight:800;color:var(--text-bright)">${profile.facility_name}</div>
-      <div style="font-size:0.78rem;color:var(--text-dim);margin-top:0.25rem">${profile.facility_id} · ${profile.facility_type} · ${profile.district}</div>
-      <div style="font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem">${profile.region}</div>
-    </div>
-
-    <!-- Readiness Score -->
-    <div style="text-align:center;margin-bottom:1.5rem">
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-dim)">READINESS SCORE</div>
-      <div style="font-size:2.5rem;font-weight:800;color:${color}">${pct}%</div>
-      <div class="risk-badge risk-badge--${profile.readiness_level === 'Ready' ? 'low' : profile.readiness_level === 'Partially Ready' ? 'moderate' : 'high'}" style="font-size:0.85rem;padding:0.4rem 1.2rem">${profile.readiness_level}</div>
-      <div class="progress-bar" style="margin-top:0.75rem"><div class="progress-bar__fill" style="width:${pct}%;background:linear-gradient(90deg,var(--danger),var(--warning),var(--success))"></div></div>
-    </div>
-
-    <!-- Readiness Indicators -->
-    <div class="section-heading" style="margin-bottom:0.75rem"><i data-lucide="clipboard-list"></i> Available Readiness Indicators</div>
-    <div class="grid-4 mb-1">
-      <div class="metric">
-        <div class="metric__label">Beds Available</div>
-        <div class="metric__value">${profile.beds_available}</div>
-      </div>
-      <div class="metric">
-        <div class="metric__label">Health Workers</div>
-        <div class="metric__value">${profile.health_workers}</div>
-      </div>
-      <div class="metric">
-        <div class="metric__label">Medicine Stock</div>
-        <div class="metric__value" style="color:${profile.malaria_medicine_stock < 0.3 ? 'var(--danger)' : 'var(--text-bright)'}">${(profile.malaria_medicine_stock * 100).toFixed(0)}%</div>
-      </div>
-      <div class="metric">
-        <div class="metric__label">Patient Load</div>
-        <div class="metric__value">${profile.patient_load}</div>
-      </div>
+      <div style="font-size:0.78rem;color:var(--text-dim);margin-top:0.25rem">${profile.facility_code || profile.facility_id} · ${profile.facility_type} · ${profile.district}</div>
+      <div style="font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem">${profile.region || ""}</div>
+      <div style="font-size:0.7rem;color:var(--text-dim);margin-top:0.35rem">Ministry of Health DHIS2 Master Facility List</div>
     </div>
 
     <div class="grid-3 mb-1">
       <div class="metric">
-        <div class="metric__label">Power Supply</div>
-        <div class="metric__value" style="color:${profile.power_availability ? '#22c55e' : '#ef4444'}">${profile.power_availability ? '✓ Available' : '✗ Unavailable'}</div>
+        <div class="metric__label">DHIS2 UID</div>
+        <div class="metric__value" style="font-size:0.9rem">${na(profile.dhis2_uid)}</div>
       </div>
       <div class="metric">
-        <div class="metric__label">Water Supply</div>
-        <div class="metric__value" style="color:${profile.water_availability ? '#22c55e' : '#ef4444'}">${profile.water_availability ? '✓ Available' : '✗ Unavailable'}</div>
+        <div class="metric__label">Facility type</div>
+        <div class="metric__value" style="font-size:0.9rem">${profile.facility_type}</div>
       </div>
       <div class="metric">
-        <div class="metric__label">Staff:Patient Ratio</div>
-        <div class="metric__value">${profile.staff_ratio ?? 'N/A'}</div>
+        <div class="metric__label">Coordinates</div>
+        <div class="metric__value" style="font-size:0.85rem">${coords}</div>
       </div>
     </div>
 
-    <!-- Key Gaps -->
-    <div class="section-heading" style="margin-bottom:0.5rem"><i data-lucide="alert-triangle"></i> Key Gaps</div>
-    <ul class="result-list result-list--${profile.key_gaps[0] === 'No critical gaps identified' ? 'success' : 'danger'}" style="margin-bottom:1.25rem">
-      ${profile.key_gaps.map(g => `<li>${g}</li>`).join("")}
+    <div class="section-heading" style="margin-bottom:0.5rem">Not in this registry</div>
+    <ul class="result-list" style="margin-bottom:1.25rem">
+      ${(profile.key_gaps || []).map(g => `<li>${g}</li>`).join("")}
     </ul>
   `;
 
@@ -664,15 +623,6 @@ function renderFacilityProfile(profile, earlyWarning) {
       </div>
     </div>
   `;
-
-  // Coordinate note
-  if (profile.coord_source === 'approximate_district_centroid') {
-    html += `
-      <div class="result-panel result-panel--info" style="font-size:0.72rem;padding:0.6rem">
-        <strong>⚠ Location note:</strong> Coordinates are approximate (district centroid). Real DHIS2 coordinates are not yet integrated.
-      </div>
-    `;
-  }
 
   // Early warning note
   if (earlyWarning?.note) {

@@ -1,7 +1,7 @@
 """
 Master Facility List (MFL) Data Service
 ==========================================
-Loads, validates, and serves facility data from the MFL CSV.
+Loads, validates, and serves the Ministry of Health DHIS2 Master Facility List.
 This is the authoritative facility reference layer for CHEWS.
 
 Data integrity rules:
@@ -24,7 +24,7 @@ from typing import Optional
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
-MFL_PATH = DATA_DIR / "01_raw" / "master_facility_list" / "mfl_readiness_chews_v1.csv"
+MFL_PATH = DATA_DIR / "01_raw" / "master_facility_list" / "moh_dhis2_core_health_facilities.csv"
 FLOOD_ZONES_PATH = DATA_DIR / "reference" / "flood_zones.json"
 ADMIN_PATH = DATA_DIR / "reference" / "admin_hierarchy.csv"
 
@@ -41,7 +41,7 @@ _initialized = False
 # ── District code mapping ────────────────────────────────────────────
 
 DISTRICT_CODES = {
-    "Bo": "BO",
+    "Bo": "BOO",
     "Bombali": "BOM",
     "Bonthe": "BON",
     "Falaba": "FAL",
@@ -52,14 +52,25 @@ DISTRICT_CODES = {
     "Koinadugu": "KOI",
     "Kono": "KON",
     "Moyamba": "MOY",
-    "Port Loko": "PLK",
+    "Port Loko": "PLT",
     "Pujehun": "PUJ",
     "Tonkolili": "TON",
-    "Western Rural": "WRU",
-    "Western Urban": "WUR",
+    "Western Rural": "WAR",
+    "Western Urban": "WAU",
 }
 
-VALID_FACILITY_TYPES = {"MCHP", "CHP", "CHC", "Primary", "Secondary", "Tertiary"}
+# DHIS2 facility-code prefixes → district names used in this registry
+CODE_PREFIX_TO_DISTRICT = {code: name for name, code in DISTRICT_CODES.items()}
+
+_DISTRICT_CANON = {
+    "western area urban": "Western Urban",
+    "western urban": "Western Urban",
+    "western area rural": "Western Rural",
+    "western rural": "Western Rural",
+}
+
+VALID_FACILITY_TYPES = {"Hospital", "CHC", "CHP", "Clinic", "Other"}
+NA = "Data not available"
 
 # Sierra Leone bounding box
 SL_BOUNDS = {"lat_min": 6.9, "lat_max": 10.0, "lng_min": -13.4, "lng_max": -10.2}
@@ -79,27 +90,51 @@ def _classify_readiness(score: float) -> dict:
         return {"level": "Critical", "color": "#ef4444", "css_class": "critical"}
 
 
-def _generate_facility_id(name: str, district: str, index: int) -> str:
-    """Generate a stable facility ID from name + district."""
-    code = DISTRICT_CODES.get(district, "UNK")
-    return f"SL-{code}-{index + 1:03d}"
+def _canonical_district(name: Optional[str]) -> str:
+    if not isinstance(name, str) or not name.strip():
+        return ""
+    return _DISTRICT_CANON.get(name.casefold(), name.strip())
+
+
+def _district_from_code(code: str) -> str:
+    prefix = (code or "").split("-")[0].strip().upper()
+    return CODE_PREFIX_TO_DISTRICT.get(prefix, "")
+
+
+def _infer_facility_type(name: str) -> str:
+    n = (name or "").upper()
+    if "HOSPITAL" in n:
+        return "Hospital"
+    if " MCHP" in n or n.endswith("MCHP"):
+        return "CHP"
+    if " CHC" in n or n.endswith("CHC") or "COMMUNITY HEALTH CENT" in n:
+        return "CHC"
+    if " CHP" in n or n.endswith("CHP") or "HEALTH POST" in n:
+        return "CHP"
+    if "CLINIC" in n or "CLIMIC" in n:
+        return "Clinic"
+    if "HEALTH CENT" in n:
+        return "CHC"
+    return "Other"
 
 
 def _identify_gaps(facility: dict) -> list[str]:
-    """Identify key gaps based on available indicators."""
+    """Identify key gaps based on available indicators. Never invent missing values."""
+    if facility.get("malaria_medicine_stock") is None:
+        return ["Operational indicators (beds, staff, power, water, stock) are not in the MoH DHIS2 facility registry"]
     gaps = []
-    if facility.get("malaria_medicine_stock", 1.0) < 0.3:
-        stock = facility["malaria_medicine_stock"]
+    stock = facility["malaria_medicine_stock"]
+    if stock < 0.3:
         gaps.append(f"Low malaria medicine stock ({stock:.0%})")
     if facility.get("power_availability") == 0:
         gaps.append("No reliable power supply")
     if facility.get("water_availability") == 0:
         gaps.append("No reliable water supply")
-    workers = facility.get("health_workers", 0)
-    load = facility.get("patient_load", 1)
+    workers = facility.get("health_workers") or 0
+    load = facility.get("patient_load") or 0
     if load > 0 and workers / load < 0.3:
         gaps.append(f"Low staff-to-patient ratio ({workers}:{load})")
-    beds = facility.get("beds_available", 0)
+    beds = facility.get("beds_available") or 0
     if load > 0 and beds > 0 and load / beds > 3.0:
         gaps.append(f"Facility overloaded ({load} patients vs {beds} beds)")
     return gaps
@@ -202,13 +237,16 @@ def _run_data_quality_checks(facilities: list[dict]) -> dict:
     total = len(facilities)
 
     # Missing coordinates
-    no_coords = sum(1 for f in facilities if f.get("coord_source") != "dhis2")
+    no_coords = sum(
+        1 for f in facilities
+        if f.get("latitude") is None or f.get("longitude") is None
+    )
     if no_coords > 0:
         issues.append({
-            "check": "Missing real coordinates",
+            "check": "Missing coordinates",
             "severity": "warning",
             "count": no_coords,
-            "description": f"{no_coords}/{total} facilities use approximate district centroid positions. Real DHIS2 coordinates are not yet available.",
+            "description": f"{no_coords}/{total} facilities have no latitude/longitude in the MoH DHIS2 registry.",
         })
 
     # Duplicate facility names
@@ -252,39 +290,7 @@ def _run_data_quality_checks(facilities: list[dict]) -> dict:
             "description": f"Facilities with unrecognized types: {', '.join(invalid_types[:5])}",
         })
 
-    # Zero beds (potential data issue for non-MCHP)
-    zero_beds = [
-        f["facility_name"]
-        for f in facilities
-        if f.get("beds_available", 0) == 0 and f.get("facility_type") not in ("MCHP", "CHP")
-    ]
-    if zero_beds:
-        issues.append({
-            "check": "Zero beds (non-community facility)",
-            "severity": "info",
-            "count": len(zero_beds),
-            "description": f"Non-MCHP/CHP facilities with 0 beds — may need verification.",
-        })
-
-    # Zero health workers
-    zero_workers = sum(1 for f in facilities if f.get("health_workers", 0) == 0)
-    if zero_workers > 0:
-        issues.append({
-            "check": "Zero health workers",
-            "severity": "warning",
-            "count": zero_workers,
-            "description": f"{zero_workers} facilities report 0 health workers.",
-        })
-
-    # Extremely low readiness
-    critical = sum(1 for f in facilities if f.get("readiness_score", 1.0) < 0.20)
-    if critical > 0:
-        issues.append({
-            "check": "Critically low readiness",
-            "severity": "warning",
-            "count": critical,
-            "description": f"{critical} facilities have readiness scores below 0.20 — requires urgent assessment.",
-        })
+    # Zero beds / workers are not applicable — those fields are not in the MoH registry
 
     # Missing facility identifiers (DHIS2 UID)
     no_dhis2 = sum(1 for f in facilities if not f.get("dhis2_uid"))
@@ -315,10 +321,14 @@ def _run_data_quality_checks(facilities: list[dict]) -> dict:
         "quality_grade": quality_grade,
         "issues": issues,
         "unavailable_fields": [
-            {"field": "Real coordinates (latitude/longitude)", "source_needed": "DHIS2 MFL export"},
+            {"field": "Beds available", "source_needed": "Facility assessment / DHIS2 service datasets"},
+            {"field": "Health workers / staffing", "source_needed": "HRH registry or facility surveys"},
+            {"field": "Medicine stock", "source_needed": "LMIS / DHIS2 commodity datasets"},
+            {"field": "Power and water", "source_needed": "Facility infrastructure surveys"},
+            {"field": "Readiness score", "source_needed": "Facility assessment (not in DHIS2 core list)"},
             {"field": "Services offered", "source_needed": "DHIS2 service datasets"},
             {"field": "Operational status", "source_needed": "DHIS2 or facility surveys"},
-            {"field": "Ownership (public/private/NGO)", "source_needed": "MFL registry"},
+            {"field": "Ownership (public/private/NGO)", "source_needed": "MFL registry attributes"},
             {"field": "Emergency preparedness plan", "source_needed": "Facility assessment surveys"},
             {"field": "Road access quality", "source_needed": "Infrastructure surveys"},
             {"field": "Building type/condition", "source_needed": "Facility assessment surveys"},
@@ -366,7 +376,7 @@ def initialize() -> bool:
         with open(FLOOD_ZONES_PATH, encoding="utf-8") as f:
             _flood_zones = json.load(f)
 
-    # Load MFL
+    # Load MoH DHIS2 Master Facility List
     if not MFL_PATH.exists():
         print(f"[CHEWS] MFL file not found at {MFL_PATH}")
         return False
@@ -377,138 +387,85 @@ def initialize() -> bool:
         for row in reader:
             raw_facilities.append(row)
 
-    # Count facilities per district for coordinate spacing
-    district_counts: dict[str, int] = {}
-    for f in raw_facilities:
-        d = f.get("district", "")
-        district_counts[d] = district_counts.get(d, 0) + 1
-
-    district_index: dict[str, int] = {}
+    def _safe_float(val):
+        if val is None or val == "":
+            return None
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return None
 
     _facilities = []
-    for i, row in enumerate(raw_facilities):
-        district = row.get("district", "").strip()
-        facility_type = row.get("facility_type", "").strip()
-        name = row.get("facility_name", "").strip()
+    _facilities_by_id = {}
+    district_counts: dict[str, int] = {}
 
-        # Track index within district for coordinate spacing
-        idx = district_index.get(district, 0)
-        district_index[district] = idx + 1
-
-        # Parse numeric fields safely
-        def safe_int(val, default=0):
-            try:
-                return int(val)
-            except (ValueError, TypeError):
-                return default
-
-        def safe_float(val, default=0.0):
-            try:
-                return float(val)
-            except (ValueError, TypeError):
-                return default
-
-        beds = safe_int(row.get("beds_available"))
-        workers = safe_int(row.get("health_workers"))
-        medicine = safe_float(row.get("malaria_medicine_stock"))
-        power = safe_int(row.get("power_availability"))
-        water = safe_int(row.get("water_availability"))
-        load = safe_int(row.get("patient_load"))
-        score = safe_float(row.get("readiness_score"))
-
-        # Generate stable ID
-        facility_id = _generate_facility_id(name, district, i)
-
-        # Approximate coordinates
-        coords = _compute_approximate_coords(district, idx, district_counts.get(district, 1))
-
-        # Readiness classification
-        readiness = _classify_readiness(score)
-
-        # Key gaps
-        facility_data = {
-            "malaria_medicine_stock": medicine,
-            "power_availability": power,
-            "water_availability": water,
-            "health_workers": workers,
-            "patient_load": load,
-            "beds_available": beds,
-            "facility_type": facility_type,
-        }
-        gaps = _identify_gaps(facility_data)
-
-        # District flood risk
+    for row in raw_facilities:
+        name = (row.get("name") or "").strip()
+        if not name:
+            continue
+        code = (row.get("code") or "").strip()
+        dhis2_uid = (row.get("id") or "").strip()
+        district = _district_from_code(code)
+        if not district:
+            district = ""
+        district_counts[district] = district_counts.get(district, 0) + 1
+        facility_type = _infer_facility_type(name)
+        lat = _safe_float(row.get("latitude"))
+        lon = _safe_float(row.get("longitude"))
+        has_coords = lat is not None and lon is not None
         flood_risk = _get_district_flood_risk(district)
-
-        # Infrastructure score
-        infra_score = (power + water) / 2  # 0, 0.5, or 1
-
-        # Capacity ratio
-        capacity_ratio = round(load / max(beds, 1), 2) if beds > 0 else None
-        staff_ratio = round(workers / max(load, 1), 2) if load > 0 else None
+        region = _district_info.get(district, {}).get("region", NA)
+        facility_id = dhis2_uid or code or name
+        gaps = _identify_gaps({"malaria_medicine_stock": None})
 
         facility = {
-            # Identity
             "facility_id": facility_id,
             "facility_name": name,
-            "dhis2_uid": None,  # To be linked when DHIS2 data arrives
-            "facility_code": None,
-
-            # Classification
+            "dhis2_uid": dhis2_uid or None,
+            "facility_code": code or None,
             "facility_type": facility_type,
-            "district": district,
-            "region": _district_info.get(district, {}).get("region", "Data not available"),
-
-            # Coordinates
-            "latitude": coords["latitude"],
-            "longitude": coords["longitude"],
-            "coord_source": coords["coord_source"],
-
-            # Readiness indicators (AVAILABLE from MFL)
-            "beds_available": beds,
-            "health_workers": workers,
-            "malaria_medicine_stock": medicine,
-            "power_availability": power,
-            "water_availability": water,
-            "patient_load": load,
-
-            # Derived indicators
-            "readiness_score": score,
-            "readiness_level": readiness["level"],
-            "readiness_color": readiness["color"],
-            "readiness_css": readiness["css_class"],
-            "infrastructure_score": infra_score,
-            "capacity_ratio": capacity_ratio,
-            "staff_ratio": staff_ratio,
-            "key_gaps": gaps if gaps else ["No critical gaps identified"],
-
-            # District-level risk exposure
+            "district": district or NA,
+            "region": region,
+            "latitude": lat,
+            "longitude": lon,
+            "coord_source": "dhis2" if has_coords else "unavailable",
+            "beds_available": None,
+            "health_workers": None,
+            "malaria_medicine_stock": None,
+            "power_availability": None,
+            "water_availability": None,
+            "patient_load": None,
+            "readiness_score": None,
+            "readiness_level": "Not assessed",
+            "readiness_color": "#888888",
+            "readiness_css": "unassessed",
+            "infrastructure_score": None,
+            "capacity_ratio": None,
+            "staff_ratio": None,
+            "key_gaps": gaps,
             "flood_risk": flood_risk,
-
-            # Unavailable indicators — explicitly marked
-            "services_offered": "Data not available",
-            "operational_status": "Data not available",
-            "ownership": "Data not available",
+            "services_offered": NA,
+            "operational_status": NA,
+            "ownership": NA,
             "emergency_plan": "Data not available — Requires facility assessment",
             "road_access": "Data not available — Requires facility assessment",
             "building_condition": "Data not available — Requires facility assessment",
-            "distance_to_referral_km": "Data not available — Requires coordinates",
-            "population_served": "Data not available — Requires DHIS2 data",
-
-            # Metadata
+            "distance_to_referral_km": NA,
+            "population_served": NA,
+            "source": "Ministry of Health DHIS2 core health facilities",
             "data_completeness": {
                 "available": [
                     "facility_name", "district", "facility_type",
-                    "beds_available", "health_workers", "malaria_medicine_stock",
-                    "power_availability", "water_availability", "patient_load",
-                    "readiness_score",
+                    "dhis2_uid", "facility_code", "latitude", "longitude",
                 ],
                 "unavailable": [
-                    "dhis2_uid", "real_coordinates", "services_offered",
-                    "operational_status", "ownership", "emergency_plan",
-                    "road_access", "building_condition", "population_served",
+                    "beds_available", "health_workers", "malaria_medicine_stock",
+                    "power_availability", "water_availability", "patient_load",
+                    "readiness_score", "services_offered", "operational_status",
+                    "ownership", "emergency_plan", "road_access", "building_condition",
+                    "population_served",
                 ],
-                "pct_complete": round(10 / 19 * 100, 1),
+                "pct_complete": round(7 / 21 * 100, 1),
             },
         }
         _facilities.append(facility)
@@ -518,8 +475,8 @@ def initialize() -> bool:
     _data_quality = _run_data_quality_checks(_facilities)
     _initialized = True
 
-    print(f"[CHEWS] MFL loaded — {len(_facilities)} facilities across "
-          f"{len(district_counts)} districts. Data quality: {_data_quality['quality_grade']}")
+    print(f"[CHEWS] MoH MFL loaded — {len(_facilities)} facilities across "
+          f"{len([d for d in district_counts if d])} districts. Data quality: {_data_quality['quality_grade']}")
     return True
 
 
@@ -533,7 +490,9 @@ def get_all_facilities(
     results = _facilities
 
     if district:
-        results = [f for f in results if f["district"] == district]
+        want = _canonical_district(district)
+        if want:
+            results = [f for f in results if _canonical_district(f.get("district")) == want]
     if facility_type:
         results = [f for f in results if f["facility_type"] == facility_type]
     if readiness_level:
@@ -573,45 +532,33 @@ def get_national_summary() -> dict:
         d = f["district"]
         district_counts[d] = district_counts.get(d, 0) + 1
 
-    # By readiness
-    readiness_counts = {"Ready": 0, "Partially Ready": 0, "Under-prepared": 0, "Critical": 0}
-    for f in _facilities:
-        lvl = f["readiness_level"]
-        readiness_counts[lvl] = readiness_counts.get(lvl, 0) + 1
+    with_coords = sum(
+        1 for f in _facilities
+        if f.get("latitude") is not None and f.get("longitude") is not None
+    )
 
-    # Average readiness
-    avg_readiness = sum(f["readiness_score"] for f in _facilities) / total
-
-    # Infrastructure
-    with_power = sum(1 for f in _facilities if f["power_availability"] == 1)
-    with_water = sum(1 for f in _facilities if f["water_availability"] == 1)
-
-    # Facilities in flood-exposed districts
     flood_exposed = sum(
         1 for f in _facilities
         if f["flood_risk"]["flood_risk_level"] not in ("Data not available", "Low")
     )
 
-    # Facilities needing assessment
-    needs_assessment = sum(
-        1 for f in _facilities
-        if f["readiness_level"] in ("Under-prepared", "Critical")
-    )
-
     return {
         "total_facilities": total,
+        "source": "Ministry of Health DHIS2 core health facilities",
         "by_type": type_counts,
         "by_district": district_counts,
-        "by_readiness": readiness_counts,
-        "avg_readiness_score": round(avg_readiness, 3),
-        "avg_readiness_level": _classify_readiness(avg_readiness)["level"],
-        "facilities_with_power": with_power,
-        "facilities_with_power_pct": round(with_power / total * 100, 1),
-        "facilities_with_water": with_water,
-        "facilities_with_water_pct": round(with_water / total * 100, 1),
+        "by_readiness": {"Not assessed": total},
+        "avg_readiness_score": None,
+        "avg_readiness_level": "Not assessed",
+        "facilities_with_power": None,
+        "facilities_with_power_pct": None,
+        "facilities_with_water": None,
+        "facilities_with_water_pct": None,
+        "facilities_with_coordinates": with_coords,
+        "facilities_with_coordinates_pct": round(with_coords / total * 100, 1) if total else 0,
         "flood_exposed_facilities": flood_exposed,
-        "needs_assessment": needs_assessment,
-        "districts_covered": len(district_counts),
+        "needs_assessment": total,
+        "districts_covered": len([d for d in district_counts if d and d != NA]),
         "data_quality_grade": _data_quality.get("quality_grade", "Unknown"),
     }
 
@@ -647,10 +594,6 @@ def get_facilities_geojson(
                 "readiness_level": f["readiness_level"],
                 "readiness_color": f["readiness_color"],
                 "coord_source": f["coord_source"],
-                "beds": f["beds_available"],
-                "workers": f["health_workers"],
-                "power": f["power_availability"],
-                "water": f["water_availability"],
                 "flood_risk": f["flood_risk"]["flood_risk_level"],
             },
         })
@@ -660,7 +603,7 @@ def get_facilities_geojson(
         "features": features,
         "metadata": {
             "total": len(features),
-            "coord_note": "Coordinates are approximate (district centroids) until real DHIS2 coordinates are integrated.",
+            "coord_note": "Coordinates are from the Ministry of Health DHIS2 Master Facility List.",
         },
     }
 
@@ -685,25 +628,11 @@ def get_district_priorities() -> list[dict]:
     for d, info in districts.items():
         facs = info["facilities"]
         n = len(facs)
-        avg_readiness = sum(f["readiness_score"] for f in facs) / n
-        critical_count = sum(1 for f in facs if f["readiness_level"] == "Critical")
-        underprepared_count = sum(1 for f in facs if f["readiness_level"] == "Under-prepared")
-        with_power = sum(1 for f in facs if f["power_availability"] == 1)
-        with_water = sum(1 for f in facs if f["water_availability"] == 1)
-
-        # District flood risk
         flood = _get_district_flood_risk(d)
         flood_level = flood["flood_risk_level"]
-
-        # Priority score: lower readiness + higher flood risk = higher priority
-        readiness_deficit = 1.0 - avg_readiness
         flood_score = {"High": 0.8, "Moderate": 0.5, "Low": 0.2}.get(flood_level, 0.0)
-        critical_pct = (critical_count + underprepared_count) / n
-
-        priority_score = round(
-            0.40 * readiness_deficit + 0.30 * flood_score + 0.30 * critical_pct,
-            3,
-        )
+        density_score = min(1.0, n / 120)
+        priority_score = round(0.70 * flood_score + 0.30 * (1.0 - density_score), 3)
 
         if priority_score >= 0.6:
             priority_level = "Urgent"
@@ -714,25 +643,34 @@ def get_district_priorities() -> list[dict]:
         else:
             priority_level = "Low"
 
+        by_type = _count_by_key(facs, "facility_type")
+        actions = []
+        if flood_level == "High":
+            actions.append("Develop flood preparedness plan for health facilities in flood zones")
+        if by_type.get("Hospital", 0) == 0:
+            actions.append("No hospital in the MoH registry for this district — confirm referral pathways")
+        if n < 40:
+            actions.append("Relatively sparse facility network — review coverage of remote chiefdoms")
+        if not actions:
+            actions.append("Continue routine facility monitoring using the MoH registry")
+
         priorities.append({
             "district": d,
             "region": info["region"],
             "total_facilities": n,
-            "avg_readiness_score": round(avg_readiness, 3),
-            "avg_readiness_level": _classify_readiness(avg_readiness)["level"],
-            "critical_facilities": critical_count,
-            "underprepared_facilities": underprepared_count,
-            "facilities_with_power": with_power,
-            "facilities_with_water": with_water,
+            "avg_readiness_score": None,
+            "avg_readiness_level": "Not assessed",
+            "critical_facilities": None,
+            "underprepared_facilities": None,
+            "facilities_with_power": None,
+            "facilities_with_water": None,
             "flood_risk_level": flood_level,
             "flood_zones_count": flood["flood_zones_count"],
             "priority_score": priority_score,
             "priority_level": priority_level,
-            "by_type": _count_by_key(facs, "facility_type"),
-            "by_readiness": _count_by_key(facs, "readiness_level"),
-            "recommended_actions": _generate_district_actions(
-                avg_readiness, flood_level, critical_count, with_power, with_water, n
-            ),
+            "by_type": by_type,
+            "by_readiness": {"Not assessed": n},
+            "recommended_actions": actions,
         })
 
     # Sort by priority score descending
@@ -778,7 +716,7 @@ def _generate_district_actions(
 def get_facility_early_warning(facility_id: str) -> Optional[dict]:
     """
     Get early warning context for a facility — connects MFL to CHEWS risk layers.
-    Uses district-level risk data since facility-level coordinates are approximate.
+    Uses district-level risk layers. Facility coordinates come from the MoH DHIS2 list.
     """
     facility = _facilities_by_id.get(facility_id)
     if not facility:
@@ -821,14 +759,15 @@ def get_facility_early_warning(facility_id: str) -> Optional[dict]:
         recommendations.append("Pre-position emergency medical supplies")
     if malaria_risk in ("High", "Moderate"):
         recommendations.append("Ensure adequate malaria medicine stock")
-        if facility["malaria_medicine_stock"] < 0.5:
-            recommendations.append("URGENT: Replenish malaria medicine stock")
-    if facility["power_availability"] == 0:
+    stock = facility.get("malaria_medicine_stock")
+    if stock is not None and stock < 0.5:
+        recommendations.append("URGENT: Replenish malaria medicine stock")
+    if facility.get("power_availability") == 0:
         recommendations.append("Install backup power for emergency operations")
-    if facility["water_availability"] == 0:
+    if facility.get("water_availability") == 0:
         recommendations.append("Secure emergency water supply arrangements")
     if not recommendations:
-        recommendations.append("Maintain current readiness posture")
+        recommendations.append("Monitor this facility against live climate-health risk in its district")
 
     return {
         "facility_id": facility["facility_id"],
@@ -839,5 +778,5 @@ def get_facility_early_warning(facility_id: str) -> Optional[dict]:
         "readiness_level": facility["readiness_level"],
         "hazard_exposure": hazards,
         "preparedness_recommendations": recommendations,
-        "note": "Risk levels are derived from district-level data. Facility-level spatial analysis requires real coordinates (DHIS2 integration pending).",
+        "note": "Identity and coordinates are from the Ministry of Health DHIS2 Master Facility List. Operational readiness (beds, staff, stock) is not in that registry.",
     }

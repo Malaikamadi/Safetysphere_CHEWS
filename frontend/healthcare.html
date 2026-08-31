@@ -55,32 +55,32 @@
             <div class="card card--glow-blue mfl-stat-card">
               <div class="mfl-stat-card__icon"><i data-lucide="building-2"></i></div>
               <div class="mfl-stat-card__value" id="mfl-total">—</div>
-              <div class="mfl-stat-card__label">Total Facilities</div>
+              <div class="mfl-stat-card__label">MoH facilities</div>
             </div>
-            <div class="card card--glow-green mfl-stat-card">
-              <div class="mfl-stat-card__icon"><i data-lucide="shield-check"></i></div>
-              <div class="mfl-stat-card__value" id="mfl-ready">—</div>
-              <div class="mfl-stat-card__label">Ready</div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--danger)">
+              <div class="mfl-stat-card__icon"><i data-lucide="hospital"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-hospitals">—</div>
+              <div class="mfl-stat-card__label">Hospitals</div>
             </div>
-            <div class="card card--glow-amber mfl-stat-card">
-              <div class="mfl-stat-card__icon"><i data-lucide="alert-triangle"></i></div>
-              <div class="mfl-stat-card__value" id="mfl-underprepared">—</div>
-              <div class="mfl-stat-card__label">Under-prepared / Critical</div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--success)">
+              <div class="mfl-stat-card__icon"><i data-lucide="building"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-chcs">—</div>
+              <div class="mfl-stat-card__label">CHCs</div>
             </div>
-            <div class="card mfl-stat-card" style="border-left:3px solid var(--accent-1)">
-              <div class="mfl-stat-card__icon"><i data-lucide="zap"></i></div>
-              <div class="mfl-stat-card__value" id="mfl-power-pct">—</div>
-              <div class="mfl-stat-card__label">With Power</div>
+            <div class="card mfl-stat-card" style="border-left:3px solid var(--accent-2)">
+              <div class="mfl-stat-card__icon"><i data-lucide="map-pin"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-chps">—</div>
+              <div class="mfl-stat-card__label">CHPs</div>
             </div>
-            <div class="card mfl-stat-card" style="border-left:3px solid var(--info)">
-              <div class="mfl-stat-card__icon"><i data-lucide="droplets"></i></div>
-              <div class="mfl-stat-card__value" id="mfl-water-pct">—</div>
-              <div class="mfl-stat-card__label">With Water</div>
+            <div class="card mfl-stat-card">
+              <div class="mfl-stat-card__icon"><i data-lucide="globe"></i></div>
+              <div class="mfl-stat-card__value" id="mfl-districts">—</div>
+              <div class="mfl-stat-card__label">Districts</div>
             </div>
             <div class="card mfl-stat-card" style="border-left:3px solid var(--danger)">
               <div class="mfl-stat-card__icon"><i data-lucide="cloud-rain"></i></div>
               <div class="mfl-stat-card__value" id="mfl-flood-exposed">—</div>
-              <div class="mfl-stat-card__label">Flood-Exposed</div>
+              <div class="mfl-stat-card__label">Flood-exposed</div>
             </div>
           </div>
 
@@ -99,34 +99,30 @@
                   <option value="Bo">Bo</option>
                   <option value="Bombali">Bombali</option>
                   <option value="Bonthe">Bonthe</option>
+                  <option value="Falaba">Falaba</option>
+                  <option value="Kailahun">Kailahun</option>
                   <option value="Kambia">Kambia</option>
+                  <option value="Karene">Karene</option>
                   <option value="Kenema">Kenema</option>
+                  <option value="Koinadugu">Koinadugu</option>
                   <option value="Kono">Kono</option>
+                  <option value="Moyamba">Moyamba</option>
                   <option value="Port Loko">Port Loko</option>
+                  <option value="Pujehun">Pujehun</option>
                   <option value="Tonkolili">Tonkolili</option>
                   <option value="Western Rural">Western Rural</option>
                   <option value="Western Urban">Western Urban</option>
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label">Facility Type</label>
+                <label class="form-label">Facility type</label>
                 <select id="mfl-type-filter" class="form-input form-select">
                   <option value="">All Types</option>
-                  <option value="MCHP">MCHP</option>
+                  <option value="Hospital">Hospital</option>
                   <option value="CHC">CHC</option>
-                  <option value="Primary">Primary</option>
-                  <option value="Secondary">Secondary</option>
-                  <option value="Tertiary">Tertiary</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Readiness Level</label>
-                <select id="mfl-readiness-filter" class="form-input form-select">
-                  <option value="">All Levels</option>
-                  <option value="Ready">🟢 Ready</option>
-                  <option value="Partially Ready">🟡 Partially Ready</option>
-                  <option value="Under-prepared">🟠 Under-prepared</option>
-                  <option value="Critical">🔴 Critical</option>
+                  <option value="CHP">CHP</option>
+                  <option value="Clinic">Clinic</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <button class="btn btn--primary btn--full" onclick="applyMflFilters()"><i data-lucide="search"></i> Apply Filters</button>
@@ -135,38 +131,36 @@
             </div>
             <div class="card mfl-map-container">
               <div class="card__header">
-                <div><div class="card__title"><i data-lucide="map"></i> Facility Map — Sierra Leone</div>
-                <div class="card__desc">Locations are approximate (district centroids) until DHIS2 coordinates are integrated.</div></div>
+                <div><div class="card__title"><i data-lucide="map"></i> Facility map — Sierra Leone</div>
+                <div class="card__desc">Ministry of Health DHIS2 Master Facility List · real facility coordinates</div></div>
               </div>
-              <div id="mfl-map" style="height:500px;border-radius:var(--radius-md);overflow:hidden"></div>
-              <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;font-size:0.72rem;color:var(--text-dim)">
-                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;margin-right:4px"></span>Ready</span>
-                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;margin-right:4px"></span>Partially Ready</span>
-                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f97316;margin-right:4px"></span>Under-prepared</span>
-                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:4px"></span>Critical</span>
+              <div id="mfl-map" class="mfl-map"></div>
+              <div class="mfl-legend">
+                <span><span class="mfl-legend__dot" style="background:#ef4444"></span>Hospital</span>
+                <span><span class="mfl-legend__dot" style="background:#22c55e"></span>CHC</span>
+                <span><span class="mfl-legend__dot" style="background:#6366f1"></span>CHP</span>
+                <span><span class="mfl-legend__dot" style="background:#f59e0b"></span>Clinic</span>
+                <span><span class="mfl-legend__dot" style="background:#888"></span>Other</span>
               </div>
             </div>
           </div>
 
           <!-- Facility Table -->
           <div class="card" style="margin-top:1.5rem">
-            <div class="card__header">
-              <div><div class="card__title"><i data-lucide="list"></i> Facility Registry</div>
+            <div class="card__header mfl-table-header">
+              <div><div class="card__title"><i data-lucide="list"></i> Facility registry</div>
               <div class="card__desc" id="mfl-table-count"></div></div>
+              <div class="mfl-pager" id="mfl-pager"></div>
             </div>
-            <div style="overflow-x:auto">
+            <div class="table-scroll">
               <table class="mfl-table" id="mfl-table">
                 <thead>
                   <tr>
-                    <th>Facility ID</th>
+                    <th>Code</th>
                     <th>Name</th>
                     <th>District</th>
                     <th>Type</th>
-                    <th>Readiness</th>
-                    <th>Beds</th>
-                    <th>Staff</th>
-                    <th>Power</th>
-                    <th>Water</th>
+                    <th>Coordinates</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -210,9 +204,19 @@
                   <option value="Western Area Urban">Western Area Urban</option>
                   <option value="Western Area Rural">Western Area Rural</option>
                   <option value="Bo">Bo</option>
-                  <option value="Kenema">Kenema</option>
-                  <option value="Port Loko">Port Loko</option>
+                  <option value="Bombali">Bombali</option>
+                  <option value="Bonthe">Bonthe</option>
+                  <option value="Falaba">Falaba</option>
+                  <option value="Kailahun">Kailahun</option>
                   <option value="Kambia">Kambia</option>
+                  <option value="Karene">Karene</option>
+                  <option value="Kenema">Kenema</option>
+                  <option value="Koinadugu">Koinadugu</option>
+                  <option value="Kono">Kono</option>
+                  <option value="Moyamba">Moyamba</option>
+                  <option value="Port Loko">Port Loko</option>
+                  <option value="Pujehun">Pujehun</option>
+                  <option value="Tonkolili">Tonkolili</option>
                 </select>
               </div>
               <div class="his-field">
@@ -238,7 +242,7 @@
             <header class="his__header">
               <div>
                 <h2 class="his__title">Surge capacity</h2>
-                <p class="his__meta">Live comparison of projected caseload with beds, clinical staff and essential supplies from the Master Facility List.</p>
+                <p class="his__meta">Live caseload forecast against the Ministry of Health facility network. Bed and staffing stocks are not in the DHIS2 core list.</p>
               </div>
               <div class="his-live" id="surge-live-stamp"><span class="pulse-dot"></span> Live</div>
             </header>
@@ -249,11 +253,21 @@
                 <select id="s-admin" class="form-input form-select">
                   <option value="national" selected>National</option>
                   <option value="Western Area Urban">Western Area Urban</option>
-                    <option value="Western Area Rural">Western Area Rural</option>
-                    <option value="Bo">Bo</option>
-                    <option value="Kenema">Kenema</option>
-                    <option value="Port Loko">Port Loko</option>
-                    <option value="Kambia">Kambia</option>
+                  <option value="Western Area Rural">Western Area Rural</option>
+                  <option value="Bo">Bo</option>
+                  <option value="Bombali">Bombali</option>
+                  <option value="Bonthe">Bonthe</option>
+                  <option value="Falaba">Falaba</option>
+                  <option value="Kailahun">Kailahun</option>
+                  <option value="Kambia">Kambia</option>
+                  <option value="Karene">Karene</option>
+                  <option value="Kenema">Kenema</option>
+                  <option value="Koinadugu">Koinadugu</option>
+                  <option value="Kono">Kono</option>
+                  <option value="Moyamba">Moyamba</option>
+                  <option value="Port Loko">Port Loko</option>
+                  <option value="Pujehun">Pujehun</option>
+                  <option value="Tonkolili">Tonkolili</option>
                 </select>
               </div>
               <div class="his-field">
