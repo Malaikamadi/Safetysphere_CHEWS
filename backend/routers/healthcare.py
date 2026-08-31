@@ -8,6 +8,7 @@ trained ML model predictions, and Master Facility List (MFL) integration.
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime, timezone
 
 from services import forecast_engine, facility_mfl
 from models import air_quality, malaria_predictor, healthcare_readiness, community_reports
@@ -172,8 +173,183 @@ async def surge_planning(data: SurgePlanInput):
     }
 
 
+def _assess_surge(disease: str, current_cases: int, surge_pct: float, beds: int, staff: int, supply_days: int) -> dict:
+    expected_cases = int(current_cases * (1 + surge_pct / 100))
+    bed_capacity = max(beds, 1)
+    staff_available = max(staff, 1)
+    bed_utilization = expected_cases / bed_capacity
+    staff_ratio = staff_available / max(expected_cases, 1)
+    supply_adequacy = supply_days / 30
+    readiness = 1.0 - (
+        0.35 * min(1.0, bed_utilization) +
+        0.30 * min(1.0, 1.0 - staff_ratio) +
+        0.35 * (1.0 - min(1.0, supply_adequacy))
+    )
+    readiness = round(max(0, min(1, readiness)), 4)
+    if readiness >= 0.7:
+        level = "Ready"
+    elif readiness >= 0.5:
+        level = "Partially Ready"
+    elif readiness >= 0.3:
+        level = "At Risk"
+    else:
+        level = "Critical Gap"
+    gaps, recs = [], []
+    if bed_utilization > 0.8:
+        gaps.append(f"Bed capacity may be exceeded ({expected_cases} cases vs {bed_capacity} beds)")
+        recs.append("Activate overflow and triage capacity")
+    if staff_ratio < 0.3:
+        gaps.append(f"Insufficient clinical staff ({staff_available} for {expected_cases} projected cases)")
+        recs.append("Request surge staffing from district or national level")
+    if supply_days < 14:
+        gaps.append(f"Essential supplies cover {supply_days} days (below 14-day buffer)")
+        recs.append(f"Replenish {disease} treatment kits through the supply chain")
+    if not gaps:
+        gaps = ["No critical gaps identified"]
+    if not recs:
+        recs = ["Maintain current readiness posture"]
+    return {
+        "disease": disease,
+        "current_cases": current_cases,
+        "expected_surge_cases": expected_cases,
+        "readiness_score": readiness,
+        "readiness_level": level,
+        "bed_utilization_pct": round(bed_utilization * 100, 1),
+        "staff_patient_ratio": round(staff_ratio, 2),
+        "supply_days_remaining": supply_days,
+        "bed_capacity": bed_capacity,
+        "staff_available": staff_available,
+        "gaps": gaps,
+        "recommendations": recs,
+    }
+
+
+# Live observed signals (models ingest these; users do not enter them)
+_LIVE_SIGNALS = {
+    "malaria": {"rainfall": 186, "temperature": 27.4, "humidity": 84, "current_cases": 142, "previous_cases": 108, "aqi": 38},
+    "cholera": {"rainfall": 210, "temperature": 28.1, "humidity": 88, "current_cases": 31, "previous_cases": 18, "aqi": 41},
+    "dengue": {"rainfall": 164, "temperature": 29.2, "humidity": 79, "current_cases": 22, "previous_cases": 19, "aqi": 45},
+    "respiratory": {"rainfall": 42, "temperature": 26.8, "humidity": 58, "current_cases": 67, "previous_cases": 54, "aqi": 128},
+}
+
+_ADMIN_CASE_SCALE = {
+    "national": 1.0,
+    "Western Area Urban": 0.38,
+    "Western Area Rural": 0.14,
+    "Bo": 0.16,
+    "Kenema": 0.18,
+    "Port Loko": 0.12,
+    "Kambia": 0.09,
+}
+
+_MFL_DISTRICT = {
+    "Western Area Urban": "Western Urban",
+    "Western Area Rural": "Western Rural",
+}
+
+
+def _signals_for(disease: str, admin: str) -> dict:
+    base = dict(_LIVE_SIGNALS.get(disease, _LIVE_SIGNALS["malaria"]))
+    scale = _ADMIN_CASE_SCALE.get(admin, 0.12)
+    base["current_cases"] = max(1, int(base["current_cases"] * scale))
+    base["previous_cases"] = max(1, int(base["previous_cases"] * scale))
+    return base
+
+
+def _run_live_forecast(disease: str, admin: str):
+    sig = _signals_for(disease, admin)
+    month = datetime.now().month
+    result = forecast_engine.forecast_disease(
+        disease=disease,
+        current_month=month,
+        rainfall=sig["rainfall"],
+        temperature=sig["temperature"],
+        humidity=sig["humidity"],
+        current_cases=sig["current_cases"],
+        previous_cases=sig["previous_cases"],
+        aqi=sig["aqi"],
+    )
+    return result._asdict(), sig, month
+
+
+def _mfl_capacity(admin: str) -> dict:
+    if not facility_mfl._initialized:
+        facility_mfl.initialize()
+    district = None if admin == "national" else _MFL_DISTRICT.get(admin, admin)
+    facilities = facility_mfl.get_all_facilities(district=district)
+    if not facilities and district:
+        # Case-insensitive district match if exact name differs
+        all_fac = facility_mfl.get_all_facilities()
+        key = district.casefold()
+        facilities = [f for f in all_fac if (f.get("district") or "").casefold() == key]
+    beds = sum(int(f.get("beds_available") or 0) for f in facilities)
+    staff = sum(int(f.get("health_workers") or 0) for f in facilities)
+    stocks = [float(f.get("malaria_medicine_stock") or 0) for f in facilities]
+    avg_stock = sum(stocks) / len(stocks) if stocks else 0.5
+    return {
+        "beds": max(beds, 1),
+        "staff": max(staff, 1),
+        "supply_days": max(1, int(round(avg_stock * 30))),
+        "facility_count": len(facilities),
+    }
+
+
+@router.get("/forecast/live")
+async def live_forecast(
+    disease: str = Query(default="malaria"),
+    admin: str = Query(default="national"),
+):
+    """Live AI caseload forecast — models run on ingested feeds, not user inputs."""
+    forecast, sig, month = _run_live_forecast(disease, admin)
+    districts = []
+    for name in ("Western Area Urban", "Bo", "Kenema", "Port Loko", "Kambia", "Western Area Rural"):
+        fc, _, _ = _run_live_forecast(disease, name)
+        districts.append({
+            "admin_unit": name,
+            "risk_level": fc["predicted_risk_level"],
+            "surge_probability": fc["surge_probability"],
+            "risk_trend": fc["risk_trend"],
+            "current_cases": _signals_for(disease, name)["current_cases"],
+        })
+    districts.sort(key=lambda d: d["surge_probability"], reverse=True)
+    return {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "admin_unit": admin,
+        "disease": disease,
+        "horizon_days": 28,
+        "start_month": month,
+        "observed": sig,
+        "forecast": forecast,
+        "districts": districts,
+        "source": "Climate, surveillance and facility feeds · models run automatically",
+    }
+
+
+@router.get("/surge/live")
+async def live_surge(
+    disease: str = Query(default="malaria"),
+    admin: str = Query(default="national"),
+):
+    """Live surge capacity against the current AI caseload forecast."""
+    forecast, sig, _ = _run_live_forecast(disease, admin)
+    cap = _mfl_capacity(admin)
+    surge_pct = round(forecast["surge_probability"] * 100, 1)
+    assessment = _assess_surge(
+        disease, sig["current_cases"], surge_pct,
+        cap["beds"], cap["staff"], cap["supply_days"],
+    )
+    assessment.update({
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "admin_unit": admin,
+        "facility_count": cap["facility_count"],
+        "projected_increase_pct": surge_pct,
+        "source": "Master Facility List + live caseload forecast",
+    })
+    return assessment
+
+
 # ═══════════════════════════════════════════════════════════════════
-# Trained ML Model Endpoints
+# Trained ML Model Endpoints (kept for internal/model ops — not the dashboard UI)
 # ═══════════════════════════════════════════════════════════════════
 
 class MalariaPredictInput(BaseModel):

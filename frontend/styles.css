@@ -6465,7 +6465,68 @@ body.eoc-emergency-mode .eoc-banner {
    Healthcare HIS — disease forecast & surge capacity
    ═══════════════════════════════════════════════════════════════════ */
 .his { max-width: 1100px; }
-.his__header { margin-bottom: 1.15rem; }
+.his__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+.his-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.his-viewbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  align-items: end;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.15rem;
+  margin-bottom: 1.25rem;
+}
+.his-viewbar .his-field { min-width: 14rem; }
+.his-signals {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.his-signal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.85rem;
+}
+.his-signal__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.his-signal__value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.2rem;
+  line-height: 1.2;
+}
+.his-signal__hint {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-top: 0.15rem;
+}
 .his__title {
   font-size: 1.2rem;
   font-weight: 700;
@@ -6684,8 +6745,9 @@ body.eoc-emergency-mode .eoc-banner {
 }
 
 @media (max-width: 960px) {
-  .his-filters__grid, .his-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .his-filters__grid, .his-kpi-row, .his-signals { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
-  .his-filters__grid, .his-kpi-row, .his-cols { grid-template-columns: 1fr; }
+  .his-filters__grid, .his-kpi-row, .his-cols, .his-signals { grid-template-columns: 1fr; }
+  .his__header { flex-direction: column; }
 }

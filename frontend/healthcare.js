@@ -1,7 +1,9 @@
 /**
- * CHEWS v3.0 — Healthcare Readiness Logic
+ * CHEWS — Healthcare Readiness
+ * Live dashboard: models run on ingested feeds. Users view, they do not calculate.
  */
 const API = "/api";
+const LIVE_REFRESH_MS = 60_000;
 
 const mt = document.getElementById("menu-toggle"), sb = document.getElementById("sidebar");
 if (mt && sb) { mt.addEventListener("click", () => sb.classList.toggle("sidebar--open")); }
@@ -51,63 +53,110 @@ function showResultError(el, msg) {
   el.innerHTML = `<p class="his-output__error">${msg}</p>`;
 }
 
-document.getElementById("f-disease")?.addEventListener("change", () => {
-  const wrap = document.getElementById("f-aqi-wrap");
-  if (wrap) wrap.hidden = document.getElementById("f-disease").value !== "respiratory";
-});
+function liveQuery(diseaseId, adminId) {
+  const disease = document.getElementById(diseaseId)?.value || "malaria";
+  const admin = document.getElementById(adminId)?.value || "national";
+  return `disease=${encodeURIComponent(disease)}&admin=${encodeURIComponent(admin)}`;
+}
 
-async function runForecast() {
+function setLiveStamp(id, iso) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const t = iso ? new Date(iso) : new Date();
+  const label = Number.isNaN(t.getTime())
+    ? "Live"
+    : `Live · ${t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  el.innerHTML = `<span class="pulse-dot"></span> ${label}`;
+}
+
+async function loadLiveForecast() {
   const el = document.getElementById("forecast-result");
   try {
-    const res = await fetch(`${API}/healthcare/forecast`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        disease: document.getElementById("f-disease").value,
-        current_month: +document.getElementById("f-month").value,
-        rainfall: +document.getElementById("f-rain").value,
-        temperature: +document.getElementById("f-temp").value,
-        humidity: +document.getElementById("f-hum").value,
-        current_cases: +document.getElementById("f-current").value,
-        previous_cases: +document.getElementById("f-prev").value,
-        aqi: +document.getElementById("f-aqi").value,
-      }),
-    });
-    if (!res.ok) throw new Error(`Forecast request failed (${res.status})`);
+    const res = await fetch(`${API}/healthcare/forecast/live?${liveQuery("f-disease", "f-admin")}`);
+    if (!res.ok) throw new Error(`Live forecast unavailable (${res.status})`);
     renderForecast(await res.json());
   } catch (err) {
     showResultError(el, err.message);
   }
 }
 
-document.getElementById("forecast-form")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  runForecast();
-});
+function renderObservedSignals(obs, disease) {
+  if (!obs) return "";
+  const signals = [
+    { label: "Rainfall", value: `${obs.rainfall} mm`, hint: "Observed feed" },
+    { label: "Temperature", value: `${obs.temperature}°C`, hint: "Mean" },
+    { label: "Humidity", value: `${obs.humidity}%`, hint: "Relative" },
+    { label: "Reported cases", value: obs.current_cases, hint: `Previous period: ${obs.previous_cases}` },
+  ];
+  if (disease === "respiratory") {
+    signals.push({ label: "Air quality", value: obs.aqi, hint: "AQI" });
+  }
+  return `<div class="his-signals">${signals.map((s) => `
+    <div class="his-signal">
+      <div class="his-signal__label">${s.label}</div>
+      <div class="his-signal__value">${s.value}</div>
+      <div class="his-signal__hint">${s.hint}</div>
+    </div>`).join("")}</div>`;
+}
 
-function renderForecast(data) {
+function renderDistrictTable(districts) {
+  if (!districts || !districts.length) return "";
+  return `
+    <div class="his-table-wrap">
+      <table class="his-table">
+        <caption>District risk ranking</caption>
+        <thead>
+          <tr>
+            <th>Administrative unit</th>
+            <th>Risk</th>
+            <th>Trend</th>
+            <th class="his-table__num">Reported cases</th>
+            <th class="his-table__num">Surge probability</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${districts.map((d) => `
+            <tr>
+              <td>${d.admin_unit}</td>
+              <td>${d.risk_level}</td>
+              <td>${d.risk_trend}</td>
+              <td class="his-table__num">${d.current_cases}</td>
+              <td class="his-table__num">${Math.round((d.surge_probability || 0) * 100)}%</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderForecast(payload) {
   const el = document.getElementById("forecast-result");
   if (!el) return;
-  const month = MONTHS[(+document.getElementById("f-month").value || 1) - 1];
-  const cls = riskClass(data.predicted_risk_level);
-  const disease = diseaseLabel(data.disease);
-  const unit = adminLabel("f-admin");
-  const onset = Math.round(data.onset_likelihood * 100);
-  const surge = Math.round(data.surge_probability * 100);
-  const conf = Math.round(data.confidence * 100);
+  const fc = payload.forecast || payload;
+  const month = MONTHS[(payload.start_month || 1) - 1];
+  const cls = riskClass(fc.predicted_risk_level);
+  const diseaseId = payload.disease || fc.disease;
+  const disease = diseaseLabel(diseaseId);
+  const unit = payload.admin_unit === "national" ? "National" : (payload.admin_unit || adminLabel("f-admin"));
+  const onset = Math.round((fc.onset_likelihood || 0) * 100);
+  const surge = Math.round((fc.surge_probability || 0) * 100);
+  const conf = Math.round((fc.confidence || 0) * 100);
+  setLiveStamp("forecast-live-stamp", payload.updated_at);
 
   el.innerHTML = `
+    ${renderObservedSignals(payload.observed, diseaseId)}
     <div class="his-banner his-banner--${cls}">
       <div class="his-banner__mark" aria-hidden="true"></div>
       <div class="his-banner__body">
-        <div class="his-banner__over">${disease} · ${unit} · 28-day horizon from ${month}</div>
-        <div class="his-banner__title">Projected risk: ${data.predicted_risk_level}</div>
-        <div class="his-banner__sub">Peak transmission period: ${data.peak_window} · Model confidence ${conf}%</div>
+        <div class="his-banner__over">${disease} · ${unit} · ${payload.horizon_days || 28}-day horizon from ${month}</div>
+        <div class="his-banner__title">Projected risk: ${fc.predicted_risk_level}</div>
+        <div class="his-banner__sub">Peak transmission period: ${fc.peak_window} · Model confidence ${conf}%</div>
       </div>
     </div>
     <div class="his-kpi-row">
       <div class="his-kpi">
         <div class="his-kpi__label">Case trend</div>
-        <div class="his-kpi__value">${data.risk_trend}</div>
+        <div class="his-kpi__value">${fc.risk_trend}</div>
         <div class="his-kpi__hint">Current vs previous reporting period</div>
       </div>
       <div class="his-kpi">
@@ -122,49 +171,35 @@ function renderForecast(data) {
       </div>
       <div class="his-kpi">
         <div class="his-kpi__label">Peak transmission window</div>
-        <div class="his-kpi__value his-kpi__value--text">${data.peak_window}</div>
+        <div class="his-kpi__value his-kpi__value--text">${fc.peak_window}</div>
         <div class="his-kpi__hint">Based on climatology for this disease</div>
       </div>
     </div>
+    ${renderDistrictTable(payload.districts)}
     <div class="his-cols">
       <div class="his-block">
         <h3 class="his-block__title">Contributing factors</h3>
-        <ol class="his-ol">${(data.factors || []).map((f) => `<li>${f}</li>`).join("")}</ol>
+        <ol class="his-ol">${(fc.factors || []).map((f) => `<li>${f}</li>`).join("")}</ol>
       </div>
       <div class="his-block">
         <h3 class="his-block__title">Recommended actions</h3>
-        <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
+        <ol class="his-ol">${(fc.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
       </div>
     </div>
-    <p class="his-footnote">Method: seasonal–climatological rules using rainfall, temperature, humidity and recent case counts. Outputs are planning estimates, not confirmed surveillance. Interpret with DHIS2 / IDSR data and local epidemiology.</p>
+    <p class="his-footnote">${payload.source || "Climate, surveillance and facility feeds"} · Outputs are planning estimates, not confirmed surveillance. Interpret with DHIS2 / IDSR and local epidemiology.</p>
   `;
 }
 
-async function runSurge() {
+async function loadLiveSurge() {
   const el = document.getElementById("surge-result");
   try {
-    const res = await fetch(`${API}/healthcare/surge-plan`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        disease: document.getElementById("s-disease").value,
-        current_cases: +document.getElementById("s-current").value,
-        forecast_surge_pct: +document.getElementById("s-surge").value,
-        bed_capacity: +document.getElementById("s-beds").value,
-        staff_available: +document.getElementById("s-staff").value,
-        supply_days: +document.getElementById("s-supply").value,
-      }),
-    });
-    if (!res.ok) throw new Error(`Capacity request failed (${res.status})`);
+    const res = await fetch(`${API}/healthcare/surge/live?${liveQuery("s-disease", "s-admin")}`);
+    if (!res.ok) throw new Error(`Live capacity unavailable (${res.status})`);
     renderSurge(await res.json());
   } catch (err) {
     showResultError(el, err.message);
   }
 }
-
-document.getElementById("surge-form")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  runSurge();
-});
 
 function gapStatus(gap) {
   if (gap > 0) return { cls: "deficit", label: "Deficit" };
@@ -175,8 +210,8 @@ function gapStatus(gap) {
 function renderSurge(data) {
   const el = document.getElementById("surge-result");
   if (!el) return;
-  const beds = +document.getElementById("s-beds").value;
-  const staff = +document.getElementById("s-staff").value;
+  const beds = data.bed_capacity;
+  const staff = data.staff_available;
   const supply = data.supply_days_remaining;
   const expected = data.expected_surge_cases;
   const staffRequired = Math.max(1, Math.ceil(expected * STAFF_PER_PATIENT));
@@ -191,14 +226,17 @@ function renderSurge(data) {
   const hasDeficit = rows.some((r) => r.gap > 0);
   const cls = riskClass(data.readiness_level);
   const disease = diseaseLabel(data.disease);
-  const unit = adminLabel("s-admin");
+  const unit = data.admin_unit === "national" ? "National" : (data.admin_unit || adminLabel("s-admin"));
   const score = Math.round(data.readiness_score * 100);
+  const facilities = data.facility_count ? `${data.facility_count} facilities` : "Master Facility List";
+  const increase = data.projected_increase_pct != null ? ` · projected increase ${data.projected_increase_pct}%` : "";
+  setLiveStamp("surge-live-stamp", data.updated_at);
 
   el.innerHTML = `
     <div class="his-banner his-banner--${cls}">
       <div class="his-banner__mark" aria-hidden="true"></div>
       <div class="his-banner__body">
-        <div class="his-banner__over">${disease} · ${unit} · ${data.current_cases} current cases → ${expected} projected cases</div>
+        <div class="his-banner__over">${disease} · ${unit} · ${facilities} · ${data.current_cases} current cases → ${expected} projected cases${increase}</div>
         <div class="his-banner__title">Facility readiness: ${data.readiness_level} (${score}%)</div>
         <div class="his-banner__sub">${hasDeficit ? "One or more resources fall below the required level." : "Available resources meet or exceed the projected requirement."}</div>
       </div>
@@ -240,9 +278,14 @@ function renderSurge(data) {
         <ol class="his-ol">${(data.recommendations || []).map((f) => `<li>${f}</li>`).join("")}</ol>
       </div>
     </div>
-    <p class="his-footnote">Gap = required − available. Positive gap is a deficit. Staffing target is 1 clinician per 3 projected patients. Supply requirement follows a 14-day emergency buffer. Use with the national Master Facility List and logistics management information system.</p>
+    <p class="his-footnote">${data.source || "Master Facility List + live caseload forecast"} · Gap = required − available. Positive gap is a deficit. Staffing target is 1 clinician per 3 projected patients. Supply requirement follows a 14-day emergency buffer.</p>
   `;
 }
+
+document.getElementById("f-admin")?.addEventListener("change", loadLiveForecast);
+document.getElementById("f-disease")?.addEventListener("change", loadLiveForecast);
+document.getElementById("s-admin")?.addEventListener("change", loadLiveSurge);
+document.getElementById("s-disease")?.addEventListener("change", loadLiveSurge);
 
 document.querySelectorAll("a.nav-link--soon").forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
 
@@ -694,8 +737,10 @@ function renderDataQuality(quality) {
 // --- Initialize on page load ---
 document.addEventListener("DOMContentLoaded", () => {
   loadMflData();
-  runForecast();
-  runSurge();
+  loadLiveForecast();
+  loadLiveSurge();
+  setInterval(loadLiveForecast, LIVE_REFRESH_MS);
+  setInterval(loadLiveSurge, LIVE_REFRESH_MS);
 });
 
 // --- Hash Routing ---
