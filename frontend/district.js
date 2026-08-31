@@ -38,10 +38,14 @@ function initDistrictMap() {
     attributionControl: true,
   });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18,
-  }).addTo(districtMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(districtMap);
+  } else {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; CARTO',
+      maxZoom: 18,
+    }).addTo(districtMap);
+  }
 
   // Mock district risk zones
   const riskZones = [

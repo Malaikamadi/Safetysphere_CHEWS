@@ -233,11 +233,14 @@ async function initMap() {
     attributionControl: true,
   });
 
-  // Dark-themed tile layer
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://openstreetmap.org">OSM</a>',
-    maxZoom: 18,
-  }).addTo(srMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(srMap);
+  } else {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; OSM &copy; CARTO',
+      maxZoom: 18,
+    }).addTo(srMap);
+  }
 
   try {
     const res = await fetch(`${API_BASE}/situation-room/map-data`);

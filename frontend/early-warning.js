@@ -473,10 +473,14 @@ function initSensorMap() {
 
   sensorMap = L.map('sn-map-container', { zoomControl: true }).setView([8.460555, -11.779889], 7);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OSM &copy; CARTO',
-    subdomains: 'abcd', maxZoom: 18
-  }).addTo(sensorMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(sensorMap, { maxZoom: 18 });
+  } else {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OSM &copy; CARTO',
+      subdomains: 'abcd', maxZoom: 18
+    }).addTo(sensorMap);
+  }
 
   const statusColors = { online: '#10b981', warning: '#facc15', offline: '#ef4444' };
 
@@ -563,10 +567,14 @@ function initLiveMap() {
   if (!mapContainer || !window.L || liveMapInit) return;
 
   eocMap = L.map('eoc-map-container', { zoomControl: false }).setView([8.460555, -11.779889], 7);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OSM contributors &copy; CARTO',
-    subdomains: 'abcd', maxZoom: 20
-  }).addTo(eocMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(eocMap, { maxZoom: 20 });
+  } else {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OSM contributors &copy; CARTO',
+      subdomains: 'abcd', maxZoom: 20
+    }).addTo(eocMap);
+  }
 
   L.circle([locationData.kroo_bay.lat, locationData.kroo_bay.lng], { color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.45, radius: 800 }).addTo(eocMap);
   L.circle([locationData.susans_bay.lat, locationData.susans_bay.lng], { color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.45, radius: 800 }).addTo(eocMap);

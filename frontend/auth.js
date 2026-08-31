@@ -1,5 +1,5 @@
 /**
- * CHEWS 4.0 — Role Management
+ * CHEWS — Role management
  * Handles role-based access control, login, and sidebar generation.
  */
 
@@ -27,7 +27,7 @@ const ROLE_PERMISSIONS = {
 
 const SIDEBAR_CONFIG = {
   admin: [
-    { label: 'Command Center', icon: 'crosshair', url: 'index.html' },
+    { label: 'Command Center', icon: 'layout-dashboard', url: 'index.html' },
     { label: 'Strategic Planning', icon: 'map', subnav: [
       { label: 'Risk & Hazard Maps', url: 'strategic.html#atlas' },
       { label: 'District Priorities', url: 'strategic.html#priorities' },
@@ -46,7 +46,7 @@ const SIDEBAR_CONFIG = {
       { label: 'Disease Forecast', url: 'healthcare.html#forecast' },
       { label: 'Surge Planning', url: 'healthcare.html#surge' }
     ]},
-    { label: 'Community Intelligence', icon: 'users', subnav: [
+    { label: 'Community reports', icon: 'users', subnav: [
       { label: 'CHW Reports', url: 'index.html#chw' },
       { label: 'Verification Queue', url: 'index.html#queue' },
       { label: 'Community Alerts', url: 'index.html#community-alerts' }
@@ -79,7 +79,7 @@ const SIDEBAR_CONFIG = {
       { label: 'Disease Forecast', url: 'healthcare.html#forecast' },
       { label: 'Surge Planning', url: 'healthcare.html#surge' }
     ]},
-    { label: 'Community Intelligence', icon: 'users', subnav: [
+    { label: 'Community reports', icon: 'users', subnav: [
       { label: 'CHW Reports', url: 'district.html#chw' },
       { label: 'Verification', url: 'district.html#verify' }
     ]},
@@ -210,7 +210,7 @@ function renderSidebar() {
         <div class="sidebar__icon"><i data-lucide="globe"></i></div>
         <div>
           <div class="sidebar__title">CHEWS</div>
-          <div class="sidebar__version" style="font-size:0.7rem;">${subtitle}</div>
+          <div class="sidebar__version">Climate-health · Sierra Leone</div>
         </div>
       </a>
     </div>
@@ -218,7 +218,7 @@ function renderSidebar() {
       ${navHtml}
     </nav>
     <div class="sidebar__footer">
-      <div class="sidebar__status"><span class="pulse-dot"></span><span>System Online · Sierra Leone</span></div>
+      <div class="sidebar__status"><span class="pulse-dot"></span><span>${subtitle}</span></div>
       <button id="logout-btn" class="btn btn--ghost btn--sm" style="width: 100%; margin-top: 0.5rem;" onclick="logout()">Logout</button>
     </div>
   `;

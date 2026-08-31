@@ -101,10 +101,14 @@ function initPartnerMap() {
     attributionControl: true,
   });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18,
-  }).addTo(partnerMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(partnerMap);
+  } else {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; CARTO',
+      maxZoom: 18,
+    }).addTo(partnerMap);
+  }
 
   const impactZones = [
     { name: "Western Area", lat: 8.48, lng: -13.23, flood: 0.7, malaria: 0.8 },
@@ -186,10 +190,14 @@ function initPartnerFullMap() {
     attributionControl: true,
   });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18,
-  }).addTo(partnerFullMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(partnerFullMap);
+  } else {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; CARTO',
+      maxZoom: 18,
+    }).addTo(partnerFullMap);
+  }
 
   const districts = [
     { name: "Koinadugu", lat: 9.5, lng: -11.4, risk: 0.82 },

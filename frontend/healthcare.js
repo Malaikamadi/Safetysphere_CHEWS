@@ -442,10 +442,14 @@ function initMflMap() {
   if (!mapEl || !window.L) return;
 
   mflMap = L.map("mfl-map", { zoomControl: true }).setView([8.46, -11.78], 7);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 18,
-  }).addTo(mflMap);
+  if (window.chewsTheme && window.chewsTheme.attachBasemap) {
+    window.chewsTheme.attachBasemap(mflMap);
+  } else {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; OSM &copy; CARTO',
+      maxZoom: 18,
+    }).addTo(mflMap);
+  }
 
   // Sierra Leone boundary
   fetch("sierra-leone-districts.geojson")

@@ -6,6 +6,7 @@
 
 /* === Design Tokens === */
 :root {
+  color-scheme: dark;
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
 
@@ -78,51 +79,51 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg: #f2f0ec;
+  --bg: #f4f2ee;
   --bg-card: #ffffff;
-  --bg-sidebar: #fafaf8;
+  --bg-sidebar: #ffffff;
 
-  --border: rgba(0, 0, 0, 0.12);
-  --border-hover: rgba(0, 0, 0, 0.22);
+  --border: rgba(12, 11, 10, 0.14);
+  --border-hover: rgba(12, 11, 10, 0.26);
 
-  --text: #242220;
-  --text-dim: #4d4944;
-  --text-bright: #080807;
+  --text: #1c1b19;
+  --text-dim: #5a564f;
+  --text-bright: #0a0908;
 
-  --accent: #4a6b51;
-  --accent-2: #3d5a73;
-  --warning: #8a6a24;
-  --danger: #9a2f27;
+  --accent: #3f5e46;
+  --accent-2: #335067;
+  --warning: #7a5c1c;
+  --danger: #8c241e;
 
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 24px 56px rgba(0, 0, 0, 0.16);
+  --shadow: 0 8px 28px rgba(12, 11, 10, 0.08);
+  --shadow-lg: 0 18px 44px rgba(12, 11, 10, 0.12);
 
-  --topbar-bg: rgba(255, 255, 255, 0.96);
+  --topbar-bg: rgba(255, 255, 255, 0.94);
 
-  --surface-muted: rgba(0, 0, 0, 0.055);
-  --surface-form: rgba(0, 0, 0, 0.04);
+  --surface-muted: #eceae5;
+  --surface-form: #f0eeea;
   --surface-input: #ffffff;
-  --surface-soft: rgba(0, 0, 0, 0.045);
-  --surface-raised: rgba(0, 0, 0, 0.07);
-  --surface-strong: rgba(0, 0, 0, 0.06);
+  --surface-soft: #f0eeea;
+  --surface-raised: #eceae5;
+  --surface-strong: #e8e6e1;
   --surface-ha-input: #ffffff;
   --surface-select-option-bg: #ffffff;
 
-  --track-fill: rgba(0, 0, 0, 0.12);
+  --track-fill: rgba(12, 11, 10, 0.12);
 
-  --spinner-rim: rgba(0, 0, 0, 0.2);
+  --spinner-rim: rgba(12, 11, 10, 0.18);
 
   --btn-on-accent: #ffffff;
 
-  --map-shell-bg: #e8e6e1;
+  --map-shell-bg: #e4e1db;
 
-  --gauge-track-stroke: rgba(0, 0, 0, 0.16);
+  --gauge-track-stroke: rgba(12, 11, 10, 0.16);
 
-  --ha-backdrop: rgba(0, 0, 0, 0.38);
+  --ha-backdrop: rgba(12, 11, 10, 0.4);
 
   --ha-panel-bg: #ffffff;
 
-  --focus-ring-accent: rgba(74, 107, 81, 0.28);
+  --focus-ring-accent: rgba(63, 94, 70, 0.28);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -146,8 +147,7 @@ body {
     radial-gradient(ellipse 50% 40% at 0% 80%, rgba(196, 135, 106, 0.04), transparent 45%);
 }
 .bg-orb {
-  position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.045;
-  animation: float 48s ease-in-out infinite;
+  display: none;
 }
 .bg-orb--1 { width: 520px; height: 520px; background: var(--accent); top: -12%; left: -6%; }
 .bg-orb--2 { width: 400px; height: 400px; background: var(--accent-2); bottom: -18%; right: -8%; animation-delay: -12s; }
@@ -1289,7 +1289,7 @@ body {
 }
 
 /* ============================================================
-   CHEWS 4.0 — National Situation Room & Role Styles
+   CHEWS — National situation room & role styles
    ============================================================ */
 
 /* Role Badge in Topbar */
@@ -2110,23 +2110,23 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Glow modifiers */
-.card--glow-amber::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(201, 163, 92, 0.15), transparent 70%); filter: blur(20px); pointer-events: none; }
-.card--glow-red::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(199, 92, 84, 0.15), transparent 70%); filter: blur(20px); pointer-events: none; }
-.card--glow-blue::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(111, 143, 170, 0.15), transparent 70%); filter: blur(20px); pointer-events: none; }
-.card--glow-green::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(125, 159, 134, 0.15), transparent 70%); filter: blur(20px); pointer-events: none; }
-.card--glow-purple::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(156, 127, 143, 0.15), transparent 70%); filter: blur(20px); pointer-events: none; }
+/* Glow modifiers — colour via border only; no blur orbs */
+.card--glow-amber::after,
+.card--glow-red::after,
+.card--glow-blue::after,
+.card--glow-green::after,
+.card--glow-purple::after { content: none; }
 
 /* ── Section wrapper ── */
 .sr-section {
-  background: rgba(22, 20, 18, 0.5);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
+  background: var(--bg-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 1.75rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow);
 }
 .sr-section__header {
   display: flex;
@@ -3223,12 +3223,12 @@ body {
   border-left: 3px solid var(--danger);
 }
 .na-kpi-card__label {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  text-transform: none;
+  letter-spacing: 0;
   margin-bottom: 0.375rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 .na-kpi-card__row {
   display: flex;
@@ -3236,8 +3236,9 @@ body {
   gap: 0.75rem;
 }
 .na-kpi-card__value {
+  font-family: var(--font-display);
   font-size: 1.75rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-bright);
   line-height: 1.1;
 }
@@ -3253,12 +3254,12 @@ body {
   color: var(--text-dim);
 }
 .na-kpi-card__badge {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  text-transform: none;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .na-kpi-card__badge--high {
@@ -3324,8 +3325,9 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .na-panel-header h2 {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
   color: var(--text-bright);
   display: flex;
   align-items: center;
@@ -3403,18 +3405,18 @@ body {
   font-size: 0.8rem;
 }
 .na-district-table thead th {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-dim);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
   padding: 0.5rem 0.875rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
 .na-district-table tbody td {
   padding: 0.5rem 0.875rem;
-  border-bottom: 1px solid rgba(240, 234, 224, 0.06);
+  border-bottom: 1px solid var(--border);
   color: var(--text);
 }
 .na-district-table tbody tr:hover {
@@ -3428,11 +3430,11 @@ body {
 .na-district-score--med { color: var(--warning); }
 .na-district-score--low { color: var(--accent); }
 .na-district-badge {
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   padding: 0.15rem 0.4rem;
   border-radius: 3px;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .na-district-badge--high { background: rgba(199, 92, 84, 0.15); color: var(--danger); }
 .na-district-badge--med { background: rgba(201, 163, 92, 0.15); color: var(--warning); }
