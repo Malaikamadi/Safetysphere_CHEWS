@@ -391,6 +391,7 @@ body {
   flex: 1;
   margin-left: var(--sidebar-w);
   min-height: 100vh;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -486,7 +487,6 @@ body {
   background: none; border: none; color: var(--text); font-size: 1.3rem;
   cursor: pointer; padding: 0.5rem;
   margin-right: 1rem;
-  display: none;
 }
 
 /* === Page Container === */
