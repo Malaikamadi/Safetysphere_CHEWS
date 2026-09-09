@@ -123,6 +123,7 @@ Marking: **[x]** = confirmed **in the repository** (code/files exist as describe
 - [x] Prediction **can** be reproduced given the same JSON *(deterministic engine)*  
 - [x] Documentation suite present under `docs/` + README  
 - [x] DHIS2 mock ingest/parsing tests in `backend/tests/test_dhis2.py`  
+- [x] No live secrets found in-repo *(fake partner Bearer is a demo string, not a server secret)*  
 
 **Do not tick as working on Vercel without testing:** `/health`, `/predict`, `/ask`, `/api/health`.
 

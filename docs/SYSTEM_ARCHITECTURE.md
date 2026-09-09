@@ -61,6 +61,7 @@ A second frontend (`frontend-react/`) exists as an unused Vite scaffold. It is *
 | `routers/early_warning.py` | `/early-warning` | Multi-hazard assess, alert trigger, list alerts |
 | `routers/healthcare.py` | `/healthcare` | Forecast, surge, MFL, experimental ML POSTs |
 | `routers/point_of_care.py` | `/poc` | Triage, keyword ask, languages, symptoms |
+| `routers/situation_room.py` | `/situation-room` | Simulated national command centre |
 | `routers/dhis2.py` | `/dhis2` | Status, ingest, malaria, facilities, health-data, risk overlay |
 
 ### Models (scoring)
@@ -84,6 +85,8 @@ A second frontend (`frontend-react/`) exists as an unused Vite scaffold. It is *
 | Module | Role | Data honesty |
 | ------ | ---- | ------------ |
 | `dhis2_service.py` / `dhis2_pipeline.py` | HMIS Analytics ingest, quality, lake writes | Mock or live; credentials never returned |
+| `dhis2_orgunits.py` | DHIS2 hierarchy + MFL join | Unmapped facilities flagged, not guessed |
+| `facility_mfl.py` | Load MoH DHIS2 core facilities CSV; district from code prefix; type from name | Does not invent beds/staff/power |
 | `forecast_engine.py` | Seasonal-climatological “forecast-in-a-box” | Explicitly rule-based; no time-series DB |
 | `flood_dashboard.py` | Zone scores + optional Open-Meteo | Synthetic jitter if weather fetch fails |
 | `weather_api.py` | Open-Meteo precipitation, 1h in-memory cache, 2s timeout | **Partial** live weather |
