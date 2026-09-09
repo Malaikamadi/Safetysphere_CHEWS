@@ -439,12 +439,27 @@ def main() -> None:
     }
     (OUTPUT_DIR / "training_metadata.json").write_text(json.dumps(training_metadata, indent=2), encoding="utf-8")
 
-    if beats_persist and beats_seasonal:
+    persist_mae = val_persist["mae"]
+    mae_lift_pct = 100.0 * (persist_mae - val_ml["mae"]) / persist_mae if persist_mae else 0.0
+    rmse_better = val_ml["rmse"] < val_persist["rmse"]
+    # Require a meaningful validation lift over persistence, not a sub-percent MAE tick.
+    meaningful_vs_persist = beats_persist and mae_lift_pct >= 5.0 and rmse_better
+    if meaningful_vs_persist and beats_seasonal:
         recommendation = "RECOMMENDED FOR FURTHER VALIDATION"
-        why = "HistGradientBoosting has lower validation MAE than both baselines."
+        why = (
+            f"HistGradientBoosting improves validation MAE by {mae_lift_pct:.1f}% vs previous-month "
+            "and also beats seasonal RMSE/MAE."
+        )
+    elif beats_persist and beats_seasonal:
+        recommendation = "NOT RECOMMENDED FOR FURTHER VALIDATION"
+        why = (
+            f"Validation MAE is only {mae_lift_pct:.1f}% below previous-month "
+            f"({val_ml['mae']:.1f} vs {persist_mae:.1f}) and RMSE/R² do not improve. "
+            "Seasonal baseline is worse, but that is not enough to treat the ML model as useful."
+        )
     elif beats_persist or beats_seasonal:
-        recommendation = "RECOMMENDED FOR FURTHER VALIDATION"
-        why = "HistGradientBoosting improves on at least one baseline on validation; review test metrics and overfitting notes before any integration."
+        recommendation = "NOT RECOMMENDED FOR FURTHER VALIDATION"
+        why = "HistGradientBoosting does not meaningfully outperform the previous-month baseline on validation."
     else:
         recommendation = "NOT RECOMMENDED FOR FURTHER VALIDATION"
         why = "HistGradientBoosting does not beat the previous-month baseline on validation MAE."

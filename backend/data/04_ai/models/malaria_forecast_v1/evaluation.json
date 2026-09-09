@@ -217,16 +217,20 @@
   ],
   "overfitting": {
     "flag": "some_overfitting",
-    "note": "Validation MAE is substantially higher than train MAE \u2014 some overfitting; judge by whether val still beats baselines.",
+    "note": "Train MAE 507 vs validation MAE 1150 (2.27x) is strong overfitting. On the held-out test window the previous-month baseline has lower MAE than HistGB.",
     "train_mae": 506.85109483581846,
     "validation_mae": 1150.4455582750488,
     "test_mae": 954.6435244649414,
     "val_over_train_mae_ratio": 2.269790023138268
   },
   "baseline_comparison_validation": {
-    "histgb_beats_previous_month": true,
-    "histgb_beats_seasonal": true
+    "histgb_beats_previous_month_mae": true,
+    "histgb_beats_previous_month_rmse": false,
+    "histgb_beats_seasonal": true,
+    "validation_mae_lift_vs_persist_pct": 0.84,
+    "test_mae_favors": "previous_month_baseline"
   },
+  "poisson_regressor": "not trained; would require imputing legitimate NaN lags, which is disallowed",
   "data_quality": {
     "filtered_rows": 504,
     "districts": 16,
@@ -248,6 +252,6 @@
     "test_used_for_model_selection": false,
     "nan_policy": "JSON null \u2192 numpy.nan"
   },
-  "recommendation": "RECOMMENDED FOR FURTHER VALIDATION",
-  "recommendation_reason": "HistGradientBoosting has lower validation MAE than both baselines."
+  "recommendation": "NOT RECOMMENDED FOR FURTHER VALIDATION",
+  "recommendation_reason": "Validation MAE is only 0.8% below previous-month (1150.4 vs 1160.2) and RMSE/R² do not improve. Seasonal baseline is worse, but that is not enough to treat the ML model as useful. Held-out test MAE also favors previous-month (863 vs 955)."
 }

@@ -50,6 +50,6 @@
     "Diagnosing individual patients.",
     "Using the synthetic malaria GBT feature contract (fever, stagnation, breeding sites)."
   ],
-  "review_status": "RECOMMENDED FOR FURTHER VALIDATION",
-  "review_status_reason": "HistGradientBoosting has lower validation MAE than both baselines."
+  "review_status": "NOT RECOMMENDED FOR FURTHER VALIDATION",
+  "review_status_reason": "Validation MAE is only 0.8% below previous-month (1150.4 vs 1160.2) and RMSE/R² do not improve. Seasonal baseline is worse, but that is not enough to treat the ML model as useful. Held-out test MAE also favors previous-month (863 vs 955)."
 }
