@@ -8,7 +8,9 @@
 
 ### DHIS2 Analytics (live/mock ingest)
 
-Mock fixtures: `01_raw/dhis2/mock/`. Live extracts are written under `01_raw/dhis2/analytics/` (gitignored). See `docs/DHIS2_INTEGRATION.md`.
+Mock fixtures: `01_raw/dhis2/mock/`. Live extracts are written under `01_raw/dhis2/analytics/` (gitignored). Historical monthly extracts: `01_raw/dhis2/historical/` (gitignored). See `docs/DHIS2_INTEGRATION.md` and `docs/DHIS2_ML_DATA_FOUNDATION.md`.
+
+The existing malaria GBT is trained on synthetic `dhis2_malaria_chews_v1.csv` / `CHEWS_SierraLeone_Malaria_Dataset.csv`. It is **not** connected to live DHIS2 for ML inference.
 
 ---
 

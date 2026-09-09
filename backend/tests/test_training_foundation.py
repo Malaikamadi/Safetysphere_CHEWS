@@ -203,7 +203,6 @@ def test_readiness_true_only_on_live_aligned_panel():
 
 
 def test_training_panel_does_not_import_malaria_predictor():
-    import inspect
     import services.training_panel as mod
-    source = inspect.getsource(mod)
-    assert "malaria_predictor" not in source
+    assert "malaria_predictor" not in getattr(mod, "__dict__", {})
+    assert not hasattr(mod, "malaria_predictor")

@@ -73,7 +73,6 @@ def aggregate_daily_to_monthly(
     humidity: list,
 ) -> dict[str, dict]:
     buckets: dict[str, dict] = {}
-    n = max(len(dates), len(precipitation), len(temperature), len(humidity))
     for i in range(len(dates)):
         period = month_from_iso_date(str(dates[i]))
         if not period:
@@ -112,7 +111,6 @@ def aggregate_daily_to_monthly(
             "days_with_temp": slot["temp_n"],
             "days_with_humidity": slot["humidity_n"],
         }
-    _ = n
     return monthly
 
 

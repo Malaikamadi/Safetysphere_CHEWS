@@ -32,7 +32,7 @@ The dashboard is **view-oriented**. Healthcare Forecast and Surge pages refresh 
 - **Rule-based malaria risk scoring** (`POST /predict`) combining environmental, epidemiological, and exposure sub-scores.
 - **Healthcare facility explorer** loaded from `moh_dhis2_core_health_facilities.csv` (1,615 MoH DHIS2 facilities: id, code, name, level, coordinates). Operational fields (beds, staff, power, water) are **not invented**; they are shown as not assessed.
 - **View-only disease forecast and surge views** (`GET /api/healthcare/forecast/live`, `GET /api/healthcare/surge/live`) using **hardcoded climatological/case constants** unless a DHIS2 ingest has been stored (malaria case overlay only).
-- **DHIS2 Analytics ingest** (`/api/dhis2/*`) against Sierra Leone HMIS. Default mock mode; live mode needs env credentials. Does **not** retrain the synthetic malaria GBT. See [docs/DHIS2_INTEGRATION.md](docs/DHIS2_INTEGRATION.md).
+- **DHIS2 Analytics ingest** (`/api/dhis2/*`) against Sierra Leone HMIS. Default mock mode; live mode needs env credentials. Does **not** retrain the synthetic malaria GBT. Historical monthly extract + Archive climate + **READY/NOT READY** verdict: [docs/DHIS2_ML_DATA_FOUNDATION.md](docs/DHIS2_ML_DATA_FOUNDATION.md). See also [docs/DHIS2_INTEGRATION.md](docs/DHIS2_INTEGRATION.md).
 - **Flood Atlas** combining a static 23-zone catalogue with rule-based flood scoring; optional Open-Meteo fetch with synthetic fallback.
 - **Point-of-care triage** via symptom keyword scoring (not a diagnostic model).
 - **Health assistant** via keyword matching (not an LLM).

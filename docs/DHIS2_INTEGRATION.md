@@ -192,6 +192,10 @@ Period is **not** hardcoded to `LAST_12_MONTHS` only. Returned row periods may b
 | GET | `/api/dhis2/facilities` | Mapped org units |
 | GET | `/api/dhis2/health-data` | Combined quality + preview |
 | GET | `/api/dhis2/risk` | Existing `risk_engine.assess()` with DHIS2 cases + caller climate |
+| POST | `/api/dhis2/historical/extract` | Explicit monthly national extract + district-month + completeness |
+| POST | `/api/dhis2/historical/climate` | Open-Meteo Archive monthly climate (realtime weather untouched) |
+| POST | `/api/dhis2/historical/panel` | Aligned panel + **READY / NOT READY FOR MODEL TRAINING** |
+| GET | `/api/dhis2/historical/readiness` | Last verdict |
 
 Same paths without `/api` when talking to local Uvicorn.
 
@@ -225,6 +229,18 @@ DHIS2 can supply `reported_cases` (sum of `malaria_confirmed`) and a simple `tre
 DHIS2 does **not** provide those climate/habitat fields. Confirmed malaria is **not** the same as `reported_fever_cases`. Do not silently substitute.
 
 DHIS2-only features (lags, rolling sums, RDT positivity when tests ≠ 0) live in `04_ai/features/` for **future** retraining.
+
+---
+
+## Historical extract and training readiness
+
+Operational `LAST_12_MONTHS` ingest is **not** a training dataset. For a multi-year monthly panel see [DHIS2_ML_DATA_FOUNDATION.md](DHIS2_ML_DATA_FOUNDATION.md):
+
+- `POST /api/dhis2/historical/extract` — explicit YYYYMM (never `LAST_5_YEARS`), facility→district aggregation, completeness
+- `POST /api/dhis2/historical/climate` — Open-Meteo **Archive** (not the 24h flood `weather_api`)
+- `POST /api/dhis2/historical/panel` — join + `malaria_confirmed_next` + **READY / NOT READY**
+
+Mock fixtures remain 2 months × 1 facility, so the default verdict is **NOT READY FOR MODEL TRAINING**. The synthetic GBT is still not called.
 
 ---
 

@@ -10,7 +10,9 @@ Brutally honest assessment for technical evaluators. Items are included only whe
 
 - **Synthetic training data** for flood, malaria, readiness, and community-report models (`DATA_CATALOG.md`).  
 - **DHIS2 ingest is on-demand**, default mock. Live HMIS is not a scheduled national feed on Vercel. Completeness checks are quality flags, not a MoH bulletin.  
-- **Live forecast climate/cases are constants** (`_LIVE_SIGNALS`).  
+- **Historical training panel is implemented but not ready on fixtures.** Mock Analytics is 2 months × 1 facility. Default `POST /api/dhis2/historical/panel` therefore returns **NOT READY FOR MODEL TRAINING**. See [DHIS2_ML_DATA_FOUNDATION.md](DHIS2_ML_DATA_FOUNDATION.md).  
+- **Existing malaria GBT is synthetic and not wired to live DHIS2.** Training target `malaria_cases` ≠ live `malaria_confirmed`.  
+- **Live forecast climate/cases are constants** (`_LIVE_SIGNALS`). Realtime Open-Meteo is 24h precip for the flood atlas, not monthly malaria climate.  
 - **No climate lag** in the malaria GBT (model card).  
 - **Community classifier blocked** (perfect metrics / leakage).  
 - **Flood AUC 0.991 / precision 1.0** on 300 synthetic rows is not evidence of hydrological skill.  
@@ -69,6 +71,7 @@ These prevent CHEWS from being **production-ready** or **national-scale**.
 ### Phase 2 — Data integration (needs to be connected)
 
 - Scheduled DHIS2 on durable storage; official climate with quality flags.  
+- **Live** DHIS2 historical extract (`DHIS2_MOCK_MODE=false`) plus **live** Open-Meteo Archive (`CLIMATE_ARCHIVE_MOCK_MODE=false`) until `/dhis2/historical/readiness` says READY — then, and only then, train a new `malaria_confirmed(t+1)` model. Do not reuse the synthetic GBT contract.  
 - Official climate (SLMDA / CHIRPS / etc.) with quality flags — **not** only Open-Meteo current precipitation.  
 - Operational MFL indicators from a governed source; still **no invention**.  
 - CHW report API with authentication and verification workflow (UI labels exist; **backend persistence does not**).  

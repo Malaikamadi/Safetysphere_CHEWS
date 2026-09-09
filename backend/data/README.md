@@ -52,7 +52,8 @@ backend/data/
 | Joined malaria features | `04_ai/features/` | `schemas/chews_malaria_features.schema.json` |
 | Deprecated mixed “weekly epi” name | — | `schemas/dhis2_weekly_epi.schema.json` → feature schema |
 | Master Facility List | `01_raw/master_facility_list/` | `schemas/master_facility_list.schema.json` |
-| Climate data | `01_raw/climate/` | — |
+| Climate data | `01_raw/climate/` | `schemas/chews_climate.schema.json` |
+| Training panel (district-month) | `04_ai/training_sets/` | built by `training_panel.py` |
 | Population | `01_raw/population/` | — |
 | Admin boundaries | `01_raw/admin_boundaries/` | — |
 | Community reports | `01_raw/community_reports/` | `schemas/community_reports.schema.json` |

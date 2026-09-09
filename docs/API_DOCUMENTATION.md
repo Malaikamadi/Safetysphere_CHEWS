@@ -392,4 +392,20 @@ Combined quality + overlay + hierarchy example.
 
 Query: `admin`, `rainfall`, `temperature`, `humidity`, `refresh`. Calls **existing** `risk_engine.assess()` with DHIS2 `reported_cases`.
 
-Full detail: [DHIS2_INTEGRATION.md](DHIS2_INTEGRATION.md).
+### POST `/api/dhis2/historical/extract`
+
+Explicit YYYYMM window (default 36 months). Facility-level Analytics → validation → district-month → completeness. Does **not** call `malaria_predictor`.
+
+### POST `/api/dhis2/historical/climate`
+
+Open-Meteo **Archive** monthly climate at district centroids. Does **not** change `weather_api.fetch_realtime_weather`.
+
+### POST `/api/dhis2/historical/panel`
+
+Join health + climate, engineer lags, target `malaria_confirmed_next`. Returns **READY FOR MODEL TRAINING** or **NOT READY FOR MODEL TRAINING**.
+
+### GET `/api/dhis2/historical/readiness`
+
+Last verdict (or NOT READY if no panel has been built).
+
+Full detail: [DHIS2_INTEGRATION.md](DHIS2_INTEGRATION.md), [DHIS2_ML_DATA_FOUNDATION.md](DHIS2_ML_DATA_FOUNDATION.md).

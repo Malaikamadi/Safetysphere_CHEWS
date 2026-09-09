@@ -26,8 +26,8 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 | Curated Parquet (`03_curated/`) | Documented data lake | **Not implemented** | `.gitkeep` only | — |
 | Population rasters / census | `01_raw/population/` | **Not implemented** | `.gitkeep` | — |
 | Admin boundary raw GIS | `01_raw/admin_boundaries/` | **Not implemented** | `.gitkeep` | — |
-| Climate NetCDF / official weather archive | `01_raw/climate/` besides flood CSV | **Not implemented** | `.gitkeep` | — |
-| Live DHIS2 Analytics payloads | Sierra Leone HMIS (`/api/analytics`) or mock fixtures | **Implemented** (ingest; default mock) | `dhis2_service`, `dhis2_pipeline` | JSON |
+| Climate NetCDF / official weather archive | `01_raw/climate/` besides flood CSV | **Partial** | Open-Meteo Archive pipeline (`climate_archive.py`); default mock monthly fixture | JSON |
+| Live DHIS2 Analytics payloads | Sierra Leone HMIS (`/api/analytics`) or mock fixtures | **Implemented** (ingest; default mock) | `dhis2_service`, `dhis2_pipeline`, `dhis2_historical` | JSON |
 | Patient-identifiable EHR | — | **Not present** | — | — |
 
 `DATA_CATALOG.md` (dated 2026-07-31) does **not** list `moh_dhis2_core_health_facilities.csv`. The catalog is therefore **out of date** relative to the live MFL.
@@ -39,7 +39,8 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 ### Current (in repo)
 
 - **Environmental / weather (scoring):** User POST bodies, hardcoded live constants, synthetic flood CSV, optional Open-Meteo rainfall.  
-- **Malaria variables:** Synthetic case columns; live dashboard uses constants, not DHIS2.  
+- **Malaria variables:** Synthetic case columns for the prototype GBT; live dashboard uses constants unless DHIS2 overlay exists. Historical district-month extract exists but mock coverage is 2 months × 1 facility (**NOT READY** for a new model).  
+- **Historical climate:** Open-Meteo Archive monthly pipeline is implemented; default is a 2-month mock fixture. Realtime Open-Meteo 24h precip is flood-only.  
 - **Symptoms:** Client-supplied lists to `/poc/triage` (not stored).  
 - **Facility data:** Real DHIS2 **identity + coordinates**; synthetic operational columns exist but are not the live registry.  
 - **Community reports:** Synthetic CSV + Situation Room mock list.
