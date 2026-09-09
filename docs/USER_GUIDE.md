@@ -10,7 +10,7 @@ If you are viewing a hosted demo, start at `login.html`. Roles are a **display s
 ## What the result does **not** mean
 
 - **Low / Medium / High** on `/predict` is a **heuristic score**, not a lab result.  
-- Live Forecast / Surge numbers are **not** pulled from DHIS2 in this version.  
+- Live Forecast / Surge climate values remain prototype constants. Malaria **case counts** overlay DHIS2 only after `POST /api/dhis2/ingest` (mock or live). Until then they stay hardcoded.  
 - Situation Room maps, sensors, and “digital twins” are **simulated**.  
 - The chat assistant **matches keywords**; it is not a doctor and not a large language model.  
 - The facility map shows **real MoH facility locations**. It does **not** show real-time bed occupancy or staffing.
