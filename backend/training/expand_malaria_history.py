@@ -1,0 +1,303 @@
+"""
+Expand DHIS2 malaria history before 202307 into a separate dataset.
+
+Does NOT overwrite malaria_district_month_panel_latest.json.
+Does NOT regenerate malaria_forecast_v1 or malaria_positivity_forecast_v1.
+Does NOT train a model.
+Does NOT persist into dhis2_malaria_district_month_latest.json.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+BACKEND = Path(__file__).resolve().parent.parent
+if str(BACKEND) not in sys.path:
+    sys.path.insert(0, str(BACKEND))
+
+from services.climate_archive import ingest_historical_climate  # noqa: E402
+from services.dhis2_historical import extract_historical  # noqa: E402
+from services.dhis2_periods import expand_monthly_range  # noqa: E402
+from services.dhis2_service import Dhis2Client  # noqa: E402
+from services.training_panel import join_district_month  # noqa: E402
+
+EXPANSION_START = "201201"
+EXPANSION_END = "202306"  # do not re-fetch the validated v1 window 202307–202608
+COMPARABLE_START = "202106"  # indicator objects created 2021-05-06
+V1_PANEL = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_district_month_panel_latest.json"
+OUT_PATH = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_historical_expansion.json"
+REPORT_PATH = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_historical_expansion_report.json"
+COUNT_V1 = BACKEND / "data" / "04_ai" / "models" / "malaria_forecast_v1" / "model.joblib"
+POS_V1 = BACKEND / "data" / "04_ai" / "models" / "malaria_positivity_forecast_v1" / "model.joblib"
+GBT = BACKEND / "data" / "trained_models" / "malaria_model.joblib"
+COUNT_FILTERED = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_forecast_v1_filtered.json"
+POS_FILTERED = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_positivity_forecast_v1.json"
+
+KNOWN_ADMIN = {
+    "western_area_urban", "western_area_rural", "bo", "pujehun", "bonthe",
+    "kenema", "port_loko", "kambia", "tonkolili", "moyamba", "bombali",
+    "kailahun", "kono", "koinadugu", "falaba", "karene",
+}
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _year_chunks(start: str, end: str) -> list[tuple[str, str]]:
+    months = expand_monthly_range(start, end)
+    chunks: list[tuple[str, str]] = []
+    current: list[str] = []
+    for m in months:
+        if not current:
+            current = [m]
+            continue
+        if m[:4] != current[0][:4]:
+            chunks.append((current[0], current[-1]))
+            current = [m]
+        else:
+            current.append(m)
+    if current:
+        chunks.append((current[0], current[-1]))
+    return chunks
+
+
+def n_prior_histogram(rows: list[dict], as_of: str | None = None) -> dict:
+    """
+    For each district × calendar-month, count years strictly before as_of
+    (default: max period in rows). That is the history a scorer would have
+    at the end of the series for that calendar month.
+    """
+    by_key: dict[tuple[str, int], list[str]] = defaultdict(list)
+    periods = []
+    for r in rows:
+        slug = r.get("district_slug")
+        period = r.get("source_period") or r.get("period")
+        if not slug or not period or slug not in KNOWN_ADMIN:
+            continue
+        if r.get("malaria_confirmed") is None:
+            continue
+        by_key[(slug, int(period[4:6]))].append(period[:4])
+        periods.append(period)
+    if not periods:
+        return {"as_of": as_of, "keys": 0}
+    as_of = as_of or max(periods)
+    as_of_year = int(as_of[:4])
+    as_of_month = int(as_of[4:6])
+    counts = {0: 0, 1: 0, 2: 0, 3: 0, "ge4": 0}
+    details = []
+    for (slug, month), years in sorted(by_key.items()):
+        uniq = sorted(set(int(y) for y in years))
+        # years available strictly before the as-of month of this calendar month
+        cutoff_year = as_of_year if month <= as_of_month else as_of_year - 1
+        prior = [y for y in uniq if y < cutoff_year]
+        n = len(prior)
+        if n >= 4:
+            counts["ge4"] += 1
+        elif n in counts:
+            counts[n] += 1
+        details.append({"district": slug, "calendar_month": month, "n_prior": n, "years": prior})
+    n_keys = len(details)
+    n_ge3 = sum(1 for d in details if d["n_prior"] >= 3)
+    return {
+        "as_of": as_of,
+        "district_calendar_month_keys": n_keys,
+        "n_prior_0": counts[0],
+        "n_prior_1": counts[1],
+        "n_prior_2": counts[2],
+        "n_prior_3": counts[3],
+        "n_prior_ge_4": counts["ge4"],
+        "share_with_n_prior_ge_3": (n_ge3 / n_keys) if n_keys else 0.0,
+        "keys_with_n_prior_ge_3": n_ge3,
+    }
+
+
+def month_stats(rows: list[dict], requested: list[str]) -> list[dict]:
+    by_p = defaultdict(list)
+    for r in rows:
+        by_p[r.get("source_period") or r.get("period")].append(r)
+    out = []
+    for p in requested:
+        group = by_p.get(p, [])
+        comps = [r.get("facility_completeness") for r in group if r.get("facility_completeness") is not None]
+        districts = {r.get("district_slug") for r in group if r.get("district_slug") in KNOWN_ADMIN}
+        out.append({
+            "period": p,
+            "districts": len(districts),
+            "rows": len(group),
+            "mean_completeness": (sum(comps) / len(comps)) if comps else None,
+            "min_completeness": min(comps) if comps else None,
+            "n_confirmed": sum(1 for r in group if r.get("malaria_confirmed") is not None),
+            "n_tests": sum(1 for r in group if r.get("malaria_tests") is not None),
+            "n_u5": sum(1 for r in group if r.get("malaria_confirmed_u5") is not None),
+            "n_rdt": sum(1 for r in group if r.get("malaria_rdt_positive") is not None),
+            "n_climate": sum(1 for r in group if r.get("rainfall_mm") is not None),
+        })
+    return out
+
+
+def main() -> None:
+    hashes_before = {
+        "panel": _sha256(V1_PANEL),
+        "gbt": _sha256(GBT),
+        "count_v1": _sha256(COUNT_V1),
+        "pos_v1": _sha256(POS_V1),
+        "count_filtered": _sha256(COUNT_FILTERED),
+        "pos_filtered": _sha256(POS_FILTERED),
+    }
+    v1 = json.loads(V1_PANEL.read_text(encoding="utf-8"))
+    if len(v1) != 535:
+        raise SystemExit(f"STOP: v1 panel is {len(v1)} rows, expected 535")
+
+    client = Dhis2Client(mock=False)
+    health_rows: list[dict] = []
+    chunk_reports = []
+    for start, end in _year_chunks(EXPANSION_START, EXPANSION_END):
+        print(f"DHIS2 extract {start}-{end} persist=False", flush=True)
+        result = extract_historical(client=client, start=start, end=end, persist=False)
+        health_rows.extend(result["district_month"])
+        chunk_reports.append({
+            "start": start,
+            "end": end,
+            "source": result.get("source"),
+            "mock": result.get("mock"),
+            "observed_months": result["completeness"].get("observed_month_count"),
+            "districts": result["completeness"].get("district_count"),
+            "rows": len(result["district_month"]),
+        })
+
+    print("Open-Meteo Archive climate persist=False", flush=True)
+    climate = ingest_historical_climate(
+        start=EXPANSION_START,
+        end=EXPANSION_END,
+        mock=False,
+        persist=False,
+    )
+    joined = join_district_month(health_rows, climate["district_month"])
+    for row in joined:
+        period = row.get("source_period") or ""
+        row["expansion_window"] = True
+        row["indicator_object_era"] = (
+            "post_indicator_created" if period >= COMPARABLE_START else "pre_indicator_created"
+        )
+        row["v1_reference_panel"] = False
+
+    OUT_PATH.write_text(json.dumps(joined, indent=2, default=str), encoding="utf-8")
+
+    requested = expand_monthly_range(EXPANSION_START, EXPANSION_END)
+    observed = sorted({r.get("source_period") for r in joined if r.get("source_period")})
+    districts = sorted({r.get("district_slug") for r in joined if r.get("district_slug") in KNOWN_ADMIN})
+    expected_dm = 16 * len(requested)
+    observed_dm = sum(
+        1 for r in joined
+        if r.get("district_slug") in KNOWN_ADMIN and r.get("source_period") in set(requested)
+    )
+
+    # Combined series for data-bar: expansion + v1 panel (read-only)
+    combined = []
+    for r in joined:
+        combined.append({
+            "source_period": r.get("source_period"),
+            "district_slug": r.get("district_slug"),
+            "malaria_confirmed": r.get("malaria_confirmed"),
+            "malaria_tests": r.get("malaria_tests"),
+            "malaria_confirmed_u5": r.get("malaria_confirmed_u5"),
+            "malaria_rdt_positive": r.get("malaria_rdt_positive"),
+            "facility_completeness": r.get("facility_completeness"),
+            "rainfall_mm": r.get("rainfall_mm"),
+            "era": r.get("indicator_object_era"),
+        })
+    for r in v1:
+        combined.append({
+            "source_period": r.get("source_period"),
+            "district_slug": r.get("district_slug"),
+            "malaria_confirmed": r.get("malaria_confirmed"),
+            "malaria_tests": r.get("malaria_tests"),
+            "malaria_confirmed_u5": r.get("malaria_confirmed_u5"),
+            "malaria_rdt_positive": r.get("malaria_rdt_positive"),
+            "facility_completeness": r.get("facility_completeness"),
+            "rainfall_mm": r.get("rainfall_mm"),
+            "era": "v1_reference",
+        })
+
+    comparable = [
+        r for r in combined
+        if (r.get("source_period") or "") >= COMPARABLE_START
+        and r.get("district_slug") in KNOWN_ADMIN
+    ]
+
+    def coverage_counts(rows):
+        n = len(rows) or 1
+        return {
+            "rows": len(rows),
+            "malaria_confirmed": sum(1 for r in rows if r.get("malaria_confirmed") is not None),
+            "malaria_tests": sum(1 for r in rows if r.get("malaria_tests") is not None),
+            "malaria_confirmed_u5": sum(1 for r in rows if r.get("malaria_confirmed_u5") is not None),
+            "malaria_rdt_positive": sum(1 for r in rows if r.get("malaria_rdt_positive") is not None),
+            "climate": sum(1 for r in rows if r.get("rainfall_mm") is not None),
+        }
+
+    report = {
+        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "expansion_start": EXPANSION_START,
+        "expansion_end": EXPANSION_END,
+        "comparable_start": COMPARABLE_START,
+        "v1_panel_rows_unmodified": 535,
+        "chunk_reports": chunk_reports,
+        "climate_source": climate.get("source"),
+        "climate_mock": climate.get("mock"),
+        "expansion_rows": len(joined),
+        "requested_months": requested,
+        "requested_month_count": len(requested),
+        "observed_months": observed,
+        "observed_month_count": len(observed),
+        "missing_months": [m for m in requested if m not in set(observed)],
+        "districts": districts,
+        "district_count": len(districts),
+        "expected_district_months_16x_months": expected_dm,
+        "observed_district_months_admin": observed_dm,
+        "missing_district_months": expected_dm - observed_dm,
+        "month_stats": month_stats(joined, requested),
+        "expansion_indicator_coverage": coverage_counts(joined),
+        "combined_n_prior_all_analytics": n_prior_histogram(combined),
+        "combined_n_prior_comparable_from_202106": n_prior_histogram(comparable),
+        "hashes_before": hashes_before,
+        "note": "v1 panel was read, not rewritten. extract_historical persist=False.",
+    }
+    REPORT_PATH.write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
+
+    hashes_after = {
+        "panel": _sha256(V1_PANEL),
+        "gbt": _sha256(GBT),
+        "count_v1": _sha256(COUNT_V1),
+        "pos_v1": _sha256(POS_V1),
+        "count_filtered": _sha256(COUNT_FILTERED),
+        "pos_filtered": _sha256(POS_FILTERED),
+    }
+    if hashes_after != hashes_before:
+        raise SystemExit(f"STOP: protected file hash changed: {hashes_before} vs {hashes_after}")
+    if len(json.loads(V1_PANEL.read_text())) != 535:
+        raise SystemExit("STOP: v1 panel row count changed")
+    print(json.dumps({
+        "expansion_rows": len(joined),
+        "observed_months": len(observed),
+        "missing_months": report["missing_months"],
+        "districts": len(districts),
+        "n_prior_all": report["combined_n_prior_all_analytics"],
+        "n_prior_comparable": report["combined_n_prior_comparable_from_202106"],
+        "out": str(OUT_PATH),
+        "protected_hashes_ok": True,
+    }, indent=2))
+
+
+if __name__ == "__main__":
+    main()
