@@ -32,7 +32,7 @@ from services.dhis2_periods import expand_monthly_range, yyyymm_to_date_bounds  
 from services.dhis2_service import Dhis2Client  # noqa: E402
 from services.training_panel import join_district_month  # noqa: E402
 
-EXPANSION_START = "201201"
+EXPANSION_START = "201104"
 EXPANSION_END = "202306"
 COMPARABLE_START = "202106"
 V1_PANEL = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_district_month_panel_latest.json"
@@ -242,10 +242,32 @@ def main() -> None:
             encoding="utf-8",
         )
 
-    print("Open-Meteo Archive climate persist=False", flush=True)
-    climate_rows = fetch_climate_with_retry(EXPANSION_START, EXPANSION_END)
-    climate = {"source": "open_meteo_archive", "mock": False, "district_month": climate_rows}
-    joined = join_district_month(health_rows, climate["district_month"])
+    existing_joined = []
+    if OUT_PATH.exists():
+        existing_joined = json.loads(OUT_PATH.read_text(encoding="utf-8"))
+    have = {
+        (r.get("source_period"), r.get("district_slug"))
+        for r in existing_joined
+        if r.get("rainfall_mm") is not None
+    }
+    new_health = [
+        r for r in health_rows
+        if (r.get("source_period"), r.get("district_slug")) not in have
+    ]
+    if new_health:
+        new_periods = sorted({r.get("source_period") for r in new_health if r.get("source_period")})
+        print(
+            f"Open-Meteo Archive climate persist=False for {new_periods[0]}-{new_periods[-1]} "
+            f"({len(new_health)} new district-months)",
+            flush=True,
+        )
+        climate_rows = fetch_climate_with_retry(new_periods[0], new_periods[-1])
+        joined_new = join_district_month(new_health, climate_rows)
+        joined = existing_joined + joined_new
+    else:
+        print("Open-Meteo Archive climate reused from existing expansion file", flush=True)
+        joined = existing_joined
+    climate = {"source": "open_meteo_archive", "mock": False}
     for row in joined:
         period = row.get("source_period") or ""
         row["expansion_window"] = True
@@ -253,6 +275,7 @@ def main() -> None:
             "post_indicator_created" if period >= COMPARABLE_START else "pre_indicator_created"
         )
         row["v1_reference_panel"] = False
+    joined.sort(key=lambda r: (r.get("source_period") or "", r.get("district_slug") or ""))
 
     OUT_PATH.write_text(json.dumps(joined, indent=2, default=str), encoding="utf-8")
 
