@@ -76,7 +76,7 @@ A second frontend (`frontend-react/`) exists as an unused Vite scaffold. It is *
 | `heat_stress.py` | Heuristic WBGT-style scoring | early warning, hazard map |
 | `air_quality.py` | Heuristic AQI-style scoring | pollution, early warning |
 | `carbon_accounting.py` | Heuristic footprint | `POST /strategic/carbon-footprint` |
-| `malaria_predictor.py` | GradientBoostingRegressor joblib or heuristic fallback | `POST /healthcare/ml/malaria-predict` |
+| `malaria_predictor.py` | GradientBoostingRegressor joblib or heuristic fallback | `POST /healthcare/ml/malaria-predict` only — **not** live DHIS2 |
 | `healthcare_readiness.py` | RandomForestRegressor joblib | `POST /healthcare/ml/readiness-predict` |
 | `community_reports.py` | RandomForestClassifier joblib (blocked by model card) | `POST /healthcare/ml/community-flood` |
 
@@ -85,6 +85,9 @@ A second frontend (`frontend-react/`) exists as an unused Vite scaffold. It is *
 | Module | Role | Data honesty |
 | ------ | ---- | ------------ |
 | `dhis2_service.py` / `dhis2_pipeline.py` | HMIS Analytics ingest, quality, lake writes | Mock or live; credentials never returned |
+| `dhis2_historical.py` | Explicit YYYYMM extract, district-month aggregation, completeness | Mock fixture is 2 months × 1 facility |
+| `climate_archive.py` | Open-Meteo **Archive** monthly climate | Separate from `weather_api.py` |
+| `training_panel.py` | Join + `malaria_confirmed(t+1)` features + READY/NOT READY | Does not call `malaria_predictor` |
 | `dhis2_orgunits.py` | DHIS2 hierarchy + MFL join | Unmapped facilities flagged, not guessed |
 | `facility_mfl.py` | Load MoH DHIS2 core facilities CSV; district from code prefix; type from name | Does not invent beds/staff/power |
 | `forecast_engine.py` | Seasonal-climatological “forecast-in-a-box” | Explicitly rule-based; no time-series DB |
