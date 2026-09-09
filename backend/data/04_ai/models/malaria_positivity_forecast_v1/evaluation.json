@@ -1,0 +1,291 @@
+{
+  "metrics": {
+    "positivity_persistence": {
+      "train": {
+        "n": 280,
+        "mae": 0.02839707933077168,
+        "rmse": 0.044644220304663286,
+        "r2": 0.6054909713901481,
+        "smape": 4.6481249698678395,
+        "coverage": 1.0,
+        "n_undefined": 0
+      },
+      "validation": {
+        "n": 128,
+        "mae": 0.02610908390222825,
+        "rmse": 0.035110918682134014,
+        "r2": 0.690802382823583,
+        "smape": 4.184075331384096,
+        "coverage": 1.0,
+        "n_undefined": 0
+      },
+      "test": {
+        "n": 96,
+        "mae": 0.0172319623045709,
+        "rmse": 0.023236261592816453,
+        "r2": 0.8645460439658188,
+        "smape": 2.708171213552708,
+        "coverage": 1.0,
+        "n_undefined": 0
+      }
+    },
+    "seasonal_positivity_baseline": {
+      "train": {
+        "n": 112,
+        "mae": 0.04712999802713412,
+        "rmse": 0.06212360617149077,
+        "r2": 0.09412505513685554,
+        "smape": 7.418425979762255,
+        "coverage": 0.4,
+        "n_undefined": 168
+      },
+      "validation": {
+        "n": 128,
+        "mae": 0.044369383833174986,
+        "rmse": 0.06192072243079395,
+        "r2": 0.03833506296430722,
+        "smape": 7.283383035232753,
+        "coverage": 1.0,
+        "n_undefined": 0
+      },
+      "test": {
+        "n": 96,
+        "mae": 0.032780423806149324,
+        "rmse": 0.03996165712355664,
+        "r2": 0.5993675179820743,
+        "smape": 5.293110629968606,
+        "coverage": 1.0,
+        "n_undefined": 0
+      }
+    },
+    "hist_gradient_boosting": {
+      "train": {
+        "n": 280,
+        "mae": 0.014504184555463638,
+        "rmse": 0.020836842648303176,
+        "r2": 0.9140610019735417,
+        "smape": 2.3530721724485786
+      },
+      "validation": {
+        "n": 128,
+        "mae": 0.027358040318289242,
+        "rmse": 0.035499964319112925,
+        "r2": 0.6839123079070952,
+        "smape": 4.424071192005866
+      },
+      "test": {
+        "n": 96,
+        "mae": 0.02385063700652625,
+        "rmse": 0.031641991483427306,
+        "r2": 0.7488189926250375,
+        "smape": 3.8610297159563634
+      }
+    }
+  },
+  "feature_set_search": [
+    {
+      "feature_set": "positivity_persistence_features",
+      "features": [
+        "malaria_positivity",
+        "lag1_malaria_positivity",
+        "positivity_change",
+        "calendar_month",
+        "district_encoded"
+      ],
+      "val_mae": 0.029283833191734963,
+      "val_rmse": 0.03870817525297755,
+      "val_r2": 0.6241996763953355,
+      "val_smape": 4.759013690122574,
+      "params": {
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "l2_regularization": 1.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    },
+    {
+      "feature_set": "positivity_plus_tests",
+      "features": [
+        "malaria_positivity",
+        "lag1_malaria_positivity",
+        "positivity_change",
+        "calendar_month",
+        "district_encoded",
+        "malaria_tests"
+      ],
+      "val_mae": 0.028659423545850347,
+      "val_rmse": 0.03750848413131471,
+      "val_r2": 0.6471332169002715,
+      "val_smape": 4.647130725193814,
+      "params": {
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "l2_regularization": 1.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    },
+    {
+      "feature_set": "positivity_plus_climate",
+      "features": [
+        "malaria_positivity",
+        "lag1_malaria_positivity",
+        "positivity_change",
+        "calendar_month",
+        "district_encoded",
+        "rainfall_mm",
+        "lag1_rainfall_mm",
+        "lag2_rainfall_mm",
+        "temperature_c",
+        "lag1_temperature_c",
+        "humidity_percent",
+        "lag1_humidity_percent"
+      ],
+      "val_mae": 0.027615902163999125,
+      "val_rmse": 0.03581951925555467,
+      "val_r2": 0.6781961334750883,
+      "val_smape": 4.457222630573952,
+      "params": {
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "l2_regularization": 1.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    },
+    {
+      "feature_set": "positivity_tests_climate",
+      "features": [
+        "malaria_positivity",
+        "lag1_malaria_positivity",
+        "positivity_change",
+        "calendar_month",
+        "district_encoded",
+        "malaria_tests",
+        "rainfall_mm",
+        "lag1_rainfall_mm",
+        "lag2_rainfall_mm",
+        "temperature_c",
+        "lag1_temperature_c",
+        "humidity_percent",
+        "lag1_humidity_percent"
+      ],
+      "val_mae": 0.027358040318289242,
+      "val_rmse": 0.035499964319112925,
+      "val_r2": 0.6839123079070952,
+      "val_smape": 4.424071192005866,
+      "params": {
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "l2_regularization": 0.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    }
+  ],
+  "selected_feature_set": "positivity_tests_climate",
+  "permutation_importance_validation": [
+    {
+      "feature": "malaria_positivity",
+      "permutation_importance_mean_mae": 0.03775539432814417,
+      "permutation_importance_std": 0.0027593529613496397
+    },
+    {
+      "feature": "rainfall_mm",
+      "permutation_importance_mean_mae": 0.0014339270924747243,
+      "permutation_importance_std": 0.0009346860155110576
+    },
+    {
+      "feature": "lag1_rainfall_mm",
+      "permutation_importance_mean_mae": 0.0006596835083465218,
+      "permutation_importance_std": 0.0001960811214207274
+    },
+    {
+      "feature": "temperature_c",
+      "permutation_importance_mean_mae": 0.0006036943913707377,
+      "permutation_importance_std": 0.00023480869475984113
+    },
+    {
+      "feature": "malaria_tests",
+      "permutation_importance_mean_mae": 0.0005163575384545182,
+      "permutation_importance_std": 0.0006403927671355289
+    },
+    {
+      "feature": "lag1_malaria_positivity",
+      "permutation_importance_mean_mae": 0.00044312223714281786,
+      "permutation_importance_std": 0.0002596597231671621
+    },
+    {
+      "feature": "positivity_change",
+      "permutation_importance_mean_mae": 0.0003112979310025259,
+      "permutation_importance_std": 0.00029270137430909644
+    },
+    {
+      "feature": "district_encoded",
+      "permutation_importance_mean_mae": 0.00014969362570001096,
+      "permutation_importance_std": 0.0002520097837198503
+    },
+    {
+      "feature": "lag1_temperature_c",
+      "permutation_importance_mean_mae": 1.9856740607580857e-07,
+      "permutation_importance_std": 0.000384908037235776
+    },
+    {
+      "feature": "lag1_humidity_percent",
+      "permutation_importance_mean_mae": -0.0001120970585983632,
+      "permutation_importance_std": 0.00010882101399705234
+    },
+    {
+      "feature": "calendar_month",
+      "permutation_importance_mean_mae": -0.00037818505352005103,
+      "permutation_importance_std": 0.00019714093395703514
+    },
+    {
+      "feature": "lag2_rainfall_mm",
+      "permutation_importance_mean_mae": -0.00040390084565241935,
+      "permutation_importance_std": 0.00020392541934698702
+    },
+    {
+      "feature": "humidity_percent",
+      "permutation_importance_mean_mae": -0.0005006271969477883,
+      "permutation_importance_std": 0.00023155438595006582
+    }
+  ],
+  "overfitting": {
+    "flag": "some_overfitting",
+    "note": "Validation MAE is substantially higher than train MAE.",
+    "train_mae": 0.014504184555463638,
+    "validation_mae": 0.027358040318289242,
+    "test_mae": 0.02385063700652625,
+    "val_over_train_mae_ratio": 1.8862170578202988
+  },
+  "baseline_comparison": {
+    "validation_histgb_beats_persistence_mae": false,
+    "validation_mae_lift_vs_persist_pct": -4.783608726901379,
+    "validation_histgb_beats_persistence_rmse": false,
+    "validation_histgb_beats_seasonal_mae": true,
+    "test_histgb_beats_persistence_mae": false,
+    "test_mae_lift_vs_persist_pct": -38.40929190171046,
+    "test_persistence_mae": 0.0172319623045709,
+    "test_histgb_mae": 0.02385063700652625,
+    "full_table_persistence_mae_reference": 0.025689312169325584,
+    "note": "The 0.026 figure is full-table persistence MAE. The decision metric requested is untouched test MAE vs test persistence."
+  },
+  "leakage_audit": {
+    "target_in_features": false,
+    "encoder_fit_on": "train_fold_only",
+    "test_used_for_model_selection": false,
+    "nan_policy": "JSON null \u2192 numpy.nan"
+  },
+  "recommendation": "NOT RECOMMENDED FOR FURTHER VALIDATION",
+  "recommendation_reason": "HistGradientBoosting does not beat positivity persistence on validation MAE (0.0274 vs 0.0261)."
+}

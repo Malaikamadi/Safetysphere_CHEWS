@@ -1,0 +1,49 @@
+{
+  "model_name": "malaria_positivity_forecast_v1",
+  "purpose": "Forecast district-level malaria positivity (confirmed/tests) one calendar month ahead.",
+  "intended_use": "Early-warning and preparedness decision support. Not a clinical diagnosis. Not a case-count forecast.",
+  "data": {
+    "source": "Historical DHIS2 malaria Analytics joined to Open-Meteo Archive monthly climate.",
+    "filtered_rows": 504,
+    "original_panel_rows": 535,
+    "geography": "16 Sierra Leone districts.",
+    "temporal_coverage": {
+      "feature_periods": "202307\u2013202602",
+      "target_periods": "202308\u2013202603"
+    }
+  },
+  "features": [
+    "malaria_positivity",
+    "lag1_malaria_positivity",
+    "positivity_change",
+    "calendar_month",
+    "district_encoded",
+    "malaria_tests",
+    "rainfall_mm",
+    "lag1_rainfall_mm",
+    "lag2_rainfall_mm",
+    "temperature_c",
+    "lag1_temperature_c",
+    "humidity_percent",
+    "lag1_humidity_percent"
+  ],
+  "target": "malaria_confirmed(t+1) / malaria_tests(t+1) when tests(t+1) > 0",
+  "algorithm": "HistGradientBoostingRegressor",
+  "evaluation_split": "chronological by feature_period: train 202307-202412, val 202501-202508, test 202509-202602",
+  "primary_baseline": "positivity persistence: positivity(t)",
+  "limitations": [
+    "Positivity still depends on who seeks care, who is tested, and facility reporting.",
+    "Typical facility completeness on kept pairs is about 0.60.",
+    "HMIS Analytics returned no cells for 202604 and 202607; those months were not imputed.",
+    "Relatively small district-month sample (504 rows, 16 districts, 32 feature months).",
+    "Climate variables are Archive month t or earlier, not a forecast of t+1 weather.",
+    "One-month-ahead forecasting model only.",
+    "Not a causal model.",
+    "Not a clinical diagnostic model.",
+    "Not connected to the CHEWS dashboard or risk engine in this package.",
+    "A successful fit is not evidence of usefulness unless the model beats positivity persistence."
+  ],
+  "missing_data_policy": "Legitimate historical gaps remain NaN. Never filled with zero.",
+  "review_status": "NOT RECOMMENDED FOR FURTHER VALIDATION",
+  "review_status_reason": "HistGradientBoosting does not beat positivity persistence on validation MAE (0.0274 vs 0.0261)."
+}

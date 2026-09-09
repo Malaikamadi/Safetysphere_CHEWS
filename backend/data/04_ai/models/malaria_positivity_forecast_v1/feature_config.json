@@ -1,0 +1,74 @@
+{
+  "core_features": [
+    "malaria_positivity",
+    "lag1_malaria_positivity",
+    "positivity_change",
+    "calendar_month",
+    "district_encoded"
+  ],
+  "climate_features": [
+    "rainfall_mm",
+    "lag1_rainfall_mm",
+    "lag2_rainfall_mm",
+    "temperature_c",
+    "lag1_temperature_c",
+    "humidity_percent",
+    "lag1_humidity_percent"
+  ],
+  "optional_features_evaluated": [
+    "malaria_tests",
+    "rainfall_mm",
+    "lag1_rainfall_mm",
+    "lag2_rainfall_mm",
+    "temperature_c",
+    "lag1_temperature_c",
+    "humidity_percent",
+    "lag1_humidity_percent"
+  ],
+  "final_features": [
+    "malaria_positivity",
+    "lag1_malaria_positivity",
+    "positivity_change",
+    "calendar_month",
+    "district_encoded",
+    "malaria_tests",
+    "rainfall_mm",
+    "lag1_rainfall_mm",
+    "lag2_rainfall_mm",
+    "temperature_c",
+    "lag1_temperature_c",
+    "humidity_percent",
+    "lag1_humidity_percent"
+  ],
+  "target": "target_malaria_positivity_next_period",
+  "missing_value_policy": "preserve legitimate NaN values",
+  "district_encoding": "train_fold_only",
+  "feature_order": [
+    "malaria_positivity",
+    "lag1_malaria_positivity",
+    "positivity_change",
+    "calendar_month",
+    "district_encoded",
+    "malaria_tests",
+    "rainfall_mm",
+    "lag1_rainfall_mm",
+    "lag2_rainfall_mm",
+    "temperature_c",
+    "lag1_temperature_c",
+    "humidity_percent",
+    "lag1_humidity_percent"
+  ],
+  "prediction_clip": "[0, 1]",
+  "not_included_due_to_redundancy": [
+    "malaria_confirmed",
+    "lag1_malaria_confirmed",
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed",
+    "confirmed_change",
+    "confirmed_pct_change",
+    "lag1_malaria_tests",
+    "testing_change",
+    "testing_pct_change",
+    "three_month_rainfall_accumulation"
+  ]
+}
