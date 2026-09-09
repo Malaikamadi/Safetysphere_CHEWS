@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/chews_malaria_features.schema.json",
+  "title": "CHEWS malaria feature row (downstream join — not raw DHIS2)",
+  "description": "Joined climate-health feature contract after separate source pipelines. Climate/environment/population are NOT DHIS2 fields. Prototype GradientBoosting malaria_predictor still requires the synthetic training vector listed under prototype_gbt_features; it is not trained on live DHIS2. All health and climate cells are nullable so missing is not stored as 0. Legacy training CSVs used malaria_cases as the target name; live health uses malaria_confirmed.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "source_period": { "type": ["string", "null"] },
+    "period": { "type": ["string", "null"] },
+    "period_type": { "type": ["string", "null"] },
+    "normalized_period": { "type": ["string", "null"] },
+    "district": { "type": ["string", "null"] },
+    "facility": { "type": ["string", "null"] },
+    "org_unit_id": { "type": ["string", "null"] },
+    "latitude": { "type": ["number", "null"] },
+    "longitude": { "type": ["number", "null"] },
+    "malaria_confirmed": { "type": ["number", "null"] },
+    "malaria_confirmed_u5": { "type": ["number", "null"] },
+    "malaria_tests": { "type": ["number", "null"] },
+    "malaria_rdt_positive": { "type": ["number", "null"] },
+    "rainfall_mm": { "type": ["number", "null"], "description": "Climate source — not DHIS2" },
+    "temperature_c": { "type": ["number", "null"], "description": "Climate source — not DHIS2" },
+    "humidity_percent": { "type": ["number", "null"], "description": "Climate source — not DHIS2" },
+    "water_stagnation_index": { "type": ["number", "null"], "description": "Environmental source — not DHIS2" },
+    "mosquito_breeding_sites": { "type": ["number", "null"], "description": "Environmental source — not DHIS2" },
+    "population_density": { "type": ["number", "null"], "description": "Population source — not DHIS2 Analytics malaria" },
+    "reported_fever_cases": {
+      "type": ["number", "null"],
+      "description": "Legacy prototype GBT input. Not the same as malaria_confirmed. Do not silently copy DHIS2 confirmed counts here."
+    },
+    "malaria_cases": {
+      "type": ["number", "null"],
+      "description": "LEGACY synthetic training TARGET name only. Live DHIS2 field is malaria_confirmed."
+    },
+    "district_encoded": { "type": ["integer", "null"] },
+    "rain_x_stagnation": { "type": ["number", "null"] },
+    "temp_humidity_index": { "type": ["number", "null"] },
+    "breeding_density": { "type": ["number", "null"] },
+    "prototype_gbt_compatible": {
+      "type": "boolean",
+      "description": "True only when all malaria_predictor.predict() inputs are present. Live DHIS2-only rows are false."
+    },
+    "join_notes": { "type": ["string", "null"] }
+  }
+}

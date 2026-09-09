@@ -1,15 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "DHIS2 Analytics normalized row",
-  "description": "Staging record after parsing Analytics rows [dx, pe, ou, value]. Missing values remain null.",
-  "type": "object",
-  "required": ["indicator_id", "period", "org_unit_id"],
-  "properties": {
-    "indicator_id": { "type": "string" },
-    "period": { "type": "string" },
-    "org_unit_id": { "type": "string" },
-    "value": { "type": ["number", "null"] },
-    "value_raw": {},
-    "invalid_numeric": { "type": "boolean" }
-  }
+  "title": "DHIS2 Analytics normalized row (alias)",
+  "description": "Canonical definition lives in dhis2_analytics.schema.json $defs.normalized_record.",
+  "$ref": "./dhis2_analytics.schema.json#/$defs/normalized_record"
 }

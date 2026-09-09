@@ -19,6 +19,8 @@ from typing import Any, Optional
 from config import dhis2 as cfg
 from services import dhis2_orgunits, dhis2_service
 from services.dhis2_service import Dhis2Client, parse_analytics_rows
+from services.dhis2_periods import classify_period, is_valid_source_period
+from services.chews_feature_join import join_feature_rows
 
 logger = logging.getLogger("chews.dhis2")
 
@@ -54,11 +56,9 @@ def period_sort_key(period: str) -> str:
 
 
 def is_valid_period(period: str) -> bool:
-    if not period:
-        return False
-    if period in cfg.RELATIVE_PERIODS:
-        return True
-    return bool(_PERIOD_RE.match(period))
+    """Row periods must be concrete DHIS2 calendars, not relative query tokens."""
+    info = classify_period(period)
+    return info["period_type"] in {"monthly", "weekly", "daily", "quarterly", "yearly"}
 
 
 def validate_records(
@@ -193,7 +193,10 @@ def build_long_rows(records: list[dict], mapped_units: list[dict], *, source: st
             "indicator_id": uid,
             "indicator_key": id_to_key.get(uid),
             "indicator_name": cfg.indicator_name_for_id(uid) if uid else None,
-            "period": rec.get("period"),
+            "period": rec.get("source_period") or rec.get("period"),
+            "source_period": rec.get("source_period") or rec.get("period"),
+            "period_type": rec.get("period_type"),
+            "normalized_period": rec.get("normalized_period"),
             "org_unit_id": rec.get("org_unit_id"),
             "facility_name": meta.get("mfl_facility_name") or meta.get("display_name"),
             "facility_level": meta.get("level"),
@@ -216,7 +219,8 @@ def build_long_rows(records: list[dict], mapped_units: list[dict], *, source: st
 
 def build_wide_table(long_rows: list[dict]) -> list[dict]:
     """
-    Pivot count indicators only. Percentage indicators stay in the long table.
+    Pivot count indicators for aggregation (sums). Percentage indicators are omitted
+    so they are never treated as counts. See build_curated_malaria() for the health contract.
     Missing cells remain None (not 0).
     """
     count_keys = set(cfg.DHIS2_COUNT_INDICATORS)

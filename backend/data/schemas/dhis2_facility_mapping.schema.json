@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/dhis2_facility_mapping.schema.json",
+  "title": "DHIS2 organisation unit to CHEWS MFL mapping",
+  "description": "Join layer only. Does not invent operational MFL fields. Unmatched facilities keep dhis2_org_unit_id and set mfl_mapped=false.",
+  "type": "object",
+  "required": ["dhis2_org_unit_id"],
+  "properties": {
+    "dhis2_org_unit_id": { "type": "string" },
+    "display_name": { "type": ["string", "null"] },
+    "level": { "type": ["integer", "null"] },
+    "parent_id": { "type": ["string", "null"] },
+    "parent_name": { "type": ["string", "null"] },
+    "district_id": { "type": ["string", "null"] },
+    "district_name": { "type": ["string", "null"] },
+    "council_id": { "type": ["string", "null"] },
+    "council_name": { "type": ["string", "null"] },
+    "zone_id": { "type": ["string", "null"] },
+    "zone_name": { "type": ["string", "null"] },
+    "longitude": { "type": ["number", "null"] },
+    "latitude": { "type": ["number", "null"] },
+    "geometry": { "type": ["object", "null"] },
+    "facility_type": { "type": ["string", "null"], "description": "From DHIS2 groups if present; otherwise null — not guessed." },
+    "mfl_mapped": { "type": "boolean" },
+    "mfl_facility_id": { "type": ["string", "null"] },
+    "unmapped": { "type": "boolean" }
+  }
+}

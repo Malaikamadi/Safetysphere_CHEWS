@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/dhis2_analytics.schema.json",
+  "title": "DHIS2 Analytics (raw envelope + normalized health cells)",
+  "description": "Health-data source contract for Sierra Leone HMIS Analytics. Climate, environment, and population do not belong here. Period strings are stored exactly as DHIS2 returns them (e.g. 202509). Missing values are null, never coerced to 0.",
+  "type": "object",
+  "$defs": {
+    "normalized_record": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["indicator_id", "period", "org_unit_id", "source_period"],
+      "properties": {
+        "indicator_id": {
+          "type": "string",
+          "description": "DHIS2 dx UID (e.g. XHQqFqfUfIf = malaria confirmed RDT/Microscopy sum). Never aliased as malaria_cases."
+        },
+        "period": {
+          "type": "string",
+          "description": "Exact Analytics pe cell. Example verified in SL HMIS: 202509 (monthly). Do not convert to ISO week."
+        },
+        "source_period": {
+          "type": "string",
+          "description": "Copy of the Analytics period as returned. Immutable through staging."
+        },
+        "period_type": {
+          "type": ["string", "null"],
+          "enum": ["monthly", "weekly", "daily", "quarterly", "yearly", "relative", "unknown", null]
+        },
+        "normalized_period": {
+          "type": ["string", "null"],
+          "description": "Filled only when period semantics are confirmed. For monthly YYYYMM this equals source_period. Never invented as YYYYW## from YYYYMM."
+        },
+        "org_unit_id": {
+          "type": "string",
+          "description": "DHIS2 organisation unit UID"
+        },
+        "value": {
+          "type": ["number", "null"],
+          "description": "Numeric cell. null = not reported. 0 = reported zero."
+        },
+        "value_raw": {},
+        "invalid_numeric": { "type": "boolean" }
+      }
+    }
+  },
+  "properties": {
+    "headers": { "type": "array" },
+    "metaData": { "type": "object" },
+    "rows": {
+      "type": "array",
+      "description": "Analytics rows: [data_dimension, period, organisation_unit, value]",
+      "items": {
+        "type": "array",
+        "minItems": 4
+      }
+    },
+    "width": { "type": "integer" },
+    "height": { "type": "integer" },
+    "normalized": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/normalized_record" }
+    }
+  }
+}

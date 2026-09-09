@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/chews_climate.schema.json",
+  "title": "CHEWS climate / weather observation (non-DHIS2)",
+  "description": "Separate source layer. These fields are not DHIS2 Analytics indicators. Join to health data later via district, org_unit_id, or coordinates plus a confirmed period key.",
+  "type": "object",
+  "properties": {
+    "period": { "type": ["string", "null"] },
+    "period_type": { "type": ["string", "null"] },
+    "district": { "type": ["string", "null"] },
+    "org_unit_id": { "type": ["string", "null"] },
+    "latitude": { "type": ["number", "null"] },
+    "longitude": { "type": ["number", "null"] },
+    "rainfall_mm": { "type": ["number", "null"] },
+    "temperature_c": { "type": ["number", "null"] },
+    "humidity_percent": { "type": ["number", "null"] },
+    "source": { "type": ["string", "null"] }
+  }
+}

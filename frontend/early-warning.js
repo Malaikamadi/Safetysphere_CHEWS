@@ -621,7 +621,7 @@ function openAiDrawer(title, locationId) {
   }
   
   aiDrawer.classList.add("is-open");
-  if (window.lucide) lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 }
 
 if (closeDrawerBtn) {

@@ -17,6 +17,7 @@ import urllib.request
 from typing import Any, Callable, Optional
 
 from config import dhis2 as cfg
+from services.dhis2_periods import classify_period
 
 logger = logging.getLogger("chews.dhis2")
 
@@ -82,9 +83,14 @@ def parse_analytics_rows(payload: Any) -> list[dict]:
         raw_value = row[3]
         numeric = parse_numeric(raw_value)
         invalid_numeric = raw_value not in (None, "") and numeric is None
+        source_period = str(row[1]).strip() if row[1] is not None else ""
+        classified = classify_period(source_period)
         records.append({
             "indicator_id": str(row[0]).strip() if row[0] is not None else "",
-            "period": str(row[1]).strip() if row[1] is not None else "",
+            "period": source_period,
+            "source_period": source_period,
+            "period_type": classified["period_type"],
+            "normalized_period": classified["normalized_period"],
             "org_unit_id": str(row[2]).strip() if row[2] is not None else "",
             "value": numeric,
             "value_raw": raw_value,

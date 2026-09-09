@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/chews_population.schema.json",
+  "title": "CHEWS population / vulnerability (non-DHIS2 unless a future verified indicator is added)",
+  "description": "population_density is not a Sierra Leone Analytics malaria indicator in the current CHEWS contract. Join later by district, facility, org unit, or coordinates.",
+  "type": "object",
+  "properties": {
+    "period": { "type": ["string", "null"] },
+    "district": { "type": ["string", "null"] },
+    "org_unit_id": { "type": ["string", "null"] },
+    "population_density": { "type": ["number", "null"] },
+    "source": { "type": ["string", "null"] }
+  }
+}

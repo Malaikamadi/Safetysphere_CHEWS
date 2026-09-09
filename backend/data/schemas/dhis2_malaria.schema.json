@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/dhis2_malaria.schema.json",
+  "title": "Curated DHIS2 malaria (health only)",
+  "description": "Facility-period malaria indicators after Analytics normalization and org-unit mapping. Not a climate dataset. XHQqFqfUfIf is malaria_confirmed (RDT/Microscopy sum), never malaria_cases. Missing indicator cells are null, not 0. child_malaria_death is a percentage and must not be summed as a count.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["org_unit_id", "source_period"],
+  "properties": {
+    "source_period": { "type": "string", "description": "Exact DHIS2 period, e.g. 202509" },
+    "period": { "type": "string", "description": "Same as source_period unless a later layer copies a confirmed normalized_period" },
+    "period_type": { "type": ["string", "null"] },
+    "normalized_period": { "type": ["string", "null"] },
+    "org_unit_id": { "type": "string" },
+    "facility_name": { "type": ["string", "null"] },
+    "facility_level": { "type": ["integer", "null"] },
+    "district_id": { "type": ["string", "null"] },
+    "district_name": { "type": ["string", "null"] },
+    "council_id": { "type": ["string", "null"] },
+    "council_name": { "type": ["string", "null"] },
+    "zone_id": { "type": ["string", "null"] },
+    "zone_name": { "type": ["string", "null"] },
+    "latitude": { "type": ["number", "null"] },
+    "longitude": { "type": ["number", "null"] },
+    "malaria_confirmed": {
+      "type": ["number", "null"],
+      "description": "XHQqFqfUfIf Malaria confirmed (RDT/Microscopy) (sum)"
+    },
+    "malaria_confirmed_u5": {
+      "type": ["number", "null"],
+      "description": "tjRoHuika9k Malaria confirmed (RDT/Microscopy) 0-4 years (sum). Not total malaria."
+    },
+    "malaria_tests": {
+      "type": ["number", "null"],
+      "description": "mwrOKePWg2r Malaria test done at OPD (sum)"
+    },
+    "malaria_rdt_positive": {
+      "type": ["number", "null"],
+      "description": "VWdhdKpLVof Malaria RDT positive (Facility/Community)"
+    },
+    "child_malaria_death": {
+      "type": ["number", "null"],
+      "description": "MM7wnFwsi7q % of Child death - Malaria - DPPI-DHAS (percentage, not a count)"
+    },
+    "mfl_mapped": { "type": ["boolean", "null"] },
+    "source": { "type": ["string", "null"] },
+    "ingested_at": { "type": ["string", "null"] }
+  }
+}

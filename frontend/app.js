@@ -248,7 +248,7 @@ async function initMap() {
     mapData = await res.json();
     renderMapLayers(mapData);
     setupLayerToggles();
-  } catch (err) {
+    } catch (err) {
     console.error("Failed to load map data", err);
   }
 }

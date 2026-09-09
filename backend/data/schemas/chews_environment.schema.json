@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/chews_environment.schema.json",
+  "title": "CHEWS environmental / flood context (non-DHIS2)",
+  "description": "Separate source layer for water stagnation, breeding sites, flood features. Not HMIS Analytics.",
+  "type": "object",
+  "properties": {
+    "period": { "type": ["string", "null"] },
+    "district": { "type": ["string", "null"] },
+    "org_unit_id": { "type": ["string", "null"] },
+    "water_stagnation_index": { "type": ["number", "null"] },
+    "mosquito_breeding_sites": { "type": ["number", "null"] },
+    "source": { "type": ["string", "null"] }
+  }
+}

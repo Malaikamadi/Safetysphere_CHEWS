@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chews.safetysphere.local/schemas/dhis2_organisation_unit.schema.json",
+  "title": "DHIS2 organisation unit",
+  "description": "Generic HMIS org-unit metadata. Sierra Leone HMIS levels observed: 1 country, 2 district, 3 council, 4 zone, 5 health facility. Names are not hardcoded per record; the mapping layer walks parent/ancestors. Geometry coordinates are [longitude, latitude].",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string" },
+    "displayName": { "type": ["string", "null"] },
+    "level": { "type": ["integer", "null"] },
+    "featureType": { "type": ["string", "null"] },
+    "parent": {
+      "type": ["object", "null"],
+      "properties": {
+        "id": { "type": "string" },
+        "displayName": { "type": ["string", "null"] },
+        "level": { "type": ["integer", "null"] }
+      }
+    },
+    "ancestors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "displayName": { "type": ["string", "null"] },
+          "level": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "geometry": {
+      "type": ["object", "string", "null"],
+      "description": "GeoJSON geometry. Point coordinates are [lon, lat]."
+    },
+    "longitude": { "type": ["number", "null"] },
+    "latitude": { "type": ["number", "null"] },
+    "organisationUnitGroups": { "type": "array" }
+  }
+}
