@@ -46,7 +46,11 @@ backend/data/
 
 | Data Domain | Raw Location | Key Schema |
 |---|---|---|
-| DHIS2 exports | `01_raw/dhis2/` | `schemas/dhis2_weekly_epi.schema.json` |
+| DHIS2 health (Analytics) | `01_raw/dhis2/` | `schemas/dhis2_analytics.schema.json` |
+| DHIS2 org units | (same ingest) | `schemas/dhis2_organisation_unit.schema.json` |
+| Curated DHIS2 malaria | `03_curated/dhis2_malaria/` | `schemas/dhis2_malaria.schema.json` |
+| Joined malaria features | `04_ai/features/` | `schemas/chews_malaria_features.schema.json` |
+| Deprecated mixed “weekly epi” name | — | `schemas/dhis2_weekly_epi.schema.json` → feature schema |
 | Master Facility List | `01_raw/master_facility_list/` | `schemas/master_facility_list.schema.json` |
 | Climate data | `01_raw/climate/` | — |
 | Population | `01_raw/population/` | — |

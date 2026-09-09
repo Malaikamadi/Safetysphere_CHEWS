@@ -113,7 +113,7 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 [Not implemented] Parquet materialisation, cron on Vercel
 ```
 
-JSON Schemas exist under `backend/data/schemas/` (`dhis2_weekly_epi`, `master_facility_list`, `community_reports`). **Automatic enforcement at API ingest is not verifiable as a running pipeline** (no pipeline package). FastAPI Pydantic validates HTTP bodies only.
+JSON Schemas live under `backend/data/schemas/`. Raw DHIS2 uses `dhis2_analytics.schema.json`. The old `dhis2_weekly_epi.schema.json` filename is a **deprecated alias** of `chews_malaria_features.schema.json` (downstream join, including climate that is **not** from DHIS2).
 
 ---
 

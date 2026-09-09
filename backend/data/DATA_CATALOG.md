@@ -60,11 +60,18 @@ Mock fixtures: `01_raw/dhis2/mock/`. Live extracts are written under `01_raw/dhi
 
 ## Schemas (Data Contracts)
 
-| Schema | Validates | Required columns |
+| Schema | Validates | Notes |
 |---|---|---|
-| `dhis2_weekly_epi.schema.json` | DHIS2 malaria surveillance data | district, rainfall_mm, malaria_cases + 6 more |
-| `master_facility_list.schema.json` | MFL facility records | facility_name, district, facility_type + 7 more |
-| `community_reports.schema.json` | CHW field reports | date, district, community, reported_flooding + 5 more |
+| `dhis2_analytics.schema.json` | Raw/normalized Analytics health cells | Period as returned (e.g. 202509) |
+| `dhis2_organisation_unit.schema.json` | Org unit metadata | Generic; mapping walks hierarchy |
+| `dhis2_malaria.schema.json` | Curated facility-period malaria | `malaria_confirmed`, not `malaria_cases` |
+| `chews_malaria_features.schema.json` | Downstream joined features | Climate fields are not DHIS2 |
+| `dhis2_weekly_epi.schema.json` | Deprecated alias | `$ref` to feature schema |
+| `chews_climate.schema.json` | Climate/weather | Separate source |
+| `chews_environment.schema.json` | Flood/env | Separate source |
+| `chews_population.schema.json` | Population density | Separate source |
+| `master_facility_list.schema.json` | MFL facility records | |
+| `community_reports.schema.json` | CHW field reports | |
 
 ---
 

@@ -21,20 +21,71 @@ DHIS2 is never called from the browser.
 
 ## Architecture and data flow
 
+DHIS2 is the **health** source. Climate, flood/environment, population, MFL, and community reports are **separate** source layers. They are not collapsed into one raw schema.
+
 ```mermaid
-flowchart LR
-    HMIS["sl.dhis2.org/hmis23"] --> SVC["services/dhis2_service.py"]
-    MOCK["01_raw/dhis2/mock/"] --> SVC
-    SVC --> RAW["01_raw/dhis2/analytics/*.json"]
-    RAW --> STG["02_staging/dhis2 normalized rows"]
-    STG --> MAP["dhis2_orgunits + existing MFL"]
-    MAP --> CUR["03_curated/surveillance"]
-    CUR --> FEAT["04_ai/features DHIS2 lags/rolling"]
-    CUR --> RE["existing risk_engine.assess"]
-    CUR --> LIVE["optional healthcare live overlay"]
+flowchart TD
+    subgraph sources [Source layer]
+        DHIS2[DHIS2 HMIS Analytics]
+        WX[Weather / climate]
+        FL[Flood / environment]
+        POP[Population / vulnerability]
+        MFL[MFL / facilities]
+        CHW[Community reports]
+    end
+    subgraph raw [Raw]
+        R1[01_raw/dhis2]
+        R2[01_raw/climate]
+        R3[01_raw/community_reports]
+        R4[01_raw/master_facility_list]
+    end
+    subgraph stg [Staging]
+        S1[02_staging/dhis2]
+        S2[02_staging/climate]
+    end
+    subgraph cur [Curated]
+        C1[03_curated/dhis2_malaria]
+        C2[03_curated/facilities]
+        C3[03_curated/climate_health]
+    end
+    FE[Feature join chews_feature_join.py]
+    AI[04_ai/features]
+    GBT[Prototype malaria GBT — synthetic contract only]
+    RE[Existing risk_engine]
+    UI[Dashboard / alerts]
+
+    DHIS2 --> R1 --> S1 --> C1
+    WX --> R2 --> S2 --> C3
+    FL --> R2
+    POP --> C3
+    MFL --> R4 --> C2
+    CHW --> R3
+    C1 --> FE
+    C3 --> FE
+    C2 --> FE
+    FE --> AI
+    AI -.->|not auto-fed; incompatible| GBT
+    C1 --> RE
+    RE --> UI
 ```
 
-Existing lake layers are reused (`01_raw` → `02_staging` → `03_curated` → `04_ai`). A parallel `data/raw/` tree is **not** created.
+**Schemas**
+
+| Contract | File | Layer |
+| -------- | ---- | ----- |
+| Raw/normalized Analytics | `dhis2_analytics.schema.json` | health source |
+| Organisation unit | `dhis2_organisation_unit.schema.json` | health source |
+| Facility↔MFL map | `dhis2_facility_mapping.schema.json` | join |
+| Curated malaria health | `dhis2_malaria.schema.json` | curated health |
+| Climate (non-DHIS2) | `chews_climate.schema.json` | climate source |
+| Environment (non-DHIS2) | `chews_environment.schema.json` | env source |
+| Population (non-DHIS2) | `chews_population.schema.json` | population source |
+| Joined model features | `chews_malaria_features.schema.json` | downstream |
+| Deprecated mixed filename | `dhis2_weekly_epi.schema.json` | `$ref` alias of the feature schema |
+
+`XHQqFqfUfIf` is **malaria_confirmed**, never `malaria_cases`. Periods such as `202509` stay monthly; they are not rewritten as `2025W09`.
+
+Existing lake prefixes (`01_raw`, …) are reused. A second `data/raw/` tree is not created.
 
 ---
 
@@ -48,7 +99,7 @@ Core malaria (queried by default):
 | malaria_confirmed_u5 | tjRoHuika9k | Malaria confirmed (RDT/Microscopy) 0-4 years (sum) | Yes (count) |
 | malaria_tests | mwrOKePWg2r | Malaria test done at OPD (sum) | Yes (count) |
 | malaria_rdt_positive | VWdhdKpLVof | Malaria RDT positive (Facility/Community) | Yes (count) |
-| child_malaria_death | MM7wnFwsi7q | % of Child death - Malaria - DPPI-DHAS | **No** — percentage; long table only |
+| child_malaria_death | MM7wnFwsi7q | % of Child death - Malaria - DPPI-DHAS | Curated nullable field; **not** summed as a count |
 
 Supporting (config only unless `DHIS2_INCLUDE_SUPPORTING=true`):
 
