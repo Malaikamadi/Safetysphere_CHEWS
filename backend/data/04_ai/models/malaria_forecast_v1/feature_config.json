@@ -1,0 +1,49 @@
+{
+  "core_features": [
+    "malaria_confirmed",
+    "lag1_malaria_confirmed",
+    "malaria_tests",
+    "rainfall_mm",
+    "temperature_c",
+    "humidity_percent",
+    "calendar_month",
+    "district_encoded"
+  ],
+  "optional_features": [
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed",
+    "malaria_rdt_positive",
+    "rdt_positivity"
+  ],
+  "optional_features_included": [
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed"
+  ],
+  "final_features": [
+    "malaria_confirmed",
+    "lag1_malaria_confirmed",
+    "malaria_tests",
+    "rainfall_mm",
+    "temperature_c",
+    "humidity_percent",
+    "calendar_month",
+    "district_encoded",
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed"
+  ],
+  "target": "target_malaria_confirmed_next_period",
+  "missing_value_policy": "preserve legitimate NaN values",
+  "district_encoding": "train_fold_only",
+  "feature_order": [
+    "malaria_confirmed",
+    "lag1_malaria_confirmed",
+    "malaria_tests",
+    "rainfall_mm",
+    "temperature_c",
+    "humidity_percent",
+    "calendar_month",
+    "district_encoded",
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed"
+  ]
+}

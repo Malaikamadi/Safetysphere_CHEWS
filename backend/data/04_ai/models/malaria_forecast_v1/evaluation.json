@@ -1,0 +1,253 @@
+{
+  "metrics": {
+    "previous_month_baseline": {
+      "train": {
+        "n": 280,
+        "mae": 1285.275,
+        "rmse": 1678.9821289357772,
+        "r2": 0.8447629946364331,
+        "smape": 16.120559935421124
+      },
+      "validation": {
+        "n": 128,
+        "mae": 1160.203125,
+        "rmse": 1511.637868960354,
+        "r2": 0.8749912488950804,
+        "smape": 12.844967634851786
+      },
+      "test": {
+        "n": 96,
+        "mae": 863.4895833333334,
+        "rmse": 1133.0639738117172,
+        "r2": 0.9312960056931463,
+        "smape": 10.365981924353566
+      }
+    },
+    "seasonal_baseline": {
+      "train": {
+        "n": 112,
+        "mae": 2075.910714285714,
+        "rmse": 2736.3523817562054,
+        "r2": 0.5656939809527195,
+        "smape": 22.623853617671934,
+        "coverage": 0.4,
+        "n_undefined": 168
+      },
+      "validation": {
+        "n": 128,
+        "mae": 2311.484375,
+        "rmse": 3020.8571527796544,
+        "r2": 0.5007647198480953,
+        "smape": 30.73169212993068,
+        "coverage": 1.0,
+        "n_undefined": 0
+      },
+      "test": {
+        "n": 96,
+        "mae": 1333.5,
+        "rmse": 1820.1896077973122,
+        "r2": 0.8227009595072097,
+        "smape": 14.585188787503842,
+        "coverage": 1.0,
+        "n_undefined": 0
+      }
+    },
+    "hist_gradient_boosting": {
+      "train": {
+        "n": 280,
+        "mae": 506.85109483581846,
+        "rmse": 670.7796843440964,
+        "r2": 0.9752221904301677,
+        "smape": 6.360192556525947
+      },
+      "validation": {
+        "n": 128,
+        "mae": 1150.4455582750488,
+        "rmse": 1542.5134100667922,
+        "r2": 0.8698324332000995,
+        "smape": 12.779112035415071
+      },
+      "test": {
+        "n": 96,
+        "mae": 954.6435244649414,
+        "rmse": 1211.7366497669552,
+        "r2": 0.9214240552241655,
+        "smape": 10.438683722481567
+      }
+    }
+  },
+  "feature_set_search": [
+    {
+      "feature_set": "core",
+      "features": [
+        "malaria_confirmed",
+        "lag1_malaria_confirmed",
+        "malaria_tests",
+        "rainfall_mm",
+        "temperature_c",
+        "humidity_percent",
+        "calendar_month",
+        "district_encoded"
+      ],
+      "val_mae": 1151.757919254717,
+      "val_rmse": 1591.9485980040292,
+      "val_r2": 0.861355395982725,
+      "val_smape": 12.790676813927199,
+      "params": {
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "l2_regularization": 0.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    },
+    {
+      "feature_set": "core_plus_lags_rolling",
+      "features": [
+        "malaria_confirmed",
+        "lag1_malaria_confirmed",
+        "malaria_tests",
+        "rainfall_mm",
+        "temperature_c",
+        "humidity_percent",
+        "calendar_month",
+        "district_encoded",
+        "lag2_malaria_confirmed",
+        "rolling_3_malaria_confirmed"
+      ],
+      "val_mae": 1150.4455582750488,
+      "val_rmse": 1542.5134100667922,
+      "val_r2": 0.8698324332000995,
+      "val_smape": 12.779112035415071,
+      "params": {
+        "max_depth": 5,
+        "learning_rate": 0.05,
+        "l2_regularization": 1.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    },
+    {
+      "feature_set": "core_plus_all_optional",
+      "features": [
+        "malaria_confirmed",
+        "lag1_malaria_confirmed",
+        "malaria_tests",
+        "rainfall_mm",
+        "temperature_c",
+        "humidity_percent",
+        "calendar_month",
+        "district_encoded",
+        "lag2_malaria_confirmed",
+        "rolling_3_malaria_confirmed",
+        "malaria_rdt_positive",
+        "rdt_positivity"
+      ],
+      "val_mae": 1196.2755093530216,
+      "val_rmse": 1610.808938134324,
+      "val_r2": 0.8580507992247394,
+      "val_smape": 13.204514210084383,
+      "params": {
+        "max_depth": 5,
+        "learning_rate": 0.05,
+        "l2_regularization": 1.0,
+        "max_iter": 200,
+        "min_samples_leaf": 20,
+        "random_state": 42,
+        "early_stopping": false
+      }
+    }
+  ],
+  "selected_feature_set": "core_plus_lags_rolling",
+  "permutation_importance_validation": [
+    {
+      "feature": "malaria_tests",
+      "permutation_importance_mean_mae": 1861.664274710344,
+      "permutation_importance_std": 189.03694169647096
+    },
+    {
+      "feature": "malaria_confirmed",
+      "permutation_importance_mean_mae": 914.4993269017314,
+      "permutation_importance_std": 95.82387346430755
+    },
+    {
+      "feature": "temperature_c",
+      "permutation_importance_mean_mae": 174.72230098867522,
+      "permutation_importance_std": 29.46504533300543
+    },
+    {
+      "feature": "rainfall_mm",
+      "permutation_importance_mean_mae": 132.57167803418685,
+      "permutation_importance_std": 38.674230455234294
+    },
+    {
+      "feature": "district_encoded",
+      "permutation_importance_mean_mae": 84.05358544290283,
+      "permutation_importance_std": 21.387066319147987
+    },
+    {
+      "feature": "lag2_malaria_confirmed",
+      "permutation_importance_mean_mae": 70.3678872121478,
+      "permutation_importance_std": 30.87093139506262
+    },
+    {
+      "feature": "calendar_month",
+      "permutation_importance_mean_mae": 45.99693339999264,
+      "permutation_importance_std": 30.73818148725444
+    },
+    {
+      "feature": "rolling_3_malaria_confirmed",
+      "permutation_importance_mean_mae": 26.95554959438664,
+      "permutation_importance_std": 12.981662215259897
+    },
+    {
+      "feature": "lag1_malaria_confirmed",
+      "permutation_importance_mean_mae": 25.525582414057727,
+      "permutation_importance_std": 13.001098591049125
+    },
+    {
+      "feature": "humidity_percent",
+      "permutation_importance_mean_mae": 1.5509116953028865,
+      "permutation_importance_std": 16.378904707022194
+    }
+  ],
+  "overfitting": {
+    "flag": "some_overfitting",
+    "note": "Validation MAE is substantially higher than train MAE \u2014 some overfitting; judge by whether val still beats baselines.",
+    "train_mae": 506.85109483581846,
+    "validation_mae": 1150.4455582750488,
+    "test_mae": 954.6435244649414,
+    "val_over_train_mae_ratio": 2.269790023138268
+  },
+  "baseline_comparison_validation": {
+    "histgb_beats_previous_month": true,
+    "histgb_beats_seasonal": true
+  },
+  "data_quality": {
+    "filtered_rows": 504,
+    "districts": 16,
+    "feature_months": 32,
+    "null_lag1": 16,
+    "null_lag2": 32,
+    "null_rolling_3": 32,
+    "null_rdt_positivity": 80,
+    "min_district_observations": 28,
+    "max_district_observations": 32,
+    "completeness_threshold": 0.2,
+    "feature_completeness_min": 0.2217573221757322,
+    "feature_completeness_max": 0.7448275862068966
+  },
+  "leakage_audit": {
+    "target_in_features": false,
+    "malaria_confirmed_next_in_features": false,
+    "encoder_fit_on": "train_fold_only",
+    "test_used_for_model_selection": false,
+    "nan_policy": "JSON null \u2192 numpy.nan"
+  },
+  "recommendation": "RECOMMENDED FOR FURTHER VALIDATION",
+  "recommendation_reason": "HistGradientBoosting has lower validation MAE than both baselines."
+}

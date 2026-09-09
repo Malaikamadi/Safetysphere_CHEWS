@@ -1,0 +1,55 @@
+{
+  "model_name": "malaria_forecast_v1",
+  "purpose": "Forecast district-level confirmed malaria cases one calendar month ahead.",
+  "intended_use": "Early-warning and preparedness decision support. Not a clinical diagnosis.",
+  "data": {
+    "source": "Historical DHIS2 malaria Analytics (Sierra Leone HMIS) joined to Open-Meteo Archive monthly climate at district centroids.",
+    "filtered_rows": 504,
+    "original_panel_rows": 535,
+    "geography": "16 Sierra Leone districts in the filtered dataset.",
+    "temporal_coverage": {
+      "feature_periods": "202307\u2013202602",
+      "target_periods": "202308\u2013202603"
+    }
+  },
+  "features": [
+    "malaria_confirmed",
+    "lag1_malaria_confirmed",
+    "malaria_tests",
+    "rainfall_mm",
+    "temperature_c",
+    "humidity_percent",
+    "calendar_month",
+    "district_encoded",
+    "lag2_malaria_confirmed",
+    "rolling_3_malaria_confirmed"
+  ],
+  "target": "malaria_confirmed at calendar month t+1 (target_malaria_confirmed_next_period)",
+  "algorithm": "HistGradientBoostingRegressor",
+  "evaluation_split": "chronological by feature_period: train 202307-202412, val 202501-202508, test 202509-202602",
+  "limitations": [
+    "Incomplete facility reporting; training required facility_completeness \u2265 0.20 at t and t+1.",
+    "HMIS Analytics returned no cells for 202604 and 202607; those months remain missing and were not imputed.",
+    "Sparse leftover reporting in 202605/202606/202608 was excluded by the completeness/calendar filter.",
+    "Typical facility completeness on kept pairs is about 0.60 (min 0.22, max 0.75).",
+    "Confirmed malaria reflects both disease burden and reporting/testing patterns.",
+    "Relatively small district-month sample (504 rows, 16 districts, 32 feature months).",
+    "Climate variables are Archive month t, not a forecast of t+1 weather.",
+    "One-month-ahead forecasting model only.",
+    "Not a causal model.",
+    "Not a clinical diagnostic model.",
+    "Not connected to the CHEWS dashboard or risk engine in this package."
+  ],
+  "missing_data_policy": "Legitimate historical gaps remain NaN. Never filled with zero.",
+  "known_biases": [
+    "Counts scale with testing volume (malaria_tests is a covariate).",
+    "Districts/months below 20% facility completeness are out of the training distribution."
+  ],
+  "prohibited_use": [
+    "Replacing official HMIS reporting.",
+    "Diagnosing individual patients.",
+    "Using the synthetic malaria GBT feature contract (fever, stagnation, breeding sites)."
+  ],
+  "review_status": "RECOMMENDED FOR FURTHER VALIDATION",
+  "review_status_reason": "HistGradientBoosting has lower validation MAE than both baselines."
+}
