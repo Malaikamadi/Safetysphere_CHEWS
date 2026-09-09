@@ -12,6 +12,8 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import time
+import urllib.error
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,18 +22,23 @@ BACKEND = Path(__file__).resolve().parent.parent
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from services.climate_archive import ingest_historical_climate  # noqa: E402
+from services.climate_archive import (  # noqa: E402
+    aggregate_daily_to_monthly,
+    fetch_archive_daily,
+    load_district_centroids,
+)
 from services.dhis2_historical import extract_historical  # noqa: E402
-from services.dhis2_periods import expand_monthly_range  # noqa: E402
+from services.dhis2_periods import expand_monthly_range, yyyymm_to_date_bounds  # noqa: E402
 from services.dhis2_service import Dhis2Client  # noqa: E402
 from services.training_panel import join_district_month  # noqa: E402
 
 EXPANSION_START = "201201"
-EXPANSION_END = "202306"  # do not re-fetch the validated v1 window 202307–202608
-COMPARABLE_START = "202106"  # indicator objects created 2021-05-06
+EXPANSION_END = "202306"
+COMPARABLE_START = "202106"
 V1_PANEL = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_district_month_panel_latest.json"
 OUT_PATH = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_historical_expansion.json"
 REPORT_PATH = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_historical_expansion_report.json"
+CHUNK_DIR = BACKEND / "data" / "04_ai" / "training_sets" / "malaria_historical_expansion_chunks"
 COUNT_V1 = BACKEND / "data" / "04_ai" / "models" / "malaria_forecast_v1" / "model.joblib"
 POS_V1 = BACKEND / "data" / "04_ai" / "models" / "malaria_positivity_forecast_v1" / "model.joblib"
 GBT = BACKEND / "data" / "trained_models" / "malaria_model.joblib"
@@ -71,12 +78,59 @@ def _year_chunks(start: str, end: str) -> list[tuple[str, str]]:
     return chunks
 
 
+def fetch_climate_with_retry(start: str, end: str) -> list[dict]:
+    start_date, end_date = yyyymm_to_date_bounds(start, end)
+    month_list = set(expand_monthly_range(start, end))
+    rows: list[dict] = []
+    for i, district in enumerate(load_district_centroids()):
+        payload = None
+        last_exc: Exception | None = None
+        for attempt in range(1, 8):
+            try:
+                payload = fetch_archive_daily(
+                    district["latitude"],
+                    district["longitude"],
+                    start_date,
+                    end_date,
+                )
+                break
+            except urllib.error.HTTPError as exc:
+                last_exc = exc
+                wait = 15 * attempt
+                print(
+                    f"climate 429/HTTP {exc.code} {district['district_slug']} "
+                    f"attempt {attempt}, sleep {wait}s",
+                    flush=True,
+                )
+                time.sleep(wait)
+        if payload is None:
+            raise RuntimeError(f"climate fetch failed for {district['district_slug']}: {last_exc}")
+        daily = payload.get("daily") or {}
+        monthly = aggregate_daily_to_monthly(
+            dates=daily.get("time") or [],
+            precipitation=daily.get("precipitation_sum") or [],
+            temperature=daily.get("temperature_2m_mean") or [],
+            humidity=daily.get("relative_humidity_2m_mean") or [],
+        )
+        for period, values in monthly.items():
+            if period not in month_list:
+                continue
+            rows.append({
+                **values,
+                "district_slug": district["district_slug"],
+                "district_id": district["district_id"],
+                "district_name": district["district_name"],
+                "latitude": district["latitude"],
+                "longitude": district["longitude"],
+                "source": "open_meteo_archive",
+            })
+        if i + 1 < 16:
+            time.sleep(3.0)
+    rows.sort(key=lambda r: (r.get("source_period") or "", r.get("district_slug") or ""))
+    return rows
+
+
 def n_prior_histogram(rows: list[dict], as_of: str | None = None) -> dict:
-    """
-    For each district × calendar-month, count years strictly before as_of
-    (default: max period in rows). That is the history a scorer would have
-    at the end of the series for that calendar month.
-    """
     by_key: dict[tuple[str, int], list[str]] = defaultdict(list)
     periods = []
     for r in rows:
@@ -97,7 +151,6 @@ def n_prior_histogram(rows: list[dict], as_of: str | None = None) -> dict:
     details = []
     for (slug, month), years in sorted(by_key.items()):
         uniq = sorted(set(int(y) for y in years))
-        # years available strictly before the as-of month of this calendar month
         cutoff_year = as_of_year if month <= as_of_month else as_of_year - 1
         prior = [y for y in uniq if y < cutoff_year]
         n = len(prior)
@@ -159,13 +212,21 @@ def main() -> None:
         raise SystemExit(f"STOP: v1 panel is {len(v1)} rows, expected 535")
 
     client = Dhis2Client(mock=False)
+    CHUNK_DIR.mkdir(parents=True, exist_ok=True)
     health_rows: list[dict] = []
     chunk_reports = []
     for start, end in _year_chunks(EXPANSION_START, EXPANSION_END):
+        chunk_path = CHUNK_DIR / f"health_{start}_{end}.json"
+        if chunk_path.exists():
+            payload = json.loads(chunk_path.read_text(encoding="utf-8"))
+            health_rows.extend(payload["district_month"])
+            chunk_reports.append({**payload.get("report", {}), "cached": True})
+            print(f"DHIS2 cached {start}-{end} rows={len(payload['district_month'])}", flush=True)
+            continue
         print(f"DHIS2 extract {start}-{end} persist=False", flush=True)
         result = extract_historical(client=client, start=start, end=end, persist=False)
         health_rows.extend(result["district_month"])
-        chunk_reports.append({
+        report = {
             "start": start,
             "end": end,
             "source": result.get("source"),
@@ -173,15 +234,17 @@ def main() -> None:
             "observed_months": result["completeness"].get("observed_month_count"),
             "districts": result["completeness"].get("district_count"),
             "rows": len(result["district_month"]),
-        })
+            "cached": False,
+        }
+        chunk_reports.append(report)
+        chunk_path.write_text(
+            json.dumps({"report": report, "district_month": result["district_month"]}, default=str),
+            encoding="utf-8",
+        )
 
     print("Open-Meteo Archive climate persist=False", flush=True)
-    climate = ingest_historical_climate(
-        start=EXPANSION_START,
-        end=EXPANSION_END,
-        mock=False,
-        persist=False,
-    )
+    climate_rows = fetch_climate_with_retry(EXPANSION_START, EXPANSION_END)
+    climate = {"source": "open_meteo_archive", "mock": False, "district_month": climate_rows}
     joined = join_district_month(health_rows, climate["district_month"])
     for row in joined:
         period = row.get("source_period") or ""
@@ -202,7 +265,6 @@ def main() -> None:
         if r.get("district_slug") in KNOWN_ADMIN and r.get("source_period") in set(requested)
     )
 
-    # Combined series for data-bar: expansion + v1 panel (read-only)
     combined = []
     for r in joined:
         combined.append({
@@ -236,7 +298,6 @@ def main() -> None:
     ]
 
     def coverage_counts(rows):
-        n = len(rows) or 1
         return {
             "rows": len(rows),
             "malaria_confirmed": sum(1 for r in rows if r.get("malaria_confirmed") is not None),
