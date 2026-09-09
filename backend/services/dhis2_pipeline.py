@@ -19,19 +19,10 @@ from typing import Any, Optional
 from config import dhis2 as cfg
 from services import dhis2_orgunits, dhis2_service
 from services.dhis2_service import Dhis2Client, parse_analytics_rows
-from services.dhis2_periods import classify_period, is_valid_source_period
+from services.dhis2_periods import classify_period
 from services.chews_feature_join import join_feature_rows
 
 logger = logging.getLogger("chews.dhis2")
-
-_PERIOD_RE = re.compile(
-    r"^(\d{4})$"  # year
-    r"|^(\d{6})$"  # YYYYMM
-    r"|^(\d{8})$"  # YYYYMMDD
-    r"|^(\d{4}W\d{1,2})$"  # ISO week
-    r"|^(\d{4}Q[1-4])$"  # quarter
-    r"|^(LAST_|THIS_)",
-)
 
 _cache: dict[str, Any] = {
     "ingest": None,
@@ -233,7 +224,10 @@ def build_wide_table(long_rows: list[dict]) -> list[dict]:
         slot = buckets.get(bucket_key)
         if slot is None:
             slot = {
-                "period": row.get("period"),
+                "period": row.get("source_period") or row.get("period"),
+                "source_period": row.get("source_period") or row.get("period"),
+                "period_type": row.get("period_type"),
+                "normalized_period": row.get("normalized_period"),
                 "org_unit_id": row.get("org_unit_id"),
                 "facility_name": row.get("facility_name"),
                 "district_id": row.get("district_id"),
@@ -250,6 +244,44 @@ def build_wide_table(long_rows: list[dict]) -> list[dict]:
             }
             for ck in cfg.DHIS2_COUNT_INDICATORS:
                 slot[ck] = None
+            buckets[bucket_key] = slot
+        slot[key_name] = row.get("value")
+    return [buckets[k] for k in sorted(buckets.keys(), key=lambda t: (t[0] or "", t[1] or ""))]
+
+
+def build_curated_malaria(long_rows: list[dict]) -> list[dict]:
+    """Facility-period health contract including percentage indicators as nullable fields."""
+    value_keys = tuple(cfg.DHIS2_COUNT_INDICATORS) + tuple(cfg.DHIS2_PERCENT_INDICATORS)
+    buckets: dict[tuple, dict] = {}
+    for row in long_rows:
+        key_name = row.get("indicator_key")
+        if key_name not in value_keys:
+            continue
+        bucket_key = (row.get("source_period") or row.get("period"), row.get("org_unit_id"))
+        slot = buckets.get(bucket_key)
+        if slot is None:
+            slot = {
+                "source_period": row.get("source_period") or row.get("period"),
+                "period": row.get("source_period") or row.get("period"),
+                "period_type": row.get("period_type"),
+                "normalized_period": row.get("normalized_period"),
+                "org_unit_id": row.get("org_unit_id"),
+                "facility_name": row.get("facility_name"),
+                "facility_level": row.get("facility_level"),
+                "district_id": row.get("district_id"),
+                "district_name": row.get("district_name"),
+                "council_id": row.get("council_id"),
+                "council_name": row.get("council_name"),
+                "zone_id": row.get("zone_id"),
+                "zone_name": row.get("zone_name"),
+                "latitude": row.get("latitude"),
+                "longitude": row.get("longitude"),
+                "mfl_mapped": row.get("mfl_mapped"),
+                "source": row.get("source"),
+                "ingested_at": row.get("ingested_at"),
+            }
+            for vk in value_keys:
+                slot[vk] = None
             buckets[bucket_key] = slot
         slot[key_name] = row.get("value")
     return [buckets[k] for k in sorted(buckets.keys(), key=lambda t: (t[0] or "", t[1] or ""))]
@@ -412,7 +444,9 @@ def ingest(
     quality = validate_records(records, mapped)
     long_rows = build_long_rows(records, mapped, source=source, ingested_at=ingested_at)
     wide = build_wide_table(long_rows)
+    curated = build_curated_malaria(long_rows)
     features = engineer_features(wide)
+    joined = join_feature_rows(curated, climate=None, environment=None, population=None)
     completeness = {
         p: reporting_completeness(wide, p) for p in quality.get("periods") or []
     }
@@ -428,7 +462,9 @@ def ingest(
         "mapped_org_units": mapped,
         "long": long_rows,
         "wide": wide,
+        "curated": curated,
         "features": features,
+        "joined_features": joined,
         "reporting_completeness": completeness,
         "mock": client.mock,
     }
@@ -461,13 +497,18 @@ def ingest(
         _write_json(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_long_latest.json", long_rows)
         _write_json(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_wide_latest.json", wide)
         _write_json(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_org_units_mapped_latest.json", mapped)
+        _write_json(cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_latest.json", curated)
+        _write_json(cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_long_latest.json", long_rows)
         _write_json(cfg.AI_FEATURES_DIR / "dhis2_malaria_features_latest.json", features)
+        _write_json(cfg.AI_FEATURES_DIR / "chews_malaria_features_latest.json", joined)
         result["paths"] = {
             "raw": str(raw_path),
             "staging": str(cfg.STAGING_DHIS2_DIR / "dhis2_analytics_normalized_latest.json"),
-            "curated_long": str(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_long_latest.json"),
-            "curated_wide": str(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_wide_latest.json"),
+            "curated_long": str(cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_long_latest.json"),
+            "curated_malaria": str(cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_latest.json"),
+            "curated_wide_compat": str(cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_wide_latest.json"),
             "features": str(cfg.AI_FEATURES_DIR / "dhis2_malaria_features_latest.json"),
+            "joined_features": str(cfg.AI_FEATURES_DIR / "chews_malaria_features_latest.json"),
         }
         logger.info(
             "DHIS2 ingest stored source=%s records=%s wide=%s duplicates=%s",
@@ -483,17 +524,27 @@ def cached_ingest() -> Optional[dict]:
 
 
 def load_latest_curated() -> Optional[dict]:
+    malaria_path = cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_latest.json"
     wide_path = cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_wide_latest.json"
-    long_path = cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_long_latest.json"
+    long_path = cfg.CURATED_DHIS2_MALARIA_DIR / "dhis2_malaria_long_latest.json"
+    if not long_path.exists():
+        long_path = cfg.CURATED_SURVEILLANCE_DIR / "dhis2_malaria_long_latest.json"
     fac_path = cfg.CURATED_SURVEILLANCE_DIR / "dhis2_org_units_mapped_latest.json"
-    if not wide_path.exists():
+    if not malaria_path.exists() and not wide_path.exists():
         return None
     try:
-        wide = json.loads(wide_path.read_text(encoding="utf-8"))
+        wide = json.loads(wide_path.read_text(encoding="utf-8")) if wide_path.exists() else []
+        curated = json.loads(malaria_path.read_text(encoding="utf-8")) if malaria_path.exists() else wide
         long_rows = json.loads(long_path.read_text(encoding="utf-8")) if long_path.exists() else []
         mapped = json.loads(fac_path.read_text(encoding="utf-8")) if fac_path.exists() else []
     except json.JSONDecodeError:
         return None
-    payload = {"wide": wide, "long": long_rows, "mapped_org_units": mapped, "source": "disk"}
+    payload = {
+        "wide": wide or curated,
+        "curated": curated,
+        "long": long_rows,
+        "mapped_org_units": mapped,
+        "source": "disk",
+    }
     _cache["ingest"] = {**(_cache.get("ingest") or {}), **payload}
     return payload

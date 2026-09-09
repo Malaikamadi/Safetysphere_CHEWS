@@ -19,6 +19,7 @@ DATA_DIR = BACKEND_DIR / "data"
 RAW_DHIS2_DIR = DATA_DIR / "01_raw" / "dhis2"
 STAGING_DHIS2_DIR = DATA_DIR / "02_staging" / "dhis2"
 CURATED_SURVEILLANCE_DIR = DATA_DIR / "03_curated" / "surveillance"
+CURATED_DHIS2_MALARIA_DIR = DATA_DIR / "03_curated" / "dhis2_malaria"
 AI_FEATURES_DIR = DATA_DIR / "04_ai" / "features"
 MOCK_DIR = RAW_DHIS2_DIR / "mock"
 

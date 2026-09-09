@@ -40,11 +40,7 @@ def classify_period(period: Optional[str]) -> dict:
         return result
     if _WEEKLY.match(source):
         result["period_type"] = "weekly"
-        result["normalized_period"] = source.upper() if "w" in source else source
-        if "w" in source and "W" not in source:
-            result["normalized_period"] = re.sub(r"w", "W", source, count=1)
-        else:
-            result["normalized_period"] = source
+        result["normalized_period"] = source
         return result
     if _MONTHLY.match(source):
         result["period_type"] = "monthly"

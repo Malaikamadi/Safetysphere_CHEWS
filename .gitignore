@@ -13,4 +13,5 @@ htmlcov/
 backend/data/01_raw/dhis2/analytics/
 backend/data/02_staging/dhis2/*.json
 backend/data/03_curated/surveillance/*.json
+backend/data/03_curated/dhis2_malaria/*.json
 backend/data/04_ai/features/*.json

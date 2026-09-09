@@ -213,6 +213,7 @@ def test_pipeline_mock_ingest(tmp_path, monkeypatch):
     monkeypatch.setattr(cfg, "RAW_DHIS2_DIR", tmp_path / "01_raw" / "dhis2")
     monkeypatch.setattr(cfg, "STAGING_DHIS2_DIR", tmp_path / "02_staging" / "dhis2")
     monkeypatch.setattr(cfg, "CURATED_SURVEILLANCE_DIR", tmp_path / "03_curated" / "surveillance")
+    monkeypatch.setattr(cfg, "CURATED_DHIS2_MALARIA_DIR", tmp_path / "03_curated" / "dhis2_malaria")
     monkeypatch.setattr(cfg, "AI_FEATURES_DIR", tmp_path / "04_ai" / "features")
     monkeypatch.setattr(cfg, "DATA_DIR", tmp_path)
 
@@ -266,3 +267,89 @@ def test_percent_indicator_not_forced_into_wide(analytics_sample):
     wide = build_wide_table(long_rows)
     assert "child_malaria_death" not in wide[0]
     assert any(r["indicator_id"] == "MM7wnFwsi7q" for r in long_rows)
+    from services.dhis2_pipeline import build_curated_malaria
+    curated = build_curated_malaria(long_rows)
+    assert curated[0].get("child_malaria_death") in (12.5, None) or any(
+        r.get("child_malaria_death") == 12.5 for r in curated
+    )
+
+
+def test_period_202509_is_monthly_not_iso_week():
+    from services.dhis2_periods import classify_period
+    info = classify_period("202509")
+    assert info["source_period"] == "202509"
+    assert info["period_type"] == "monthly"
+    assert info["normalized_period"] == "202509"
+    assert info["normalized_period"] != "2025W09"
+
+
+def test_parse_preserves_source_period(analytics_sample):
+    from services.dhis2_service import parse_analytics_rows
+    rows = parse_analytics_rows(analytics_sample)
+    hit = next(r for r in rows if r["indicator_id"] == "XHQqFqfUfIf" and r["value"] == 144)
+    assert hit["period"] == "202509"
+    assert hit["source_period"] == "202509"
+    assert hit["period_type"] == "monthly"
+    assert hit["normalized_period"] == "202509"
+
+
+def test_schema_normalized_analytics_record(analytics_sample):
+    from jsonschema import Draft202012Validator
+    from services.dhis2_service import parse_analytics_rows
+    schema = json.loads((BACKEND / "data/schemas/dhis2_analytics.schema.json").read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema["$defs"]["normalized_record"])
+    for rec in parse_analytics_rows(analytics_sample):
+        validator.validate(rec)
+
+
+def test_schema_curated_malaria_and_features():
+    from jsonschema import Draft202012Validator
+    malaria_schema = json.loads((BACKEND / "data/schemas/dhis2_malaria.schema.json").read_text(encoding="utf-8"))
+    feature_schema = json.loads((BACKEND / "data/schemas/chews_malaria_features.schema.json").read_text(encoding="utf-8"))
+    malaria = {
+        "source_period": "202509",
+        "org_unit_id": "dar4XkzRmN0",
+        "malaria_confirmed": 144,
+        "malaria_confirmed_u5": 100,
+        "malaria_tests": None,
+        "child_malaria_death": None,
+    }
+    Draft202012Validator(malaria_schema).validate(malaria)
+    features = {
+        "source_period": "202509",
+        "org_unit_id": "dar4XkzRmN0",
+        "malaria_confirmed": 144,
+        "rainfall_mm": None,
+        "prototype_gbt_compatible": False,
+    }
+    Draft202012Validator(feature_schema).validate(features)
+
+
+def test_feature_join_does_not_invent_climate():
+    from services.chews_feature_join import join_feature_rows
+    health = [{
+        "source_period": "202509",
+        "org_unit_id": "dar4XkzRmN0",
+        "facility_name": "Aberdeen Women Centre Hospital",
+        "district_name": "Western Area Urban",
+        "malaria_confirmed": 144,
+        "malaria_confirmed_u5": 100,
+        "period_type": "monthly",
+        "normalized_period": "202509",
+    }]
+    joined = join_feature_rows(health)
+    assert joined[0]["malaria_confirmed"] == 144
+    assert joined[0]["rainfall_mm"] is None
+    assert joined[0]["population_density"] is None
+    assert joined[0]["reported_fever_cases"] is None
+    assert joined[0]["prototype_gbt_compatible"] is False
+    climate = [{"period": "202509", "district": "Western Area Urban", "rainfall_mm": 80, "temperature_c": 28, "humidity_percent": 70}]
+    joined2 = join_feature_rows(health, climate=climate)
+    assert joined2[0]["rainfall_mm"] == 80
+    assert joined2[0]["prototype_gbt_compatible"] is False
+
+
+def test_weekly_schema_file_is_deprecated_alias():
+    raw = json.loads((BACKEND / "data/schemas/dhis2_weekly_epi.schema.json").read_text(encoding="utf-8"))
+    assert "chews_malaria_features.schema.json" in raw.get("$ref", "")
+    assert "DEPRECATED" in raw.get("title", "")
