@@ -269,6 +269,18 @@ def _signals_for(disease: str, admin: str) -> dict:
     scale = _ADMIN_CASE_SCALE.get(admin, 0.12)
     base["current_cases"] = max(1, int(base["current_cases"] * scale))
     base["previous_cases"] = max(1, int(base["previous_cases"] * scale))
+    if disease == "malaria":
+        try:
+            from services import dhis2_pipeline
+            overlay = dhis2_pipeline.live_case_overlay(admin)
+            if overlay and overlay.get("current_cases") is not None:
+                base["current_cases"] = overlay["current_cases"]
+                if overlay.get("previous_cases") is not None:
+                    base["previous_cases"] = overlay["previous_cases"]
+                base["surveillance_source"] = overlay.get("source")
+                base["dhis2_period"] = overlay.get("period")
+        except Exception:
+            pass
     return base
 
 

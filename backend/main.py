@@ -45,7 +45,7 @@ except Exception as e:
     _import_errors.append(f"community_reports: {e}")
 
 # Individual router imports
-strategic = early_warning = healthcare = point_of_care = situation_room = None
+strategic = early_warning = healthcare = point_of_care = situation_room = dhis2_router = None
 try:
     from routers import strategic
 except Exception as e:
@@ -66,6 +66,10 @@ try:
     from routers import situation_room
 except Exception as e:
     _import_errors.append(f"situation_room router: {e}")
+try:
+    from routers import dhis2 as dhis2_router
+except Exception as e:
+    _import_errors.append(f"dhis2 router: {e}")
 
 # Services
 facility_mfl = None
@@ -111,6 +115,9 @@ if point_of_care:
 if situation_room:
     app.include_router(situation_room.router, prefix="/api")
     app.include_router(situation_room.router)
+if dhis2_router:
+    app.include_router(dhis2_router.router, prefix="/api")
+    app.include_router(dhis2_router.router)
 
 
 # ========================== Startup Event ==================================
@@ -259,7 +266,7 @@ async def health_check():
             "flood_risk", "heat_stress", "air_quality", "carbon_accounting",
         ],
         "routers": [
-            "/strategic", "/early-warning", "/healthcare", "/poc",
+            "/strategic", "/early-warning", "/healthcare", "/poc", "/dhis2",
         ],
     }
 

@@ -1,0 +1,36 @@
+{
+  "headers": [
+    {"name": "dx", "column": "Data", "valueType": "TEXT", "meta": true},
+    {"name": "pe", "column": "Period", "valueType": "TEXT", "meta": true},
+    {"name": "ou", "column": "Organisation unit", "valueType": "TEXT", "meta": true},
+    {"name": "value", "column": "Value", "valueType": "NUMBER", "meta": false}
+  ],
+  "metaData": {
+    "items": {
+      "XHQqFqfUfIf": {"name": "Malaria confirmed (RDT/Microscopy) (sum)"},
+      "tjRoHuika9k": {"name": "Malaria confirmed (RDT/Microscopy) 0-4 years (sum)"},
+      "mwrOKePWg2r": {"name": "Malaria test done at OPD (sum)"},
+      "VWdhdKpLVof": {"name": "Malaria RDT positive (Facility/Community)"},
+      "202508": {"name": "August 2025"},
+      "202509": {"name": "September 2025"},
+      "dar4XkzRmN0": {"name": "Aberdeen Women Centre Hospital"}
+    },
+    "dimensions": {
+      "dx": ["XHQqFqfUfIf", "tjRoHuika9k", "mwrOKePWg2r", "VWdhdKpLVof"],
+      "pe": ["202508", "202509"],
+      "ou": ["dar4XkzRmN0"]
+    }
+  },
+  "rows": [
+    ["XHQqFqfUfIf", "202508", "dar4XkzRmN0", "130"],
+    ["tjRoHuika9k", "202508", "dar4XkzRmN0", "90"],
+    ["mwrOKePWg2r", "202508", "dar4XkzRmN0", "200"],
+    ["VWdhdKpLVof", "202508", "dar4XkzRmN0", "110"],
+    ["XHQqFqfUfIf", "202509", "dar4XkzRmN0", "144"],
+    ["tjRoHuika9k", "202509", "dar4XkzRmN0", "100"],
+    ["mwrOKePWg2r", "202509", "dar4XkzRmN0", "220"],
+    ["VWdhdKpLVof", "202509", "dar4XkzRmN0", "120"]
+  ],
+  "width": 4,
+  "height": 8
+}

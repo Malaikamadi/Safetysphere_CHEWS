@@ -1,0 +1,42 @@
+{
+  "organisationUnits": [
+    {
+      "id": "ImspTQPwCqd",
+      "displayName": "Sierra Leone",
+      "level": 1,
+      "parent": null
+    },
+    {
+      "id": "PMLlCzM0mWT",
+      "displayName": "Western Area Urban District",
+      "level": 2,
+      "parent": { "id": "ImspTQPwCqd", "displayName": "Sierra Leone", "level": 1 }
+    },
+    {
+      "id": "wlDW6S0pHLL",
+      "displayName": "Freetown City Council",
+      "level": 3,
+      "parent": { "id": "PMLlCzM0mWT", "displayName": "Western Area Urban District", "level": 2 }
+    },
+    {
+      "id": "RqcjKMD6wRN",
+      "displayName": "West 3 Zone",
+      "level": 4,
+      "parent": { "id": "wlDW6S0pHLL", "displayName": "Freetown City Council", "level": 3 }
+    },
+    {
+      "id": "dar4XkzRmN0",
+      "displayName": "Aberdeen Women Centre Hospital",
+      "level": 5,
+      "featureType": "POINT",
+      "parent": { "id": "RqcjKMD6wRN", "displayName": "West 3 Zone", "level": 4 },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-13.28778, 8.49314]
+      },
+      "organisationUnitGroups": [
+        { "id": "hosp", "displayName": "Hospital" }
+      ]
+    }
+  ]
+}
