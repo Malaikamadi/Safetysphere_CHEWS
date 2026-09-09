@@ -78,8 +78,12 @@ def fetch_historical_analytics(
     payloads: list[dict] = []
     records: list[dict] = []
     chunks = chunk_months(months, cfg.DHIS2_HISTORICAL_CHUNK_MONTHS)
-    for group in chunks:
+    for index, group in enumerate(chunks, start=1):
         pe = ",".join(group)
+        logger.info(
+            "DHIS2 historical Analytics chunk %s/%s pe=%s indicators=%s",
+            index, len(chunks), pe, len(ids),
+        )
         payload = client.fetch_analytics(indicator_ids=ids, period=pe, ou_dimension=ou)
         payloads.append(payload)
         records.extend(parse_analytics_rows(payload))
