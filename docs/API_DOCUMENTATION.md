@@ -358,4 +358,38 @@ Hardcoded facilities include named hospitals (e.g. Connaught) with invented bed/
 
 ## Endpoints that do not exist
 
-Do not document or demo: DHIS2 proxy, login/token issue, persistence, webhooks, GraphQL, `/api/health`.
+Do not document or demo: login/token issue, GraphQL. DHIS2 credentials are never returned by `/api/dhis2/*`.
+
+---
+
+## DHIS2 (`/api/dhis2`)
+
+Authentication: none at the CHEWS API layer (same as other routers). HMIS credentials stay on the server.
+
+### GET `/api/dhis2/status`
+
+Public connection flags (`mock_mode`, `auth_method`, indicator IDs). **No username/password/token.**
+
+### POST `/api/dhis2/ingest`
+
+Optional JSON: `period`, `ou_dimension`, `include_supporting`, `persist`.
+
+Pulls Analytics + organisation units (mock or live) into `01_raw` / staging / curated.
+
+### GET `/api/dhis2/malaria`
+
+Query: `district`, `period`, `refresh`. Returns long/wide tables and risk-engine mapping.
+
+### GET `/api/dhis2/facilities`
+
+Query: `unmapped_only`, `refresh`. DHIS2 org units joined to the existing MFL.
+
+### GET `/api/dhis2/health-data`
+
+Combined quality + overlay + hierarchy example.
+
+### GET `/api/dhis2/risk`
+
+Query: `admin`, `rainfall`, `temperature`, `humidity`, `refresh`. Calls **existing** `risk_engine.assess()` with DHIS2 `reported_cases`.
+
+Full detail: [DHIS2_INTEGRATION.md](DHIS2_INTEGRATION.md).

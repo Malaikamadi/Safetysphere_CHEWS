@@ -9,7 +9,7 @@ Brutally honest assessment for technical evaluators. Items are included only whe
 ### Data and models
 
 - **Synthetic training data** for flood, malaria, readiness, and community-report models (`DATA_CATALOG.md`).  
-- **No real-time DHIS2** malaria or completeness feeds.  
+- **DHIS2 ingest is on-demand**, default mock. Live HMIS is not a scheduled national feed on Vercel. Completeness checks are quality flags, not a MoH bulletin.  
 - **Live forecast climate/cases are constants** (`_LIVE_SIGNALS`).  
 - **No climate lag** in the malaria GBT (model card).  
 - **Community classifier blocked** (perfect metrics / leakage).  
@@ -57,7 +57,7 @@ These prevent CHEWS from being **production-ready** or **national-scale**.
 
 ### Phase 1 — MVP (what already exists)
 
-- FastAPI + static multi-page UI.  
+- DHIS2 Analytics ingest (mock fixtures + live client), MFL join, curated long/wide tables.  
 - Rule-based `/predict`.  
 - MoH DHIS2 core facility map with honest missing operational data.  
 - View-only forecast/surge shells.  
@@ -68,7 +68,7 @@ These prevent CHEWS from being **production-ready** or **national-scale**.
 
 ### Phase 2 — Data integration (needs to be connected)
 
-- DHIS2 analytics/event APIs with org-unit ids matching MFL `id`.  
+- Scheduled DHIS2 on durable storage; official climate with quality flags.  
 - Official climate (SLMDA / CHIRPS / etc.) with quality flags — **not** only Open-Meteo current precipitation.  
 - Operational MFL indicators from a governed source; still **no invention**.  
 - CHW report API with authentication and verification workflow (UI labels exist; **backend persistence does not**).  

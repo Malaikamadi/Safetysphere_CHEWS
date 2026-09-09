@@ -6,7 +6,13 @@
 
 ## 01_raw — Source Files
 
-### DHIS2 Exports
+### DHIS2 Analytics (live/mock ingest)
+
+Mock fixtures: `01_raw/dhis2/mock/`. Live extracts are written under `01_raw/dhis2/analytics/` (gitignored). See `docs/DHIS2_INTEGRATION.md`.
+
+---
+
+### DHIS2 Exports (synthetic training file, unchanged)
 | File | Rows | Columns | Period | Source |
 |---|---|---|---|---|
 | `dhis2_malaria_chews_v1.csv` | 500 | 9 | Synthetic | CHEWS training data |

@@ -24,7 +24,7 @@ From `backend/requirements.txt`:
 - pydantic ≥ 2.0.0  
 - numpy ≥ 1.26.0  
 - joblib ≥ 1.3.0  
-- scikit-learn ≥ 1.3.0  
+- `python-dotenv>=1.0.0`  
 
 ### Training extras
 
@@ -32,7 +32,9 @@ From `backend/requirements.txt`:
 
 ### Environment variables
 
-**None required.** The app does not load dotenv. CORS origins are hardcoded.
+Local DHIS2 mock mode needs no secrets. For live HMIS, copy `.env.example` to `.env` (never commit). Variables: `DHIS2_BASE_URL`, `DHIS2_USERNAME`, `DHIS2_PASSWORD` or `DHIS2_API_TOKEN`, `DHIS2_MOCK_MODE`. Loaded by `python-dotenv` from repo-root or `backend/.env`.
+
+CORS origins are still hardcoded.
 
 ### Backend startup
 

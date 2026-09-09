@@ -18,10 +18,10 @@ CHEWS is designed to become a **live early-warning layer** on top of official da
 
 | Status | What it means in this repo |
 | ------ | -------------------------- |
-| **Implemented** | FastAPI API, static dashboard, rule-based `/predict` risk scoring, MoH DHIS2 Master Facility List map, view-only disease/surge dashboards, flood-atlas UI, keyword health assistant, in-memory alerts |
+| **Implemented** | FastAPI API, static dashboard, rule-based `/predict` risk scoring, MoH DHIS2 Master Facility List map, view-only disease/surge dashboards, flood-atlas UI, keyword health assistant, in-memory alerts, DHIS2 Analytics ingest (mock + live client) |
 | **Prototype** | Situation Room (simulated national command centre), digital twins, sensors, community-report ML, Open-Meteo rainfall overlay |
 | **Experimental** | sklearn models (Gradient Boosting / Random Forest) trained on synthetic CSVs |
-| **Not implemented** | DHIS2 live sync, real-time malaria surveillance, authentication, database, automated SMS/push alerts, clinical validation, production monitoring |
+| **Not implemented** | Scheduled DHIS2 jobs on durable hosting, validated real-time surveillance, authentication, database, automated SMS/push alerts, clinical validation, production monitoring |
 
 The dashboard is **view-oriented**. Healthcare Forecast and Surge pages refresh from server-side signals; they do **not** ask a user to type rainfall or case counts. Those POST endpoints still exist for internal/demo use.
 
@@ -31,7 +31,8 @@ The dashboard is **view-oriented**. Healthcare Forecast and Surge pages refresh 
 
 - **Rule-based malaria risk scoring** (`POST /predict`) combining environmental, epidemiological, and exposure sub-scores.
 - **Healthcare facility explorer** loaded from `moh_dhis2_core_health_facilities.csv` (1,615 MoH DHIS2 facilities: id, code, name, level, coordinates). Operational fields (beds, staff, power, water) are **not invented**; they are shown as not assessed.
-- **View-only disease forecast and surge views** (`GET /api/healthcare/forecast/live`, `GET /api/healthcare/surge/live`) using **hardcoded climatological/case constants**, not live DHIS2 or weather APIs.
+- **View-only disease forecast and surge views** (`GET /api/healthcare/forecast/live`, `GET /api/healthcare/surge/live`) using **hardcoded climatological/case constants** unless a DHIS2 ingest has been stored (malaria case overlay only).
+- **DHIS2 Analytics ingest** (`/api/dhis2/*`) against Sierra Leone HMIS. Default mock mode; live mode needs env credentials. Does **not** retrain the synthetic malaria GBT. See [docs/DHIS2_INTEGRATION.md](docs/DHIS2_INTEGRATION.md).
 - **Flood Atlas** combining a static 23-zone catalogue with rule-based flood scoring; optional Open-Meteo fetch with synthetic fallback.
 - **Point-of-care triage** via symptom keyword scoring (not a diagnostic model).
 - **Health assistant** via keyword matching (not an LLM).
@@ -48,7 +49,7 @@ Browser (frontend/*.html)
 FastAPI (backend/main.py)
         ├── routers/          REST endpoints
         ├── models/           rule engines + sklearn wrappers
-        ├── services/         MFL, forecast, alerts, weather, triage
+        ├── services/         MFL, DHIS2 ingest, forecast, alerts, weather, triage
         └── data/             CSVs, joblib artifacts, reference tables
 ```
 
@@ -64,7 +65,9 @@ SafetySphere_CHEWS/
 │   ├── main.py                 # FastAPI app, CORS, /health /predict /ask
 │   ├── requirements.txt        # Runtime Python deps
 │   ├── requirements-dev.txt    # Training extras (pandas, matplotlib)
-│   ├── routers/                # strategic, early_warning, healthcare, point_of_care, situation_room
+│   ├── config/                 # DHIS2 env/indicator configuration
+│   ├── routers/                # strategic, early_warning, healthcare, point_of_care, situation_room, dhis2
+│   ├── tests/                  # pytest (DHIS2 ingest/parsing)
 │   ├── models/                 # risk_engine, environmental, epidemiological, flood_risk, sklearn wrappers
 │   ├── services/               # facility_mfl, forecast_engine, alert_engine, weather_api, …
 │   ├── training/               # train_all_models.py
@@ -126,11 +129,12 @@ pip install -r requirements-dev.txt
 
 ## Configuration
 
-The API does not load a `.env` file. There are no required environment variables for local run.
+Local DHIS2 mock mode needs **no** credentials. Optional `.env` (see `.env.example`) is loaded via `python-dotenv` when present.
 
 | Variable | Used? | Notes |
 | -------- | ----- | ----- |
-| None required | — | CORS is hardcoded `allow_origins=["*"]` in `backend/main.py` |
+| `DHIS2_*` | DHIS2 ingest | Documented in [docs/DHIS2_INTEGRATION.md](docs/DHIS2_INTEGRATION.md) |
+| CORS | Hardcoded | `allow_origins=["*"]` in `backend/main.py` |
 
 Do not commit secrets. None were found as live credentials in this audit; see [docs/SECURITY.md](docs/SECURITY.md).
 
@@ -188,6 +192,9 @@ Full contract: [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md).
 | GET | `/api/strategic/flood-dashboard` | Flood atlas payload |
 | POST | `/api/poc/triage` | Symptom-score triage |
 | GET | `/api/situation-room` | Simulated national dashboard |
+| GET | `/api/dhis2/status` | DHIS2 config (no secrets) |
+| POST | `/api/dhis2/ingest` | Pull Analytics into the data lake |
+| GET | `/api/dhis2/malaria` | Curated malaria series |
 
 Routers are mounted **twice** (with and without `/api`) in `backend/main.py`.
 
@@ -255,7 +262,7 @@ Honest assessment: [docs/LIMITATIONS_AND_ROADMAP.md](docs/LIMITATIONS_AND_ROADMA
 
 ## Future roadmap (planned — not in code)
 
-1. Replace hardcoded live signals with DHIS2 malaria extracts and climate APIs.  
+1. Schedule DHIS2 ingest on durable hosting; replace remaining climate constants with weather APIs.  
 2. Attach operational MFL indicators without fabricating missing fields.  
 3. Retrain and validate models on historical Sierra Leone surveillance.  
 4. Add authentication, audit logs, and a real alert channel.  
@@ -271,7 +278,7 @@ Honest assessment: [docs/LIMITATIONS_AND_ROADMAP.md](docs/LIMITATIONS_AND_ROADMA
 | Rule-based risk engine | Implemented |
 | MoH facility identity + map | Implemented |
 | sklearn models | Experimental / pre-production |
-| DHIS2 API integration | Not implemented |
+| DHIS2 API integration | Implemented (ingest + mock; live needs credentials) |
 | Production operations | Not implemented |
 
 ---

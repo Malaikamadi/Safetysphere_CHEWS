@@ -12,7 +12,7 @@ Verified by inspecting source (runtime of *your* clone should still be checked w
 - Pydantic-validated `POST /predict` rule engine (`models/risk_engine.py`).  
 - Keyword `POST /ask` and `POST /api/poc/ask`.  
 - Symptom-score `POST /api/poc/triage`.  
-- MoH DHIS2 facility CSV load and facility HTTP APIs (`services/facility_mfl.py`, `routers/healthcare.py`).  
+- DHIS2 Analytics ingest + MFL join (`services/dhis2_*.py`, `routers/dhis2.py`). Mock fixtures for offline demo.  
 - View-only `GET /api/healthcare/forecast/live` and `/surge/live`.  
 - Flood dashboard/forecast routes and Open-Meteo helper.  
 - Early-warning assess/trigger/alerts (in-memory).  
@@ -54,7 +54,7 @@ That is a coherent **MVP engineering demonstration**, not a validated climate-he
 
 ## What is planned
 
-DHIS2 live integration, operational MFL attributes, real CHW ingestion, true forecasting, auth, database, monitoring, national scale — see [LIMITATIONS_AND_ROADMAP.md](LIMITATIONS_AND_ROADMAP.md). Sidebar “Administration → DHIS2 / Weather APIs / Audit Logs” entries are **not backed by pages/APIs**.
+Operational MFL attributes, real CHW ingestion, true forecasting, auth, database, monitoring, national scale, scheduled DHIS2 on durable hosting — see [LIMITATIONS_AND_ROADMAP.md](LIMITATIONS_AND_ROADMAP.md). Sidebar “Administration → DHIS2” remains a UI hash, not the ingest API (use `/api/dhis2/*`).
 
 ---
 
@@ -122,7 +122,7 @@ Marking: **[x]** = confirmed **in the repository** (code/files exist as describe
 - [x] `POST /ask` **implemented** (keywords)  
 - [x] Prediction **can** be reproduced given the same JSON *(deterministic engine)*  
 - [x] Documentation suite present under `docs/` + README  
-- [x] No live secrets found in-repo *(fake partner Bearer is a demo string, not a server secret)*  
+- [x] DHIS2 mock ingest/parsing tests in `backend/tests/test_dhis2.py`  
 
 **Do not tick as working on Vercel without testing:** `/health`, `/predict`, `/ask`, `/api/health`.
 

@@ -16,8 +16,8 @@ There is no identity provider, API key middleware, network allowlist in code, or
 
 ## Secrets management
 
-- No `.env` loader in application code.  
-- No cloud secret manager client.  
+- No `.env` loader in application code except `config/dhis2.py` via `python-dotenv` for **DHIS2_*** only.  
+- `.env` is gitignored. `.env.example` contains placeholders only.  
 - **No live API keys, passwords, or private keys were found in the repository during this audit.** Open-Meteo is used without a key. OSM tiles require no key.
 
 If a secret is introduced later, `.gitignore` is **too thin** to protect it.
@@ -95,7 +95,7 @@ Startup may print paths and model status to logs.
 - **No retention policy** (nothing stored — except git history of CSVs and host logs).  
 - Synthetic epi files must not be published as real patient or outbreak data.
 
-Health-data considerations for a future DHIS2 connection: data processing agreement, encryption at rest, role-based org-unit scope, audit, minimisation. **None of that is implemented.**
+Health-data considerations for DHIS2: Analytics responses are aggregate, but still official surveillance. Store credentials only in environment/secret manager. `/api/dhis2/status` must not echo passwords (it does not). A data processing agreement, encryption at rest, and org-unit-scoped auth are **still not implemented** on the CHEWS API.
 
 ---
 

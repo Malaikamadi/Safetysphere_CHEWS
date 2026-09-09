@@ -27,7 +27,7 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 | Population rasters / census | `01_raw/population/` | **Not implemented** | `.gitkeep` | — |
 | Admin boundary raw GIS | `01_raw/admin_boundaries/` | **Not implemented** | `.gitkeep` | — |
 | Climate NetCDF / official weather archive | `01_raw/climate/` besides flood CSV | **Not implemented** | `.gitkeep` | — |
-| Live DHIS2 API payloads | — | **Not implemented** | No client | — |
+| Live DHIS2 Analytics payloads | Sierra Leone HMIS (`/api/analytics`) or mock fixtures | **Implemented** (ingest; default mock) | `dhis2_service`, `dhis2_pipeline` | JSON |
 | Patient-identifiable EHR | — | **Not present** | — | — |
 
 `DATA_CATALOG.md` (dated 2026-07-31) does **not** list `moh_dhis2_core_health_facilities.csv`. The catalog is therefore **out of date** relative to the live MFL.
@@ -46,7 +46,7 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 
 ### Planned (not in code)
 
-- Operational DHIS2 aggregate analytics (malaria, notifiable diseases).  
+- Operational DHIS2 Analytics ingest is implemented (see [DHIS2_INTEGRATION.md](DHIS2_INTEGRATION.md)). Remaining planned work: durable scheduled sync, climate lags, operational MFL indicators without fabricating gaps.  
 - Full MFL attributes (beds, staffing, utilities) from an official feed **without fabricating**.  
 - National meteorological / hydrological observations and forecasts.  
 - Verified CHW electronic reports.  
@@ -109,7 +109,8 @@ All statements below are taken from files under `backend/data/`, loaders in `bac
 ```
 [Implemented] CSV on disk → Python csv/pandas read → optional sklearn fit → joblib
 [Implemented] CSV on disk → facility_mfl.initialize() → in-memory list
-[Not implemented] Schema validation jobs, Parquet materialisation, scheduled DHIS2 pull
+[Implemented] DHIS2 Analytics JSON → 01_raw (unmodified) → staging rows → curated long/wide → 04_ai DHIS2 features
+[Not implemented] Parquet materialisation, cron on Vercel
 ```
 
 JSON Schemas exist under `backend/data/schemas/` (`dhis2_weekly_epi`, `master_facility_list`, `community_reports`). **Automatic enforcement at API ingest is not verifiable as a running pipeline** (no pipeline package). FastAPI Pydantic validates HTTP bodies only.
