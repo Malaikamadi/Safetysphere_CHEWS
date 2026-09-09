@@ -103,6 +103,8 @@ Until live extracts exist, the honest verdict is:
 
 **NOT READY FOR MODEL TRAINING**
 
+A later live extract (`202307`–`202608`) was filtered for calendar t+1 and completeness ≥ 0.20. See [MALARIA_FORECAST_MODEL_DESIGN.md](MALARIA_FORECAST_MODEL_DESIGN.md). The synthetic GBT is still not trained on that table.
+
 ---
 
 ## Files
