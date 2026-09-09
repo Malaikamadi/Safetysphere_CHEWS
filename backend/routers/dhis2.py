@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from config import dhis2 as cfg
-from services import dhis2_pipeline
+from services import climate_archive, dhis2_historical, dhis2_pipeline, training_panel
 from services.dhis2_service import (
     Dhis2AuthError,
     Dhis2Client,
@@ -30,6 +30,19 @@ class IngestRequest(BaseModel):
     ou_dimension: Optional[str] = Field(default=None, description="e.g. LEVEL-5 or a DHIS2 org unit UID")
     include_supporting: Optional[bool] = Field(default=None)
     persist: bool = Field(default=True)
+
+
+class HistoricalExtractRequest(BaseModel):
+    start: Optional[str] = Field(default=None, description="YYYYMM inclusive start")
+    end: Optional[str] = Field(default=None, description="YYYYMM inclusive end")
+    months: Optional[int] = Field(default=None, ge=1, le=120)
+    persist: bool = Field(default=True)
+
+
+class TrainingPanelRequest(HistoricalExtractRequest):
+    refresh_health: bool = True
+    refresh_climate: bool = True
+    climate_mock: Optional[bool] = None
 
 
 def _http_error(exc: Exception) -> HTTPException:

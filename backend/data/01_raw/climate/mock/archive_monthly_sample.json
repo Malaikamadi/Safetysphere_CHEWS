@@ -1,0 +1,26 @@
+{
+  "source": "open_meteo_archive_mock",
+  "note": "Fixture for tests and mock mode. Not ERA5. Not live Archive data.",
+  "rows": [
+    {
+      "district_id": "western_area_urban",
+      "district_name": "Western Area Urban",
+      "source_period": "202508",
+      "rainfall_mm": 412.4,
+      "temperature_c": 26.2,
+      "humidity_percent": 84.1,
+      "latitude": 8.4844,
+      "longitude": -13.2299
+    },
+    {
+      "district_id": "western_area_urban",
+      "district_name": "Western Area Urban",
+      "source_period": "202509",
+      "rainfall_mm": 388.0,
+      "temperature_c": 26.5,
+      "humidity_percent": 83.4,
+      "latitude": 8.4844,
+      "longitude": -13.2299
+    }
+  ]
+}

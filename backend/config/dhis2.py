@@ -79,6 +79,22 @@ DHIS2_INCLUDE_SUPPORTING = _env_bool("DHIS2_INCLUDE_SUPPORTING", False)
 DHIS2_PERIOD = _env("DHIS2_PERIOD", "LAST_12_MONTHS") or "LAST_12_MONTHS"
 DHIS2_OU_DIMENSION = _env("DHIS2_OU_DIMENSION", "LEVEL-5") or "LEVEL-5"
 
+# Historical training extract — explicit YYYYMM only. Do not use LAST_5_YEARS (yearly).
+DHIS2_HISTORICAL_MONTHS = _env_int("DHIS2_HISTORICAL_MONTHS", 36)
+DHIS2_HISTORICAL_START = _env("DHIS2_HISTORICAL_START")
+DHIS2_HISTORICAL_END = _env("DHIS2_HISTORICAL_END")
+DHIS2_HISTORICAL_CHUNK_MONTHS = _env_int("DHIS2_HISTORICAL_CHUNK_MONTHS", 12)
+CURATED_DISTRICT_MONTH_DIR = DATA_DIR / "03_curated" / "dhis2_malaria"
+AI_TRAINING_SETS_DIR = DATA_DIR / "04_ai" / "training_sets"
+RAW_DHIS2_HISTORICAL_DIR = RAW_DHIS2_DIR / "historical"
+
+# Training-readiness bars (district-month panel for malaria_confirmed t+1)
+TRAINING_MIN_MONTHS = _env_int("TRAINING_MIN_MONTHS", 36)
+TRAINING_MIN_DISTRICTS = _env_int("TRAINING_MIN_DISTRICTS", 10)
+TRAINING_MIN_DISTRICT_MONTH_COMPLETENESS = float(_env("TRAINING_MIN_DISTRICT_MONTH_COMPLETENESS", "0.5") or "0.5")
+TRAINING_MIN_CLIMATE_COVERAGE = float(_env("TRAINING_MIN_CLIMATE_COVERAGE", "0.9") or "0.9")
+TRAINING_MIN_TRAINABLE_ROWS = _env_int("TRAINING_MIN_TRAINABLE_ROWS", 200)
+
 # ---------------------------------------------------------------------------
 # Indicators — core malaria (used in Analytics + curated ML table)
 # ---------------------------------------------------------------------------
@@ -202,4 +218,7 @@ def public_status() -> dict:
         "timeout_seconds": DHIS2_TIMEOUT_SECONDS,
         "core_indicators": DHIS2_INDICATORS,
         "supporting_indicators": DHIS2_SUPPORTING_INDICATORS,
+        "historical_months": DHIS2_HISTORICAL_MONTHS,
+        "historical_start": DHIS2_HISTORICAL_START,
+        "historical_end": DHIS2_HISTORICAL_END,
     }
