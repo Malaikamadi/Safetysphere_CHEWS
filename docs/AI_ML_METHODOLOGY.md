@@ -4,6 +4,8 @@ This document describes **exactly** what the repository trains, loads, and serve
 
 **Summary:** The user-facing `/predict` path is a **weighted rule-based scorer**. Separate **experimental sklearn models** exist, trained on **synthetic** tables. One classifier is explicitly **blocked** for leakage. None of the models are validated against real Sierra Leone surveillance outcomes in this repository.
 
+**Malaria GBT vs live DHIS2:** The trained malaria GradientBoostingRegressor is **not connected** to DHIS2 Analytics for inference. Its training target is synthetic `malaria_cases`; live HMIS uses `malaria_confirmed`. A historical district-month panel (`POST /api/dhis2/historical/panel`) is the path toward a **future** `malaria_confirmed(t+1)` model. Until that panel is **READY FOR MODEL TRAINING**, do not retrain or wire the existing GBT. See [DHIS2_ML_DATA_FOUNDATION.md](DHIS2_ML_DATA_FOUNDATION.md).
+
 ---
 
 ## Current approach

@@ -7,11 +7,9 @@ Historical malaria climate must not use 24-hour forecast precipitation.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-from typing import Optional
 
-from config.dhis2 import DATA_DIR, REPO_ROOT, _env, _env_bool, _env_int, _load_dotenv
+from config.dhis2 import DATA_DIR, _env, _env_bool, _env_int, _load_dotenv
 
 _load_dotenv()
 

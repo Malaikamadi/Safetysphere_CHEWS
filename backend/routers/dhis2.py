@@ -230,6 +230,127 @@ async def dhis2_risk(
     }
 
 
+def _public_historical(result: dict) -> dict:
+    completeness = result.get("completeness") or {}
+    return {
+        "ingested_at": result.get("ingested_at"),
+        "source": result.get("source"),
+        "mock": result.get("mock"),
+        "period_start": result.get("period_start"),
+        "period_end": result.get("period_end"),
+        "requested_month_count": len(result.get("requested_months") or []),
+        "indicator_keys": result.get("indicator_keys"),
+        "quality": result.get("quality"),
+        "completeness": completeness,
+        "district_month_count": len(result.get("district_month") or []),
+        "district_month_preview": (result.get("district_month") or [])[:20],
+        "prototype_gbt": result.get("prototype_gbt"),
+        "paths": result.get("paths"),
+    }
+
+
+@router.post("/historical/extract")
+async def dhis2_historical_extract(body: HistoricalExtractRequest | None = None):
+    """
+    Explicit monthly DHIS2 extract → validation → district-month → completeness.
+
+    Does not retrain or call the synthetic malaria GBT.
+    """
+    body = body or HistoricalExtractRequest()
+    try:
+        result = dhis2_historical.extract_historical(
+            start=body.start,
+            end=body.end,
+            months=body.months,
+            persist=body.persist,
+        )
+    except Exception as exc:
+        raise _http_error(exc) from exc
+    return _public_historical(result)
+
+
+@router.post("/historical/climate")
+async def dhis2_historical_climate(body: HistoricalExtractRequest | None = None):
+    """Open-Meteo Archive monthly climate. Does not change realtime flood weather."""
+    body = body or HistoricalExtractRequest()
+    try:
+        result = climate_archive.ingest_historical_climate(
+            start=body.start,
+            end=body.end,
+            months=body.months,
+            persist=body.persist,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {
+        "source": result.get("source"),
+        "mock": result.get("mock"),
+        "period_start": result.get("period_start"),
+        "period_end": result.get("period_end"),
+        "start_date": result.get("start_date"),
+        "end_date": result.get("end_date"),
+        "requested_month_count": len(result.get("requested_months") or []),
+        "observed_months": result.get("observed_months"),
+        "district_count": result.get("district_count"),
+        "row_count": result.get("row_count"),
+        "preview": (result.get("district_month") or [])[:20],
+        "realtime_weather_untouched": True,
+        "paths": result.get("paths"),
+    }
+
+
+@router.post("/historical/panel")
+async def dhis2_training_panel(body: TrainingPanelRequest | None = None):
+    """
+    Align DHIS2 district-month with Archive climate, engineer lags, emit READY / NOT READY.
+
+    Never calls malaria_predictor.predict().
+    """
+    body = body or TrainingPanelRequest()
+    try:
+        result = training_panel.build_training_panel(
+            refresh_health=body.refresh_health,
+            refresh_climate=body.refresh_climate,
+            persist=body.persist,
+            climate_mock=body.climate_mock,
+            start=body.start,
+            end=body.end,
+            months=body.months,
+        )
+    except Exception as exc:
+        raise _http_error(exc) from exc
+    readiness = result.get("readiness") or {}
+    return {
+        "verdict": result.get("verdict"),
+        "ready": readiness.get("ready"),
+        "readiness": readiness,
+        "health": result.get("health"),
+        "climate": result.get("climate"),
+        "joined_rows": result.get("joined_rows"),
+        "feature_rows": result.get("feature_rows"),
+        "trainable_preview": result.get("trainable_preview"),
+        "paths": result.get("paths"),
+        "prototype_gbt": {
+            "retrained": False,
+            "connected": False,
+            "note": "Synthetic malaria GBT is not used on this panel.",
+        },
+    }
+
+
+@router.get("/historical/readiness")
+async def dhis2_training_readiness():
+    """Last training-readiness verdict, or a reminder to run POST /dhis2/historical/panel."""
+    readiness = training_panel.load_latest_readiness()
+    if not readiness:
+        return {
+            "verdict": training_panel.NOT_READY,
+            "ready": False,
+            "note": "No panel has been built. POST /dhis2/historical/panel first.",
+        }
+    return readiness
+
+
 def _ensure_data(*, refresh: bool) -> dict:
     cached = dhis2_pipeline.cached_ingest()
     if cached and not refresh:
