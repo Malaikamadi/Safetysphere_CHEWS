@@ -6,9 +6,7 @@ from services.malaria_positivity_forecast import (
     COMPLETENESS_MIN,
     FEATURE_COLUMNS,
     TARGET_NAME,
-    build_training_row,
     filter_positivity_rows,
-    index_panel,
     leakage_audit,
     positivity,
 )
