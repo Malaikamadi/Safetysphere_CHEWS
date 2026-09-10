@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-09-10T14:36:30Z",
+  "shadow_pilot": true,
+  "model_trained": false,
+  "integrated_into_chews": false,
+  "notifications_sent": false,
+  "input_period": {
+    "start": "202106",
+    "end": "202608"
+  },
+  "dhis2_source": "comparable_era_replay_expansion_plus_frozen_v1_panel",
+  "live_analytics_called": false,
+  "indicators_used": [
+    "malaria_confirmed",
+    "malaria_tests",
+    "malaria_confirmed_u5",
+    "malaria_rdt_positive"
+  ],
+  "baseline_methodology": "past-only expanding seasonal median of positivity for the same district and calendar month; years strictly before the evaluation month; pre-202106 excluded",
+  "threshold_pp": 3.0,
+  "threshold_source": "operational_policy_not_fitted",
+  "n_evaluated_districts": 16,
+  "n_shadow_observations": 1008,
+  "n_observed_district_months": 935,
+  "n_missing_placeholders": 73,
+  "n_anomaly_flags": 46,
+  "n_blocked_by_data_quality": 660,
+  "n_confirmed_case_support": 41,
+  "n_testing_down": 3,
+  "n_testing_up": 0,
+  "n_without_supporting_evidence": 2,
+  "n_sustained_anomalies": 23,
+  "n_isolated_anomalies": 23,
+  "n_sustained_3": 13,
+  "baseline_years_span": [
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+  ],
+  "incomplete_periods": [
+    "202605",
+    "202606",
+    "202608"
+  ],
+  "reporting_completeness_min": 0.2,
+  "data_freshness": "frozen_comparable_era_replay",
+  "stale_check": "not_applicable_replay_no_live_analytics",
+  "leakage_audit": {
+    "passed": true,
+    "n_violations": 0,
+    "violations": []
+  },
+  "software": {
+    "component": "malaria_anomaly_shadow",
+    "python": "3.13.2",
+    "git_head": "1e732cb4f9028731536dcfb1fdfd237d3f9f57d7",
+    "live_analytics_called": false
+  },
+  "disclaimer": "Statistical seasonal positivity nowcast for shadow review only. Not AI, not a forecast, not an outbreak detector.",
+  "protected_hashes_before": {
+    "panel": "fde4751ba987d8269ac51cceef4551635d3132ea1c1f0867e515030b54ff0afb",
+    "gbt": "08a66c5900ac7263b82ab4669bab7748fd874b1fad2e49f8e0098f1c4a45c5f7",
+    "count_v1": "bf10653696fb7afd0668ffeeb35def789194039b4b9b5116222e18ea61dee95b",
+    "pos_v1": "b94b7d6fc71bc005fcff0a90bbd270b37e4afe240d6967caa03a2e718bbf1114",
+    "count_filtered": "771d7612d66d0c9a3040c2b099ad352404b129e1bd164104eb4c1255d5d2aa84",
+    "pos_filtered": "f8d1684840d6f22ff5f34a8fb29826421da192d07e486b0f0c27cfe6ebeae205",
+    "backtest_json": "b99926214f4ca45d437987e8d3413e38129b009a36b5c7329676f1f487273899"
+  }
+}
