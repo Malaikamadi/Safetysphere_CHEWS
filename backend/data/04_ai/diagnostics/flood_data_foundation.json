@@ -1,0 +1,612 @@
+{
+  "generated_at": "2026-09-10T15:57:36Z",
+  "phase": "flood_event_data_foundation",
+  "model_trained": false,
+  "integrated_into_chews": false,
+  "rainfall_derived_labels_created": false,
+  "missing_converted_to_nonflood": false,
+  "sources": [
+    {
+      "name": "NDMA disaster register and field assessments",
+      "url": "https://ndma.gov.sl/",
+      "examples": [
+        "https://ndma.gov.sl/2024/09/24/4259-zsqong/",
+        "https://ndma.gov.sl/2023/09/15/3818-draunc/",
+        "https://ndma.gov.sl/2022/09/20/ndma-responds-to-bonthe-district-flood-victims-assesses-impact-on-livelihoods-and-infrastructure/"
+      ],
+      "years_publicly_illustrated": "2022\u20132024 posts; register exists from NDMA creation (2021) per Audit Service SL 2025",
+      "geography": "national; community and chiefdom names in assessments",
+      "attributes": "households, people affected, buildings, farmland, dates of incident and assessment",
+      "accessibility": "Assessment pages are public; the disaster register is NOT a bulk public download \u2014 partnership/acquisition required",
+      "ground_truth": "Best primary source if a dated extract can be obtained. Not in the CHEWS repo.",
+      "in_repo": false
+    },
+    {
+      "name": "IFRC DREF / Sierra Leone Red Cross situation reports on ReliefWeb",
+      "url": "https://reliefweb.int/report/sierra-leone/sierra-leone-floods-2024-dref-final-report-mdrsl016",
+      "examples": [
+        "https://reliefweb.int/report/sierra-leone/sierra-leone-floods-2024-dref-final-report-mdrsl016"
+      ],
+      "years_publicly_illustrated": "at least 2022 (MDRSL013) and 2024 (MDRSL016)",
+      "geography": "named communities and districts",
+      "attributes": "start window, people/households, deaths, joint NDMA assessments",
+      "accessibility": "Public humanitarian reports. Not a complete national register.",
+      "ground_truth": "Independent corroboration of major events. Too sparse alone for backtesting.",
+      "in_repo": false
+    },
+    {
+      "name": "EM-DAT (CRED/UCLouvain)",
+      "url": "https://public.emdat.be/",
+      "years": "1900\u2013present, weekly updates",
+      "geography": "country-level; optional lat/lon and river basin, often missing for floods",
+      "attributes": "start/end when known, deaths, affected, disaster subtype",
+      "accessibility": "Free non-commercial after registration; HDX country profiles are yearly aggregates only",
+      "ground_truth": "Independent check on HIGH-IMPACT events. Not community EWS grain.",
+      "in_repo": false
+    },
+    {
+      "name": "Dartmouth Flood Observatory / Global Flood Database (MODIS 2000\u20132018)",
+      "url": "https://floodobservatory.colorado.edu/",
+      "secondary": "https://developers.google.com/earth-engine/datasets/catalog/GLOBAL_FLOOD_DB_MODIS_EVENTS_V1",
+      "years": "DFO large-flood archive from 1985; GFD mapped subset 2000\u20132018",
+      "geography": "event polygons / 250 m raster; large floods only",
+      "accessibility": "Research/Earth Engine; HDX hosts an older DFO extract",
+      "ground_truth": "Supporting inundation, not CHEWS primary target. Urban flash floods often unmapped.",
+      "in_repo": false
+    },
+    {
+      "name": "Copernicus EMS Rapid Mapping",
+      "url": "https://emergency.copernicus.eu/",
+      "examples": [
+        "EMSR222 Regent mudflow 15 Aug 2017"
+      ],
+      "years": "activation-based, not a continuous Sierra Leone series",
+      "geography": "AOI polygons for activated disasters",
+      "accessibility": "Public map products",
+      "ground_truth": "High-value for 2017 landslide/mudflow; not a national flood time series",
+      "in_repo": false
+    },
+    {
+      "name": "NWRMA hydrometric / SLMet climate archives",
+      "url": "https://nwrma.gov.sl/data/",
+      "secondary": "https://slmet.gov.sl/our-services/climate/",
+      "years": "rainfall records cited from 1921; gaps during the war; monitoring restarted ~2010",
+      "geography": "sparse stations; Rokel-Seli focus for Water Security Project",
+      "accessibility": "Agency portals; not confirmed as bulk open flood-event tables",
+      "ground_truth": "Weather/water-level context if obtained \u2014 not flood labels",
+      "in_repo": false
+    },
+    {
+      "name": "CIDMEWS-SL GeoPortal",
+      "url": "https://www.cidmews-sl.solutions/index.php/early-warning-systems/cidmews",
+      "years": "project layers ~2016\u20132017 documented",
+      "geography": "Western Area disaster-prone areas cited",
+      "accessibility": "Web geoportal; bulk historical flood events not verified as downloadable",
+      "ground_truth": "Potential exposure layer after access review \u2014 not used here",
+      "in_repo": false
+    },
+    {
+      "name": "HDX COD-AB Sierra Leone and CHIRPS subnational rainfall",
+      "url": "https://data.humdata.org/dataset/cod-ab-sle",
+      "secondary": "https://data.humdata.org/dataset/sle-rainfall-subnational",
+      "years": "admin COD current; CHIRPS dekadal time series",
+      "geography": "admin 0\u20134 polygons; rainfall averaged to admin units",
+      "accessibility": "Public HDX",
+      "ground_truth": "Join geometry and rainfall context only \u2014 not flood events",
+      "in_repo": false
+    }
+  ],
+  "current_inventory": [
+    {
+      "asset": "flood_zones.json",
+      "source": "CHEWS static catalog (NDMA/IFRC-aligned narratives)",
+      "date_coverage": "history years 2015\u20132024 in prose; layer itself is undated",
+      "geographic_coverage": "23 communities; 10 of 16 districts",
+      "temporal_resolution": "year (sometimes month in text)",
+      "spatial_resolution": "point lat/lng",
+      "real_vs_synthetic": "real place names / compiled history; not an event time series",
+      "can_be_target": false,
+      "can_be_context": true,
+      "limitations": "No day field; 6 districts have zero zones"
+    },
+    {
+      "asset": "Open-Meteo realtime + archive",
+      "source": "weather_api.py / climate_archive.py",
+      "date_coverage": "live nowcast; archive JSON on disk ~202307\u2013202608; malaria monthly climate from 201104",
+      "geographic_coverage": "district centroids today; archive API can take any lat/lng",
+      "temporal_resolution": "hourly live / daily archive / monthly malaria join",
+      "spatial_resolution": "Open-Meteo grid at requested point",
+      "real_vs_synthetic": "real reanalysis/forecast; live fallback is synthetic jitter",
+      "can_be_target": false,
+      "can_be_context": true,
+      "limitations": "Rainfall is not a flood event; live weather ignores zone coordinates"
+    },
+    {
+      "asset": "synthetic flood CSV",
+      "source": "CHEWS_SierraLeone_Flood_Dataset.csv",
+      "date_coverage": "none",
+      "geographic_coverage": "none",
+      "temporal_resolution": "none",
+      "spatial_resolution": "none",
+      "real_vs_synthetic": "synthetic",
+      "can_be_target": false,
+      "can_be_context": false,
+      "limitations": "300 rows; flood_occurred is generated; 0.991 AUC is not real-world"
+    },
+    {
+      "asset": "synthetic community reports",
+      "source": "community_reports_chews_202607.csv",
+      "date_coverage": "2026-07-01 to 2026-07-30",
+      "geographic_coverage": "shuffled Freetown names \u00d7 inland districts",
+      "temporal_resolution": "day (fake)",
+      "spatial_resolution": "invalid",
+      "real_vs_synthetic": "synthetic",
+      "can_be_target": false,
+      "can_be_context": false,
+      "limitations": "632 geo mismatches; BLOCKED RF leakage"
+    },
+    {
+      "asset": "MoH DHIS2 core MFL",
+      "source": "data/01_raw/master_facility_list/moh_dhis2_core_health_facilities.csv",
+      "date_coverage": "snapshot",
+      "geographic_coverage": "1615 facilities with lat/lng",
+      "temporal_resolution": "none",
+      "spatial_resolution": "facility point",
+      "real_vs_synthetic": "real identity and coordinates",
+      "can_be_target": false,
+      "can_be_context": true,
+      "limitations": "No flood-closure outcomes"
+    },
+    {
+      "asset": "admin_hierarchy.csv + sierra-leone-districts.geojson",
+      "source": "CHEWS reference / frontend",
+      "date_coverage": "static",
+      "geographic_coverage": "16 districts; GeoJSON polygons in frontend",
+      "temporal_resolution": "none",
+      "spatial_resolution": "district",
+      "real_vs_synthetic": "reference geography",
+      "can_be_target": false,
+      "can_be_context": true,
+      "limitations": "admin_boundaries staging folders are empty; OCHA COD-AB not ingested"
+    },
+    {
+      "asset": "river gauges / inundation extents / NDMA register",
+      "source": "not in repository",
+      "date_coverage": null,
+      "geographic_coverage": null,
+      "temporal_resolution": null,
+      "spatial_resolution": null,
+      "real_vs_synthetic": "absent",
+      "can_be_target": false,
+      "can_be_context": false,
+      "limitations": "Primary gap from the validation audit"
+    }
+  ],
+  "coverage": {
+    "in_repo_dated_flood_events": 0,
+    "in_repo_observed_gauges": 0,
+    "in_repo_inundation_extents": 0,
+    "external_primary_source_identified": true,
+    "external_primary_source_acquired": false
+  },
+  "data_quality": {
+    "synthetic_training_table_unusable_as_target": true,
+    "synthetic_community_reports_unusable_as_target": true,
+    "zone_history_year_grain_only": true,
+    "card_auc_not_real_world": true
+  },
+  "target_candidates": [
+    {
+      "id": "A",
+      "name": "dated_observed_flood_event",
+      "definition": "A flood, flash flood, riverine flood, coastal flood, or flood-associated landslide that a named authority recorded at a place with a calendar date.",
+      "spatial_grain": "community / named settlement, falling back to district only if flagged",
+      "temporal_grain": "calendar day (start; end if known)",
+      "lead_time": "hours\u2013days before event_start using past-only rainfall windows",
+      "required_data": "NDMA register or equivalent dated assessment; location at least district",
+      "limitations": "Register access required; under-reporting of minor events; delayed assessments",
+      "recommended": true
+    },
+    {
+      "id": "B",
+      "name": "geographic_inundation_event",
+      "definition": "Satellite-mapped surface water beyond permanent water over a known interval.",
+      "spatial_grain": "raster (e.g. 250 m MODIS GFD) or Copernicus EMS polygons",
+      "temporal_grain": "event window (often days), cloud-limited",
+      "lead_time": "poor for Freetown flash floods; better for prolonged riverine water",
+      "required_data": "GFD / DFO / Copernicus EMS activations",
+      "limitations": "Misses many urban flash floods; 2017 Freetown event was mudflow/landslide mapping",
+      "recommended": false,
+      "role": "independent spatial corroboration, not the primary CHEWS target"
+    },
+    {
+      "id": "C",
+      "name": "community_level_flood_occurrence",
+      "definition": "Same as A, restricted to a named community matching flood_zones or NDMA place names.",
+      "spatial_grain": "community",
+      "temporal_grain": "day",
+      "lead_time": "same as A",
+      "required_data": "community names in the source, not synthetic CHW CSV",
+      "limitations": "Name matching is uncertain; 23 CHEWS zones do not cover all NDMA places",
+      "recommended": true,
+      "role": "preferred grain of target A when the source names a community"
+    },
+    {
+      "id": "D",
+      "name": "facility_accessibility_disruption",
+      "definition": "A health facility unreachable or damaged because of flood.",
+      "spatial_grain": "MFL facility point",
+      "temporal_grain": "day",
+      "lead_time": "operational overlay after an event is known",
+      "required_data": "dated facility closure/damage records joined to MFL coordinates",
+      "limitations": "No such outcomes exist in CHEWS today",
+      "recommended": false,
+      "role": "future health-connection layer, not the first target"
+    },
+    {
+      "id": "E",
+      "name": "district_level_flood_occurrence",
+      "definition": "At least one documented flood in a district on a date.",
+      "spatial_grain": "district (admin-2)",
+      "temporal_grain": "day or multi-day window",
+      "lead_time": "weaker: centroid weather, mixed event types",
+      "required_data": "district named in NDMA/IFRC reports",
+      "limitations": "Hides intra-district differences; centroid weather is a high-uncertainty fallback",
+      "recommended": false,
+      "role": "fallback when community is unknown"
+    },
+    {
+      "id": "F",
+      "name": "flood_severity_category",
+      "definition": "Ordinal impact class (e.g. NDMA/IFRC assessment grade).",
+      "spatial_grain": "inherits from A/C/E",
+      "temporal_grain": "event",
+      "lead_time": "not a detection target",
+      "required_data": "source-provided grade; otherwise estimated and labelled as such",
+      "limitations": "CHEWS must not invent severity from rainfall",
+      "recommended": false,
+      "role": "optional observed field if the source grades the event"
+    }
+  ],
+  "recommended_target": {
+    "id": "A+C",
+    "name": "dated_observed_flood_event_at_community_grain",
+    "fallback": "E district-day if community unknown, with mapping_uncertainty=high",
+    "not_selected_as_primary": [
+      "B",
+      "D",
+      "F"
+    ]
+  },
+  "canonical_schema": {
+    "name": "chews_flood_event_v0",
+    "grain": "one row = one dated flood at one place",
+    "not_a_daily_panel": true,
+    "fields": [
+      {
+        "name": "event_id",
+        "provenance": "observed",
+        "required_for_lead_time": true,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "event_start",
+        "provenance": "observed",
+        "required_for_lead_time": true,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "event_end",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "location_id",
+        "provenance": "derived",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "location_name",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "district",
+        "provenance": "observed",
+        "required_for_lead_time": true,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "chiefdom",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "latitude",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "longitude",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "geographic_precision",
+        "provenance": "derived",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "mapping_method",
+        "provenance": "derived",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "mapping_uncertainty",
+        "provenance": "derived",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "event_type",
+        "provenance": "observed",
+        "required_for_lead_time": true,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "severity",
+        "provenance": "estimated",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "source",
+        "provenance": "observed",
+        "required_for_lead_time": true,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "source_url",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "source_confidence",
+        "provenance": "estimated",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "verified",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "verification_date",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "reported_by",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "affected_population",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "affected_households",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "affected_facilities",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "deaths",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "displacement",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "infrastructure_damage",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "inundation_area_km2",
+        "provenance": "estimated",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "notes",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      },
+      {
+        "name": "label_origin",
+        "provenance": "observed",
+        "required_for_lead_time": false,
+        "missing_policy": "null \u2014 never 0 / non-flood"
+      }
+    ],
+    "forbidden": [
+      "missing_as_nonflood",
+      "community_csv_chews_202607",
+      "rainfall_threshold",
+      "synthetic_flood_occurred",
+      "rainfall_percentile"
+    ],
+    "weather_columns_on_this_table": false,
+    "weather_join": "separate past-only extract keyed by event_id after acquisition"
+  },
+  "weather_alignment": {
+    "windows": "t-1, t-3, t-7 ending the day before event_start; t0 contemporaneous only",
+    "future_forbidden": true,
+    "variables": [
+      "precipitation_sum",
+      "optional temperature_2m_mean",
+      "optional relative_humidity_2m_mean",
+      "later: percentile/anomaly vs past-only expanding wet-season distribution at the same point"
+    ],
+    "percentile_is_context_not_label": true
+  },
+  "geographic_alignment": {
+    "priority": [
+      "event_coordinates",
+      "named_community_match_to_flood_zone",
+      "named_community_unmatched",
+      "district_polygon",
+      "district_centroid_fallback"
+    ],
+    "silent_centroid_assignment_forbidden": true
+  },
+  "minimum_data_requirements": {
+    "A_statistical_rule_backtesting": {
+      "purpose": "Estimate miss rate, false-alarm rate, and lead time of a disclosed rainfall/zone rule.",
+      "minimum": {
+        "wet_seasons": 3,
+        "dated_community_or_zone_events": 30,
+        "districts_or_distinct_regimes": "\u22658 districts, or Western Area plus \u22654 inland/coastal districts so Freetown flash flood is not the only regime",
+        "event_types": "at least flash vs riverine/coastal if claiming a national rule",
+        "non_event_rule": "Silent days are negatives ONLY if the same source would have recorded an event. Missing register coverage is not a non-flood label."
+      },
+      "why": "Three wet seasons prevent fitting a rule to one unusual year. About 30 dated events is the smallest count where a miss rate is even interpretable (e.g. 5 misses in 30 is 17%, with a still-wide confidence interval). Fewer than ~15 day-dated events cannot tell a useless rule from noise. Geographic diversity is required because coastal Bonthe, inland rivers, and Freetown informal settlements are different processes."
+    },
+    "B_controlled_shadow_validation": {
+      "purpose": "Observe a frozen rainfall/zone rule on refreshed weather without live CHEWS alerts.",
+      "minimum": {
+        "includes": "all of A",
+        "weather": "daily precip at event/zone coordinates covering those seasons (past-only)",
+        "corroboration": "subset of events also in IFRC DREF / ReliefWeb or equivalent",
+        "isolation": "no dashboard, risk engine, or notifications"
+      },
+      "why": "Malaria shadow was possible because DHIS2 positivity already existed. Flood shadow requires the event list first; weather without events is not a flood shadow."
+    },
+    "C_supervised_ml": {
+      "purpose": "Only if a rule baseline is already backtested and remaining error is not a simple rain cut.",
+      "minimum": {
+        "includes": "A and B completed, with a published rule baseline",
+        "wet_seasons": 5,
+        "dated_events": 100,
+        "districts": 10,
+        "negatives": "documented daily surveillance, never missing-as-zero",
+        "split": "chronological, never random",
+        "must_beat": "lead time and missed-event rate of the rule, not accuracy"
+      },
+      "why": "Flood days are rare. A classifier rewarded for accuracy will predict non-flood. Five seasons and ~100 events still may not justify ML; they are a floor for even asking the question. Default remains the simpler rule if ML does not win on lead time and misses.",
+      "currently_justified": false
+    }
+  },
+  "future_baseline": {
+    "implemented_now": false,
+    "threshold_invented_now": false,
+    "first_defensible_baseline_once_events_exist": {
+      "type": "zone_or_community past-only rainfall accumulation",
+      "candidates_to_evaluate_later": [
+        "t-1 / t-3 / t-7 precipitation sum vs that location's expanding wet-season percentile",
+        "rolling accumulation ending at t-1 (not t0) in mapped flood zones",
+        "event recurrence calendar (same community, same calendar month in prior years) as context only"
+      ],
+      "must_not": [
+        "fit a mm cut on the same events then call it validation",
+        "use future rainfall",
+        "treat missing register days as non-flood without a coverage statement"
+      ],
+      "ml_rule": "An ML model is only justified if it beats this baseline on lead time and missed-event rate."
+    }
+  },
+  "community_report_requirements": {
+    "current_synthetic_csv_is_ground_truth": false,
+    "required_to_become_useful": {
+      "location": "GPS or verified community id matching MFL/COD/flood zone",
+      "timestamp": "ISO datetime, timezone Africa/Abidjan; report time vs event time distinguished",
+      "reporter": "stable CHW/NDMA officer id; role; organisation",
+      "verification": "second source or supervisor flag; unverified reports stay unverified",
+      "duplicates": "space-time clustering (same community, same 24h) before counting events",
+      "confidence": "explicit low/medium/high; never implied by damaged_houses",
+      "spatial_accuracy": "record GPS error or admin-level if GPS absent",
+      "impact_fields": "optional observed impact; must not be model features if they define the label"
+    },
+    "roles_if_quality_met": {
+      "event_detection": "possible near-real-time signal, still not the historical target",
+      "independent_validation": "only if independent of the NDMA row being validated",
+      "confirmation": "yes, with timestamps after the event"
+    }
+  },
+  "operational_use_case": {
+    "would_warn_about": [
+      "likely flooding at a known exposed community or zone",
+      "possible disruption of access to listed nearby health facilities",
+      "community exposure (population in catalog / MFL catchment)"
+    ],
+    "would_not_claim": [
+      "disease outbreak caused by the flood",
+      "AI prediction",
+      "96% accuracy"
+    ],
+    "warning_contents": [
+      "location (community/zone/district) and mapping uncertainty",
+      "expected timing (nowcast vs t-1/t-3 rainfall context \u2014 not a false NWP strip)",
+      "evidence (which source would confirm; rainfall window used)",
+      "confidence/data quality",
+      "affected facilities/communities if a spatial join is valid",
+      "recommended verification (NDMA / DHMT / CHW), not automatic public-health action"
+    ]
+  },
+  "known_gaps": [
+    "NDMA disaster register not in CHEWS",
+    "No river-gauge time series",
+    "No inundation time series",
+    "No facility-closure outcomes",
+    "OCHA COD-AB not ingested (frontend has a district GeoJSON only)",
+    "Zone catalog missing 6 districts"
+  ],
+  "verdict": {
+    "classification": "B",
+    "label": "REAL EVENT DATA SOURCE IDENTIFIED \u2014 ACQUISITION REQUIRED"
+  },
+  "protected_hashes_before": {
+    "flood_risk_py": "8905872c23b8cf77bdd082d70dc1b54ec6a79a63d6c74a5ce0b1eb8703c7faae",
+    "flood_dashboard_py": "e5fdad6d5609b53f8c163431d9aa6a5ddbd58a6091bc25b16e9b235ae5c2e50c",
+    "weather_api_py": "f572f2978140ea37b57b6ebfa26b8458389375f5533271e73dc7b58f76f577d3",
+    "flood_model_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "flood_risk_v1_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b"
+  },
+  "disclaimer": "Specification only. No flood events were fabricated. Existing 0.9667 accuracy / 0.991 AUC remains synthetic-holdout, not real-world performance.",
+  "protected_hashes_after": {
+    "flood_risk_py": "8905872c23b8cf77bdd082d70dc1b54ec6a79a63d6c74a5ce0b1eb8703c7faae",
+    "flood_dashboard_py": "e5fdad6d5609b53f8c163431d9aa6a5ddbd58a6091bc25b16e9b235ae5c2e50c",
+    "weather_api_py": "f572f2978140ea37b57b6ebfa26b8458389375f5533271e73dc7b58f76f577d3",
+    "flood_model_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "flood_risk_v1_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b"
+  }
+}
