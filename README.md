@@ -301,4 +301,4 @@ Apache License 2.0. Copyright 2026 SafetySphere Global. See [LICENSE](LICENSE).
 ## Contact / ownership
 
 **Owner:** SafetySphere Global (per `LICENSE`).  
-A public contact email is **not verifiable from the current repository**.
+or Email Maliakamadi@safetysphereglobal.org**.
