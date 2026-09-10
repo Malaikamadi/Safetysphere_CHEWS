@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T15:41:31Z",
+  "generated_at": "2026-09-10T15:42:30Z",
   "diagnostic_only": true,
   "model_trained_this_phase": false,
   "integrated_into_chews": false,
@@ -132,7 +132,11 @@
     "A_rainfall": {
       "realtime_open_meteo": true,
       "historical_archive_api": true,
-      "historical_archive_downloaded": false,
+      "historical_archive_downloaded": true,
+      "historical_archive_files": [
+        "open_meteo_archive_202307_202608.json",
+        "open_meteo_archive_202309_202608.json"
+      ],
       "synthetic_csv_rainfall_24h": true,
       "is_flood_event": false
     },
