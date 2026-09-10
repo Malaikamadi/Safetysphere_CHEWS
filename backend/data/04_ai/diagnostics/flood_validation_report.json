@@ -1,0 +1,855 @@
+{
+  "generated_at": "2026-09-10T15:41:31Z",
+  "diagnostic_only": true,
+  "model_trained_this_phase": false,
+  "integrated_into_chews": false,
+  "invented_flood_labels": false,
+  "missing_converted_to_nonflood": false,
+  "large_weather_download": false,
+  "architecture": {
+    "live_path": [
+      "Open-Meteo realtime precip (district centroid) OR synthetic climatology jitter",
+      "services/flood_dashboard._district_signal (soil/river/tide synthesised)",
+      "reference/flood_zones.json static geomorphology",
+      "models.flood_risk.predict heuristic composite",
+      "GET /strategic/flood-dashboard and /flood-zone/{id}/forecast",
+      "frontend Flood Atlas / early-warning pages"
+    ],
+    "ml_path": [
+      "data/raw/CHEWS_SierraLeone_Flood_Dataset.csv (synthetic)",
+      "training/train_all_models.py GradientBoostingClassifier, random 80/20 split",
+      "data/trained_models/flood_model.joblib",
+      "models.flood_risk.predict_ml \u2014 NOT called by routers"
+    ],
+    "parallel_unvalidated_paths": [
+      "POST /early-warning/assess uses the same heuristic + alert_engine hardcoded cuts",
+      "POST /healthcare/ml/community-flood uses BLOCKED community RF",
+      "routers/situation_room.py uses random.uniform flood scores",
+      "frontend/early-warning.js ships hardcoded demo flood alerts"
+    ],
+    "live_uses_trained_gbt": false,
+    "spatial_grain_live": "23 catalog communities nested in 16 districts",
+    "temporal_grain_live": "nowcast snapshot; 24h hourly outlook is a decay heuristic, not NWP",
+    "training_period": "none \u2014 synthetic rows have no dates",
+    "inference_period": "wall-clock time at request"
+  },
+  "existing_model": {
+    "algorithm": "GradientBoostingClassifier",
+    "artifact": "data/trained_models/flood_model.joblib",
+    "duplicate_artifact": "data/04_ai/models/flood_risk_v1_20260731.joblib",
+    "features": [
+      "rainfall_mm_24h",
+      "temperature_c",
+      "humidity_percent",
+      "elevation_m",
+      "water_level_m",
+      "drainage_encoded",
+      "soil_saturation",
+      "community_reports",
+      "rain_x_saturation",
+      "rain_x_drainage",
+      "low_elevation_flag"
+    ],
+    "target": "flood_occurred",
+    "training_rows": 300,
+    "split": "80/20 stratified random_state=42",
+    "card_metrics": {
+      "accuracy": 0.9667,
+      "precision": 1.0,
+      "recall": 0.8947,
+      "f1": 0.9444,
+      "roc_auc": 0.991
+    },
+    "card_limitations": [
+      "Trained on synthetic data \u2014 not yet validated against real DHIS2/NDMA flood records",
+      "No temporal component \u2014 treats each observation independently",
+      "Community reports feature has zero importance \u2014 may indicate data quality issue",
+      "Perfect precision suggests potential overfitting on small dataset"
+    ],
+    "review_status": "Pre-production \u2014 pending validation with real data",
+    "live_dashboard_calls_predict_ml": false
+  },
+  "weather": {
+    "realtime": {
+      "module": "services/weather_api.py",
+      "provider": "Open-Meteo Forecast API",
+      "url_pattern": "https://api.open-meteo.com/v1/forecast",
+      "variables": [
+        "current.precipitation",
+        "hourly.precipitation past_hours=24"
+      ],
+      "temporal_resolution": "hourly / current",
+      "spatial_resolution": "Open-Meteo grid at requested lat/lon",
+      "coordinates_used": "district centroids from admin_hierarchy.csv, not flood-zone lat/lng",
+      "cache_ttl_seconds": 3600,
+      "on_failure": "flood_dashboard falls back to synthetic climatology jitter",
+      "alignable_to_flood_observations": false,
+      "reason": "No dated flood observations exist to align against."
+    },
+    "historical_archive": {
+      "module": "services/climate_archive.py",
+      "provider": "Open-Meteo Archive",
+      "base_url": "https://archive-api.open-meteo.com/v1/archive",
+      "daily_variables": [
+        "temperature_2m_mean",
+        "precipitation_sum",
+        "relative_humidity_2m_mean"
+      ],
+      "default_mock_mode": true,
+      "downloaded_archive_files": [
+        "open_meteo_archive_202307_202608.json",
+        "open_meteo_archive_202309_202608.json"
+      ],
+      "large_download_performed": false,
+      "current_aggregation": "daily \u2192 district-month for malaria join",
+      "flood_would_need": "daily or sub-daily precip at zone coordinates plus an event target",
+      "historical_rainfall_retrievable": true,
+      "historical_rainfall_retrieved_for_this_audit": false,
+      "mock_fixture": "data/01_raw/climate/mock/archive_monthly_sample.json"
+    },
+    "malaria_monthly_climate_reuse": {
+      "present": true,
+      "n_rows": 2347,
+      "period_min": "201104",
+      "period_max": "202306",
+      "has_rainfall_mm": true,
+      "usable_as_flood_target": false,
+      "note": "District-month malaria climate join. Monthly rainfall is not a flood event."
+    },
+    "river_gauges": {
+      "available": false
+    },
+    "soil_moisture_observations": {
+      "available": false,
+      "live_path": "synthesised in flood_dashboard"
+    },
+    "tide_observations": {
+      "available": false,
+      "live_path": "12.4h sine heuristic for coastal districts"
+    }
+  },
+  "available_data": {
+    "A_rainfall": {
+      "realtime_open_meteo": true,
+      "historical_archive_api": true,
+      "historical_archive_downloaded": false,
+      "synthetic_csv_rainfall_24h": true,
+      "is_flood_event": false
+    },
+    "B_temperature": {
+      "synthetic_csv": true,
+      "archive_api": true,
+      "is_flood_event": false
+    },
+    "C_humidity": {
+      "synthetic_csv": true,
+      "archive_api": true,
+      "is_flood_event": false
+    },
+    "D_river_water_level": {
+      "observed_gauges": false,
+      "synthetic_csv_water_level_m": true,
+      "live_river_stage": "derived from rainfall_24h + jitter"
+    },
+    "E_flood_event_observations": {
+      "available": false
+    },
+    "F_flood_zone_geographic": {
+      "source": "reference/flood_zones.json",
+      "n_zones": 23,
+      "static_manually_defined": true,
+      "districts_with_zones": [
+        "bo",
+        "bonthe",
+        "kambia",
+        "kenema",
+        "moyamba",
+        "port_loko",
+        "pujehun",
+        "tonkolili",
+        "western_area_rural",
+        "western_area_urban"
+      ],
+      "districts_without_zones": [
+        "bombali",
+        "falaba",
+        "kailahun",
+        "karene",
+        "koinadugu",
+        "kono"
+      ],
+      "unmapped_zone_districts": [],
+      "coordinates_in_sierra_leone_bbox": true,
+      "elevation_m": {
+        "n": 23,
+        "missing": 0,
+        "min": 2.0,
+        "p50": 14.0,
+        "max": 280.0,
+        "mean": 42.0
+      },
+      "flood_history": {
+        "n_events": 41,
+        "years": [
+          2015,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024
+        ],
+        "year_only": true,
+        "n_with_named_month_in_text": 13,
+        "n_with_day_field": 0,
+        "usable_as_dated_flood_target": false,
+        "reason": "Catalog narratives are year-grain (sometimes a calendar month in prose). They cannot be aligned to daily rainfall or used as supervised labels."
+      },
+      "population_in_catalog": 686208,
+      "can_serve_as_flood_target": false,
+      "limitation": "Static NDMA/IFRC-aligned community catalog with narrative yearly history. Not a flood-extent time series and not linked to gauges or satellite inundation."
+    },
+    "G_facility_location": {
+      "mfl_present": true,
+      "flood_join": "district name map onto static zones; saturation\u226575 \u2192 High"
+    },
+    "H_population_exposure": {
+      "zone_population_field": true,
+      "source": "static catalog integers, not census time series"
+    },
+    "I_community_flood_reports": {
+      "source": "data/01_raw/community_reports/community_reports_chews_202607.csv",
+      "n_rows": 1000,
+      "date_range": {
+        "min": "2026-07-01",
+        "max": "2026-07-30"
+      },
+      "unique_dates": 30,
+      "class_counts": {
+        "0": 751,
+        "1": 249
+      },
+      "n_missing_labels": 0,
+      "n_geo_mismatches": 632,
+      "geo_mismatch_examples": [
+        {
+          "row_index": 0,
+          "community": "Kissy",
+          "district": "Tonkolili",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 3,
+          "community": "Dworzark",
+          "district": "Bombali",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 4,
+          "community": "Kissy",
+          "district": "Port Loko",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 5,
+          "community": "Regent",
+          "district": "Bo",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 6,
+          "community": "Susan's Bay",
+          "district": "Kono",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 9,
+          "community": "Regent",
+          "district": "Kambia",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 11,
+          "community": "Kissy",
+          "district": "Bombali",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        },
+        {
+          "row_index": 13,
+          "community": "Aberdeen",
+          "district": "Port Loko",
+          "issue": "freetown_or_western_place_name_assigned_to_non_western_district"
+        }
+      ],
+      "point_biserial_damaged_houses": 0.8425,
+      "point_biserial_displaced_households": 0.8384,
+      "model_card_review_status": "BLOCKED \u2014 requires audit for data leakage before use",
+      "leakage_features_in_training": [
+        "damage_displacement_index = damaged_houses * displaced_households",
+        "total_impact = damaged_houses + displaced_households + water_contamination"
+      ],
+      "real_or_synthetic": "synthetic_chews_training_table",
+      "can_serve_as_independent_validation": false,
+      "can_serve_as_event_labels": false,
+      "reason": "July-2026 synthetic rows; Freetown place names randomly paired with inland districts; community RF is BLOCKED for leakage. Not ground truth."
+    },
+    "J_historical_flood_labels": {
+      "synthetic_flood_occurred": true,
+      "observed_event_labels": false
+    }
+  },
+  "flood_training_tables": {
+    "raw_csv": {
+      "source": "data/raw/CHEWS_SierraLeone_Flood_Dataset.csv",
+      "n_rows": 300,
+      "columns": [
+        "rainfall_mm_24h",
+        "temperature_c",
+        "humidity_percent",
+        "elevation_m",
+        "water_level_m",
+        "drainage_quality",
+        "soil_saturation",
+        "community_reports",
+        "flood_occurred"
+      ],
+      "temporal_columns": [],
+      "spatial_columns": [],
+      "n_missing_labels": 0,
+      "class_counts": {
+        "1": 93,
+        "0": 207
+      },
+      "positive_rate": 0.31,
+      "completeness": {
+        "rainfall_mm_24h": 1.0,
+        "temperature_c": 1.0,
+        "humidity_percent": 1.0,
+        "elevation_m": 1.0,
+        "water_level_m": 1.0,
+        "drainage_quality": 1.0,
+        "soil_saturation": 1.0,
+        "community_reports": 1.0,
+        "flood_occurred": 1.0
+      },
+      "rainfall_mm_24h": {
+        "n": 300,
+        "missing": 0,
+        "min": 0.9,
+        "p50": 130.2,
+        "max": 248.9,
+        "mean": 127.9587
+      },
+      "water_level_m": {
+        "n": 300,
+        "missing": 0,
+        "min": 0.12,
+        "p50": 2.58,
+        "max": 4.95,
+        "mean": 2.6508
+      },
+      "soil_saturation": {
+        "n": 300,
+        "missing": 0,
+        "min": 0.1,
+        "p50": 0.58,
+        "max": 0.99,
+        "mean": 0.5646
+      },
+      "soil_saturation_unit_guess": "fraction_0_1",
+      "duplicate_row_count": 0,
+      "feature_target_point_biserial": {
+        "rainfall_mm_24h": 0.4243,
+        "water_level_m": -0.0911,
+        "elevation_m": -0.1613,
+        "humidity_percent": 0.522,
+        "temperature_c": -0.0638,
+        "soil_saturation": 0.079,
+        "community_reports": 0.0554
+      },
+      "real_or_synthetic": "synthetic_chews_training_table",
+      "can_serve_as_flood_target": false,
+      "cannot_serve_reason": "No date, no location, catalogued as synthetic. flood_occurred is a generated label, not an observed Sierra Leone flood event."
+    },
+    "catalog_csv_identical_to_raw": true,
+    "catalog_n_rows": 300
+  },
+  "data_quality": {
+    "rule_missing_is_not_nonflood": true,
+    "synthetic_table_has_no_missing_labels": true,
+    "no_temporal_index": true,
+    "no_spatial_index_on_training_rows": true,
+    "duplicate_training_rows": 0
+  },
+  "target_assessment": {
+    "candidates": [
+      {
+        "id": "A",
+        "name": "observed_flood_event",
+        "represents": "A dated inundation or flood disaster at a known place.",
+        "available_in_repo": false,
+        "spatial_grain": "unknown \u2014 would need community/catchment/district",
+        "temporal_grain": "at least daily, preferably hourly for flash flood",
+        "lead_time": "requires observations before/during event",
+        "limitations": "No NDMA/MoS/IFRC/EM-DAT event list with dates is in the repository."
+      },
+      {
+        "id": "B",
+        "name": "flood_zone_inundation",
+        "represents": "Water covering a mapped flood-prone community.",
+        "available_in_repo": false,
+        "spatial_grain": "23 static catalog points",
+        "temporal_grain": "none",
+        "lead_time": "not supported",
+        "limitations": "flood_zones.json is a static exposure catalog, not a time series of inundation."
+      },
+      {
+        "id": "C",
+        "name": "facility_access_disruption",
+        "represents": "Health facility unreachable because of flood.",
+        "available_in_repo": false,
+        "spatial_grain": "MFL facility",
+        "temporal_grain": "none",
+        "lead_time": "not supported",
+        "limitations": "MFL join uses static zone saturation, not observed access closures."
+      },
+      {
+        "id": "D",
+        "name": "rainfall_triggered_flood_condition",
+        "represents": "Rainfall (or accumulation) above a policy gate in an exposed zone.",
+        "available_in_repo": "partial \u2014 Open-Meteo can supply rainfall; flood occurrence is not observed",
+        "spatial_grain": "district centroid today; zone lat/lng unused for weather",
+        "temporal_grain": "hourly realtime or daily archive",
+        "lead_time": "same-day to ~1\u20137 day forecast if forecast precip were used and disclosed",
+        "limitations": "Rainfall is not a flood event. Using it as a label would circularly validate a rainfall rule. Not adopted as a supervised target in this audit."
+      },
+      {
+        "id": "E",
+        "name": "flood_probability_in_future_window",
+        "represents": "P(flood in next N days).",
+        "available_in_repo": false,
+        "spatial_grain": "undefined",
+        "temporal_grain": "undefined",
+        "lead_time": "the product goal, not an available label",
+        "limitations": "Cannot train or backtest without dated events."
+      }
+    ],
+    "selected_supervised_target": null,
+    "supervised_flood_prediction_supported": false,
+    "conclusion": "The repository has no defensible observed flood-event target. Current data cannot support supervised flood prediction."
+  },
+  "temporal_alignment": {
+    "training_csv_time": null,
+    "zone_history_grain": "year",
+    "live_features_timing": {
+      "open_meteo_precip": "contemporaneous / past 24h",
+      "soil_saturation": "synthesised now",
+      "river_stage": "synthesised from current rainfall_24h",
+      "24h_outlook": "heuristic decay of current intensity \u2014 uses no future NWP",
+      "water_level_m_in_gbt": "same-row as flood_occurred; contemporaneous, not lead-time"
+    },
+    "horizons_supported_by_event_data": [],
+    "horizons_not_evaluable": [
+      "same-day",
+      "1-day",
+      "3-day",
+      "7-day"
+    ]
+  },
+  "geographic_alignment": {
+    "weather_to_zone": "District centroid weather is applied to every zone in that district. Zone lat/lng are unused for Open-Meteo.",
+    "community_reports_to_zones": "names overlap some catalog places but pairing is random",
+    "facilities_to_zones": "district-level, not point-in-polygon",
+    "chiefdoms": "not used"
+  },
+  "leakage_audit": {
+    "synthetic_labels": true,
+    "random_split_without_time": true,
+    "water_level_same_row_as_target": true,
+    "soil_saturation_same_row_as_target": true,
+    "community_reports_count_same_row": true,
+    "interaction_features_from_same_row": true,
+    "future_rainfall_in_training": false,
+    "duplicate_training_files": true,
+    "community_rf_target_derived_features": true,
+    "card_auc_0_991_is_not_real_world": true,
+    "passed_as_operationally_valid": false
+  },
+  "baseline_comparison": {
+    "n_scored_rows": 300,
+    "n_train": 240,
+    "n_test": 60,
+    "split": {
+      "method": "sklearn.train_test_split",
+      "test_size": 0.2,
+      "random_state": 42,
+      "stratify": true,
+      "chronological": false,
+      "leakage_risk": "random_split_of_iid_synthetic_rows_with_no_time_index"
+    },
+    "rainfall_threshold_baseline": {
+      "selection": {
+        "selected_on": "train_split_only",
+        "purpose": "diagnostic_baseline_not_operational_policy",
+        "candidates_mm": [
+          50.0,
+          75.0,
+          100.0,
+          125.0,
+          150.0
+        ],
+        "selected_threshold_mm": 125.0,
+        "train_ranking": [
+          {
+            "threshold_mm": 125.0,
+            "n": 240,
+            "tp": 67,
+            "tn": 103,
+            "fp": 63,
+            "fn": 7,
+            "accuracy": 0.7083,
+            "precision": 0.5154,
+            "recall": 0.9054,
+            "f1": 0.6569,
+            "false_alarm_rate": 0.3795,
+            "missed_event_rate": 0.0946,
+            "confusion_matrix": {
+              "tn": 103,
+              "fp": 63,
+              "fn": 7,
+              "tp": 67
+            }
+          },
+          {
+            "threshold_mm": 100.0,
+            "n": 240,
+            "tp": 69,
+            "tn": 83,
+            "fp": 83,
+            "fn": 5,
+            "accuracy": 0.6333,
+            "precision": 0.4539,
+            "recall": 0.9324,
+            "f1": 0.6106,
+            "false_alarm_rate": 0.5,
+            "missed_event_rate": 0.0676,
+            "confusion_matrix": {
+              "tn": 83,
+              "fp": 83,
+              "fn": 5,
+              "tp": 69
+            }
+          },
+          {
+            "threshold_mm": 75.0,
+            "n": 240,
+            "tp": 74,
+            "tn": 62,
+            "fp": 104,
+            "fn": 0,
+            "accuracy": 0.5667,
+            "precision": 0.4157,
+            "recall": 1.0,
+            "f1": 0.5873,
+            "false_alarm_rate": 0.6265,
+            "missed_event_rate": 0.0,
+            "confusion_matrix": {
+              "tn": 62,
+              "fp": 104,
+              "fn": 0,
+              "tp": 74
+            }
+          },
+          {
+            "threshold_mm": 150.0,
+            "n": 240,
+            "tp": 48,
+            "tn": 120,
+            "fp": 46,
+            "fn": 26,
+            "accuracy": 0.7,
+            "precision": 0.5106,
+            "recall": 0.6486,
+            "f1": 0.5714,
+            "false_alarm_rate": 0.2771,
+            "missed_event_rate": 0.3514,
+            "confusion_matrix": {
+              "tn": 120,
+              "fp": 46,
+              "fn": 26,
+              "tp": 48
+            }
+          },
+          {
+            "threshold_mm": 50.0,
+            "n": 240,
+            "tp": 74,
+            "tn": 46,
+            "fp": 120,
+            "fn": 0,
+            "accuracy": 0.5,
+            "precision": 0.3814,
+            "recall": 1.0,
+            "f1": 0.5522,
+            "false_alarm_rate": 0.7229,
+            "missed_event_rate": 0.0,
+            "confusion_matrix": {
+              "tn": 46,
+              "fp": 120,
+              "fn": 0,
+              "tp": 74
+            }
+          }
+        ]
+      },
+      "test_metrics": {
+        "n": 60,
+        "tp": 17,
+        "tn": 29,
+        "fp": 12,
+        "fn": 2,
+        "accuracy": 0.7667,
+        "precision": 0.5862,
+        "recall": 0.8947,
+        "f1": 0.7083,
+        "false_alarm_rate": 0.2927,
+        "missed_event_rate": 0.1053,
+        "confusion_matrix": {
+          "tn": 29,
+          "fp": 12,
+          "fn": 2,
+          "tp": 17
+        },
+        "roc_auc_using_rainfall_as_score": 0.7818,
+        "threshold_mm": 125.0
+      }
+    },
+    "heuristic_flood_risk_predict": {
+      "n": 60,
+      "tp": 0,
+      "tn": 41,
+      "fp": 0,
+      "fn": 19,
+      "accuracy": 0.6833,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_alarm_rate": 0.0,
+      "missed_event_rate": 1.0,
+      "confusion_matrix": {
+        "tn": 41,
+        "fp": 0,
+        "fn": 19,
+        "tp": 0
+      },
+      "roc_auc_using_heuristic_score": 0.7092,
+      "binary_gate": 0.6,
+      "note": "Heuristic expects soil_saturation in percent; CSV stores ~0\u20131. This diagnostic rescales CSV soil \u00d7100 so the comparison is not an accident of units."
+    },
+    "existing_gbt_synthetic_holdout": {
+      "n": 60,
+      "tp": 17,
+      "tn": 41,
+      "fp": 0,
+      "fn": 2,
+      "accuracy": 0.9667,
+      "precision": 1.0,
+      "recall": 0.8947,
+      "f1": 0.9444,
+      "false_alarm_rate": 0.0,
+      "missed_event_rate": 0.1053,
+      "confusion_matrix": {
+        "tn": 41,
+        "fp": 0,
+        "fn": 2,
+        "tp": 17
+      },
+      "roc_auc": 0.991,
+      "evaluated": true,
+      "model_type": "GradientBoostingClassifier",
+      "split": "80/20 stratified random_state=42 \u2014 NOT chronological",
+      "universe": "synthetic_chews_flood_csv_holdout",
+      "real_world_performance": false
+    },
+    "comparison_caveat": "All three comparisons are on the SYNTHETIC flood CSV. They do not measure skill on real Sierra Leone floods. High GBT AUC here must not be reported as operational early-warning performance."
+  },
+  "ml_justified": false,
+  "ml_adds_value_on_synthetic_holdout": true,
+  "ml_justification": "ML is not justified. Labels are synthetic, the split is random, several features are contemporaneous with the label, and the live atlas does not even call the GBT. A rainfall threshold on the same table is the honest baseline; any GBT lift is lift on a generator, not on Sierra Leone floods.",
+  "early_warning": {
+    "lead_time_evidence": null,
+    "average_lead_time": null,
+    "median_lead_time": null,
+    "recall_on_real_events": null,
+    "false_alarm_rate_on_real_events": null,
+    "missed_event_rate_on_real_events": null,
+    "reason": "No dated historical flood events are available to measure lead time."
+  },
+  "thresholds": [
+    {
+      "name": "heuristic_rainfall_intensity_50mm_h",
+      "value": 50,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_rainfall_intensity_30mm_h",
+      "value": 30,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_rainfall_intensity_15mm_h",
+      "value": 15,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_rainfall_intensity_7_5mm_h",
+      "value": 7.5,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_rainfall_24h_100mm",
+      "value": 100,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_rainfall_24h_50mm",
+      "value": 50,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_elevation_5m",
+      "value": 5,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_elevation_15m",
+      "value": 15,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_composite_low_0.20",
+      "value": 0.2,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_composite_moderate_0.40",
+      "value": 0.4,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_composite_high_0.60",
+      "value": 0.6,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "heuristic_composite_severe_0.80",
+      "value": 0.8,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "dashboard_population_at_risk_0.40",
+      "value": 0.4,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "alert_engine_flood_advisory_0.30",
+      "value": 0.3,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "alert_engine_flood_watch_0.50",
+      "value": 0.5,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "alert_engine_flood_warning_0.70",
+      "value": 0.7,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "alert_engine_flood_emergency_0.85",
+      "value": 0.85,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "mfl_high_saturation_75pct",
+      "value": 75,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "community_rf_critical_0.80",
+      "value": 0.8,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "gbt_predict_class_0.5",
+      "value": 0.5,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    },
+    {
+      "name": "drainage_poor_score_0.85",
+      "value": 0.85,
+      "origin": "hardcoded_prototype",
+      "validated_against_flood_events": false
+    }
+  ],
+  "health_linkage_opportunities": {
+    "facility_access": "MFL coordinates exist; no flood-closure outcomes.",
+    "service_disruption": "not observed",
+    "disease_risk": "malaria DHIS2 is a separate track; no flood\u2192malaria causal claim.",
+    "displacement": "only synthetic community fields and catalog impact prose",
+    "causal_claim_made": false
+  },
+  "verdict": {
+    "classification": "E",
+    "label": "CURRENT FLOOD MODEL IS NOT DEFENSIBLE",
+    "also_true": [
+      "B. NEEDS MORE HISTORICAL FLOOD DATA",
+      "D. SIMPLE STATISTICAL/RULE-BASED METHOD IS PREFERABLE (if rebuilt after data exist)",
+      "F. MORE DATA/EXTERNAL VALIDATION REQUIRED"
+    ],
+    "not_selected": [
+      "A. READY FOR CONTROLLED SHADOW VALIDATION \u2014 no event target analogous to DHIS2 positivity",
+      "C. EXISTING MODEL NEEDS REDESIGN \u2014 redesign is premature until independent events exist"
+    ]
+  },
+  "protected_hashes_before": {
+    "flood_risk_py": "8905872c23b8cf77bdd082d70dc1b54ec6a79a63d6c74a5ce0b1eb8703c7faae",
+    "flood_dashboard_py": "e5fdad6d5609b53f8c163431d9aa6a5ddbd58a6091bc25b16e9b235ae5c2e50c",
+    "weather_api_py": "f572f2978140ea37b57b6ebfa26b8458389375f5533271e73dc7b58f76f577d3",
+    "flood_model_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "flood_risk_v1_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "train_all_models_py": "29f3f138c2ced25ccfe6c22874c520c1181d4b58d72eb6e598111ecf37b03044"
+  },
+  "disclaimer": "Diagnostic audit only. Not a flood forecast. Not an outbreak or disaster declaration. Card accuracy 0.9667 / ROC-AUC 0.991 is synthetic-holdout and is not real-world performance.",
+  "protected_hashes_after": {
+    "flood_risk_py": "8905872c23b8cf77bdd082d70dc1b54ec6a79a63d6c74a5ce0b1eb8703c7faae",
+    "flood_dashboard_py": "e5fdad6d5609b53f8c163431d9aa6a5ddbd58a6091bc25b16e9b235ae5c2e50c",
+    "weather_api_py": "f572f2978140ea37b57b6ebfa26b8458389375f5533271e73dc7b58f76f577d3",
+    "flood_model_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "flood_risk_v1_joblib": "f4a3c2cfdb0f5b016abe164d4ed87bdd29a4ca9cb7d3d1599eb37dd356bc918b",
+    "train_all_models_py": "29f3f138c2ced25ccfe6c22874c520c1181d4b58d72eb6e598111ecf37b03044"
+  }
+}
