@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-09-10T09:55:50Z",
+  "created_at": "2026-09-10T09:56:51Z",
   "model_trained": false,
   "integrated_into_chews": false,
   "comparable_era": {
@@ -290,6 +290,17 @@
     "n_consecutive_conventional": 8,
     "n_genuine_increased_positivity_alerts": 25,
     "n_testing_down_alerts": 4,
+    "n_alerts_mad_lt_0.01": 22,
+    "n_alerts_abs_dev_lt_0.03": 13,
+    "n_mean_z_ge_2": 11,
+    "candidate_dual_gate_z2_and_abs_dev_ge_0.03": {
+      "n": 22,
+      "source": "operational_candidate_not_validated",
+      "reason": "robust_z>=2 alone fires on sub-1pp moves when MAD is near zero"
+    },
+    "eligible_period_min": "202406",
+    "eligible_period_max": "202603",
+    "eligible_month_count": 22,
     "alerts_by_district": {
       "port_loko": 2,
       "bo": 1,
@@ -404,7 +415,7 @@
       "C": "MORE DATA IS REQUIRED",
       "D": "ANOMALY APPROACH IS NOT CURRENTLY DEFENSIBLE"
     },
-    "reason": "Past-only seasonal robust-z is a defensible contemporaneous detector. Persistence still dominates t+1 positivity, so an ML forecast is not justified.",
+    "reason": "Past-only expanding seasonal median is a defensible contemporaneous baseline. Robust z with n_prior=3 is MAD-fragile and needs a magnitude gate. Persistence still dominates t+1 positivity, so an ML forecast is not justified.",
     "genuine_alert_share": 0.7142857142857143,
     "testing_down_alert_share": 0.11428571428571428,
     "climate_rainfall_pooled_r": -0.04297983402256192,

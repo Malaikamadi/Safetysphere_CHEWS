@@ -180,7 +180,6 @@ def main() -> None:
     persistence_pairs = []
     seasonal_pairs = []
     prior_year_pairs = []
-    anomaly_as_level_pairs = []
     for row in eligible:
         if row.get("lead1_period") is None or row.get("lead1_observed") is None:
             continue
@@ -194,10 +193,6 @@ def main() -> None:
             seasonal_pairs.append((y, lead["expanding_median"]))
         if lead.get("prior_year") is not None:
             prior_year_pairs.append((y, lead["prior_year"]))
-        if row.get("observed") is not None and row.get("abs_dev_median") is not None and lead.get("expanding_median") is not None:
-            # naive: next month ≈ this month's seasonal baseline is wrong month;
-            # compare using current positivity as level (persistence) already above.
-            anomaly_as_level_pairs.append((y, row["observed"]))
 
     stability = baseline_stability_table(scored)
     unstable = [s for s in stability if s.get("unstable_high_step") or s.get("high_mad")]
@@ -212,19 +207,7 @@ def main() -> None:
         if r.get("rainfall_anomaly") is not None
     ]
 
-    # Tests vs positivity movement
-    d_tests = []
-    d_conf = []
-    d_pos = []
-    for r in eligible:
-        if r.get("prior_year") is None or r.get("observed") is None:
-            continue
-        d_pos.append(r["abs_dev_median"])
-        # prior_year is last year's positivity; tests change vs last year's tests is on bias class
     tests_vals = _finite([r["malaria_tests"] for r in eligible])
-    inv_sqrt_tests = [1.0 / math.sqrt(t) for t in tests_vals if t > 0]
-    abs_z = [abs(r["robust_z"]) for r in eligible if r.get("robust_z") is not None]
-    # align inv_sqrt with abs_z via eligible order
     inv_for_corr = []
     abs_for_corr = []
     for r in eligible:
@@ -373,6 +356,26 @@ def main() -> None:
             "n_consecutive_conventional": len(consecutive),
             "n_genuine_increased_positivity_alerts": len(genuine_alerts),
             "n_testing_down_alerts": len(testing_down_alerts),
+            "n_alerts_mad_lt_0.01": sum(
+                1 for r in alerts if r.get("expanding_mad") is not None and r["expanding_mad"] < 0.01
+            ),
+            "n_alerts_abs_dev_lt_0.03": sum(
+                1 for r in alerts if r.get("abs_dev_median") is not None and r["abs_dev_median"] < 0.03
+            ),
+            "n_mean_z_ge_2": sum(
+                1 for r in eligible if r.get("z_mean") is not None and r["z_mean"] >= 2.0
+            ),
+            "candidate_dual_gate_z2_and_abs_dev_ge_0.03": {
+                "n": sum(
+                    1 for r in alerts
+                    if r.get("abs_dev_median") is not None and r["abs_dev_median"] >= 0.03
+                ),
+                "source": "operational_candidate_not_validated",
+                "reason": "robust_z>=2 alone fires on sub-1pp moves when MAD is near zero",
+            },
+            "eligible_period_min": min((r["source_period"] for r in eligible), default=None),
+            "eligible_period_max": max((r["source_period"] for r in eligible), default=None),
+            "eligible_month_count": len({r["source_period"] for r in eligible}),
             "alerts_by_district": dict(by_district_alerts),
             "silent_districts": silent,
             "alerts_by_calendar_month": {str(k): v for k, v in sorted(by_month_alerts.items())},
@@ -502,7 +505,8 @@ def main() -> None:
     ):
         code = "A"
         reason = (
-            "Past-only seasonal robust-z is a defensible contemporaneous detector. "
+            "Past-only expanding seasonal median is a defensible contemporaneous baseline. "
+            "Robust z with n_prior=3 is MAD-fragile and needs a magnitude gate. "
             "Persistence still dominates t+1 positivity, so an ML forecast is not justified."
         )
     else:
