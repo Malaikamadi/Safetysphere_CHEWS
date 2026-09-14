@@ -196,6 +196,39 @@ def test_build_dataset_from_opener_is_reproducible_and_unlabelled():
     assert payload["disclaimer"].startswith("Historical weather data does not constitute")
 
 
+def test_build_dataset_records_fetch_failure_without_flood_labels(monkeypatch):
+    from services import flood_weather_history as mod
+
+    def boom(*_args, **_kwargs):
+        raise RuntimeError("HTTP Error 429: Too Many Requests")
+
+    monkeypatch.setattr(mod, "fetch_archive_daily", boom)
+    locations = [{
+        "location_id": "zone:fetch_fail",
+        "location_name": "Fail",
+        "location_type": "flood_zone",
+        "district": "bo",
+        "latitude": 7.96,
+        "longitude": -11.74,
+        "source": "test",
+        "coordinate_quality": "catalog_point",
+        "coordinate_ok": True,
+        "represents_all_flood_prone_communities": False,
+    }]
+    payload = mod.build_dataset(
+        start=date(2015, 8, 1),
+        end=date(2015, 8, 2),
+        locations=locations,
+        reuse_raw=False,
+        persist_raw=False,
+        sleep_seconds=0,
+    )
+    assert payload["rows"] == []
+    assert payload["fetch_failures"][0]["location_id"] == "zone:fetch_fail"
+    assert payload["flood_labels_created"] is False
+    assert "flood_occurred" not in (payload.get("quality") or {})
+
+
 def test_quality_audit_tracks_year_and_month_gaps():
     rows = _days([1.0, None])
     rows[1]["date"] = "2020-09-02"

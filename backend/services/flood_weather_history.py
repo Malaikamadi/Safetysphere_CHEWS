@@ -296,7 +296,7 @@ def fetch_archive_daily(
         last_error = None
         payload = None
         status = None
-        for attempt in range(6):
+        for attempt in range(4):
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
                     status = resp.status
@@ -308,13 +308,14 @@ def fetch_archive_daily(
                 if exc.code == 429:
                     retry_after = exc.headers.get("Retry-After") if exc.headers else None
                     if retry_after and str(retry_after).isdigit():
-                        wait = max(45, int(retry_after))
+                        wait = max(60, int(retry_after))
                     else:
-                        wait = 45 * (attempt + 1)
+                        wait = 60
+                print(f"  HTTP {exc.code}; waiting {wait}s (attempt {attempt + 1}/4)", flush=True)
                 time.sleep(wait)
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
                 last_error = exc
-                time.sleep(4 * (attempt + 1))
+                time.sleep(8 * (attempt + 1))
         if payload is None:
             raise RuntimeError(f"Open-Meteo Archive request failed after retries: {last_error}")
     if not isinstance(payload, dict):
@@ -563,13 +564,34 @@ def build_dataset(
     fetchable = [loc for loc in locations if loc.get("coordinate_ok")]
     rows: list[dict] = []
     extracts = []
+    fetch_failures = []
     for i, loc in enumerate(fetchable):
         payload = None
         if opener is None and reuse_raw:
             payload = load_cached_payload(loc["location_id"], start, end)
         if payload is None:
-            payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
-        print(f"[flood_weather_v1] {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
+            print(f"[flood_weather_v1] fetching {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
+            try:
+                payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
+            except RuntimeError as exc:
+                fetch_failures.append({"location_id": loc["location_id"], "error": str(exc)})
+                extracts.append({
+                    "location_id": loc["location_id"],
+                    "latitude": loc["latitude"],
+                    "longitude": loc["longitude"],
+                    "requested_start": start.isoformat(),
+                    "requested_end": end.isoformat(),
+                    "http_status": 429 if "429" in str(exc) else None,
+                    "error": str(exc),
+                    "api": ARCHIVE_URL,
+                    "provider": "Open-Meteo Archive",
+                })
+                print(f"  FAILED {loc['location_id']}: {exc}", flush=True)
+                if opener is None and sleep_seconds:
+                    time.sleep(max(sleep_seconds, 30))
+                continue
+        else:
+            print(f"[flood_weather_v1] cached {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
         from_cache = bool((payload.get("_chews_request") or {}).get("from_cache"))
         daily_keys = list((payload.get("daily") or {}).keys())
         extracts.append({
@@ -602,7 +624,9 @@ def build_dataset(
 
     attach_rainfall_features(rows)
     attach_baselines_efficient(rows)
-    quality = quality_audit(rows, fetchable, start, end)
+    quality = quality_audit(rows, [loc for loc in fetchable if loc["location_id"] not in {f["location_id"] for f in fetch_failures}], start, end)
+    quality["n_fetch_failures"] = len(fetch_failures)
+    quality["fetch_failures"] = fetch_failures
     comparison = compare_malaria_climate(rows)
     generated_at = _now()
     return {
@@ -613,6 +637,7 @@ def build_dataset(
         "locations": locations,
         "rows": rows,
         "extracts": extracts,
+        "fetch_failures": fetch_failures,
         "quality": quality,
         "malaria_climate_comparison": comparison,
         "period": {"start": start.isoformat(), "end": end.isoformat()},
@@ -678,6 +703,8 @@ def build_manifest(payload: dict) -> dict[str, Any]:
         "n_flood_zones": sum(1 for loc in payload["locations"] if loc["location_type"] == "flood_zone"),
         "n_district_centroids": sum(1 for loc in payload["locations"] if loc["location_type"] == "district_centroid"),
         "n_rows": quality["n_rows"],
+        "n_fetch_failures": quality.get("n_fetch_failures", 0),
+        "fetch_failures": payload.get("fetch_failures") or quality.get("fetch_failures") or [],
         "variables_requested": list(DAILY_VARIABLES),
         "variables_unavailable": list(UNAVAILABLE_REQUESTED),
         "extracts": payload["extracts"],

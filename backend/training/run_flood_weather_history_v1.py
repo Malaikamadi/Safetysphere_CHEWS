@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parent.parent
@@ -22,6 +23,8 @@ from services.flood_weather_history import (  # noqa: E402
     assert_protected_unchanged,
     build_dataset,
     build_manifest,
+    load_cached_payload,
+    load_canonical_locations,
     protected_hashes,
     write_csv,
 )
@@ -58,12 +61,20 @@ def _write_dataset_json(path: Path, payload: dict) -> None:
 
 def main() -> None:
     before = protected_hashes()
+    needed = [
+        loc for loc in load_canonical_locations()
+        if loc.get("coordinate_ok")
+        and load_cached_payload(loc["location_id"], PERIOD_START, PERIOD_END) is None
+    ]
+    if needed:
+        print(f"[flood_weather_v1] {len(needed)} locations need live fetch; 90s rate-limit cooldown", flush=True)
+        time.sleep(90)
     payload = build_dataset(
         start=PERIOD_START,
         end=PERIOD_END,
         persist_raw=True,
         reuse_raw=True,
-        sleep_seconds=2.0,
+        sleep_seconds=8.0,
     )
     TRAINING.mkdir(parents=True, exist_ok=True)
     DIAG.mkdir(parents=True, exist_ok=True)
@@ -93,6 +104,7 @@ def main() -> None:
         "n_expected": quality["n_expected"],
         "missing_precipitation": quality["missing_precipitation"],
         "n_duplicate_location_dates": quality["n_duplicate_location_dates"],
+        "n_fetch_failures": quality.get("n_fetch_failures", 0),
         "flood_labels_created": False,
         "model_trained": False,
         "csv": str(CSV_OUT),
