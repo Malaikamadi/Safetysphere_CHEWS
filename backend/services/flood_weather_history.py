@@ -570,6 +570,7 @@ def build_dataset(
         if payload is None:
             payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
         print(f"[flood_weather_v1] {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
+        from_cache = bool((payload.get("_chews_request") or {}).get("from_cache"))
         daily_keys = list((payload.get("daily") or {}).keys())
         extracts.append({
             "location_id": loc["location_id"],
@@ -588,6 +589,7 @@ def build_dataset(
             "elevation_m": payload.get("elevation"),
             "http_status": (payload.get("_chews_request") or {}).get("http_status"),
             "retrieved_at": (payload.get("_chews_request") or {}).get("retrieved_at"),
+            "from_cache": from_cache,
             "api": ARCHIVE_URL,
             "provider": "Open-Meteo Archive",
             "model_note": "Open-Meteo Archive historical reanalysis (ERA5-family as served by the API)",
@@ -595,7 +597,7 @@ def build_dataset(
         rows.extend(payload_to_daily_rows(loc, payload, start, end))
         if persist_raw:
             extracts[-1]["raw_path"] = str(persist_raw_payload(loc["location_id"], payload).relative_to(BACKEND))
-        if opener is None and i < len(fetchable) - 1:
+        if opener is None and not from_cache and i < len(fetchable) - 1:
             time.sleep(sleep_seconds)
 
     attach_rainfall_features(rows)
