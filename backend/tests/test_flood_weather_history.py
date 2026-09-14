@@ -10,16 +10,10 @@ from services.flood_weather_history import (
     attach_rainfall_features,
     daterange,
     load_canonical_locations,
-    missing_not_zero,
     quality_audit,
     rolling_sum,
     validate_coordinates,
 )
-
-
-def missing_not_zero(value):  # noqa: A001 — test helper name if not exported
-    from services.flood_weather_history import _num
-    return _num(value)
 
 
 def _days(precip):
@@ -195,3 +189,18 @@ def test_build_dataset_from_opener_is_reproducible_and_unlabelled():
     assert manifest["flood_labels_created"] is False
     assert "flood_occurred" not in manifest["transformations"]
     assert payload["rows"][2]["rainfall_prev_24h"] == 2.0
+    assert payload["rows"][2]["rainfall_24h"] == 4.0
+    assert payload["extracts"][0]["timezone"] == "Africa/Abidjan"
+    assert payload["extracts"][0]["daily_units"]["precipitation_sum"] == "mm"
+    assert "flood_occurred" not in payload["rows"][0]
+    assert payload["disclaimer"].startswith("Historical weather data does not constitute")
+
+
+def test_quality_audit_tracks_year_and_month_gaps():
+    rows = _days([1.0, None])
+    rows[1]["date"] = "2020-09-02"
+    rows[1]["wet_season_indicator"] = True
+    audit = quality_audit(rows, [{"location_id": "zone:test"}], date(2020, 8, 1), date(2020, 8, 2))
+    assert audit["gaps_by_year"]["2020"] == 1
+    assert audit["gaps_by_month"]["09"] == 1
+    assert audit["gaps_by_location"]["zone:test"] == 1

@@ -16,6 +16,7 @@ import json
 import math
 import statistics
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -57,10 +58,15 @@ PROTECTED_PATHS = {
     "flood_dashboard_py": BACKEND / "services" / "flood_dashboard.py",
     "weather_api_py": BACKEND / "services" / "weather_api.py",
     "flood_model_joblib": BACKEND / "data" / "trained_models" / "flood_model.joblib",
+    "flood_risk_v1_joblib": BACKEND / "data" / "04_ai" / "models" / "flood_risk_v1_20260731.joblib",
+    "malaria_model_joblib": BACKEND / "data" / "trained_models" / "malaria_model.joblib",
     "malaria_climate": MALARIA_CLIMATE,
+    "malaria_anomaly_backtest": BACKEND / "data" / "04_ai" / "diagnostics" / "malaria_anomaly_backtest.json",
     "flood_validation_report": BACKEND / "data" / "04_ai" / "diagnostics" / "flood_validation_report.json",
     "flood_foundation": BACKEND / "data" / "04_ai" / "diagnostics" / "flood_data_foundation.json",
 }
+
+RAW_DIR = BACKEND / "data" / "01_raw" / "climate" / "open_meteo_archive" / "flood_weather_v1"
 
 FORBIDDEN_LABEL_FIELDS = (
     "flood_occurred",
@@ -197,8 +203,20 @@ def attach_rainfall_features(rows: list[dict]) -> None:
             row["rainfall_prev_14d"] = rolling_sum(precip, i, 14, include_end=False)
 
 
+def protected_hashes() -> dict[str, Optional[str]]:
+    return {name: sha256_file(path) for name, path in PROTECTED_PATHS.items()}
+
+
+def assert_protected_unchanged(before: dict[str, Optional[str]]) -> dict[str, Optional[str]]:
+    after = protected_hashes()
+    if after != before:
+        changed = [k for k in after if after[k] != before.get(k)]
+        raise RuntimeError(f"protected CHEWS artifacts changed: {changed}")
+    return after
+
+
 def attach_baselines_efficient(rows: list[dict]) -> None:
-    """Same rules as attach_baselines, without O(n²) year counting."""
+    """Descriptive (all years) vs past-only (prior years only). No future leakage in past-only."""
     by_loc_month: dict[tuple[str, int], list[dict]] = {}
     for row in rows:
         day = date.fromisoformat(row["date"])
@@ -255,7 +273,7 @@ def fetch_archive_daily(
     end: date,
     *,
     opener: Optional[Callable[[str], dict]] = None,
-    timeout: int = 60,
+    timeout: int = 90,
 ) -> dict[str, Any]:
     query = {
         "latitude": f"{lat:.4f}",
@@ -275,9 +293,20 @@ def fetch_archive_daily(
             "Accept": "application/json",
             "User-Agent": "CHEWS-Flood-Weather-History/1.0",
         })
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            status = resp.status
-            payload = json.loads(resp.read().decode("utf-8"))
+        last_error = None
+        payload = None
+        status = None
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    status = resp.status
+                    payload = json.loads(resp.read().decode("utf-8"))
+                break
+            except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+                last_error = exc
+                time.sleep(1.5 * (attempt + 1))
+        if payload is None:
+            raise RuntimeError(f"Open-Meteo Archive request failed after retries: {last_error}")
     if not isinstance(payload, dict):
         raise ValueError("Open-Meteo Archive JSON root must be an object")
     payload["_chews_request"] = {
@@ -289,20 +318,27 @@ def fetch_archive_daily(
     return payload
 
 
+def _series_at(daily: dict, key: str, index: int) -> Optional[float]:
+    series = daily.get(key) or []
+    if index >= len(series):
+        return None
+    return _num(series[index])
+
+
 def payload_to_daily_rows(location: dict, payload: dict, start: date, end: date) -> list[dict]:
     daily = payload.get("daily") or {}
     times = daily.get("time") or []
     by_date = {}
     for i, raw in enumerate(times):
         by_date[raw] = {
-            "precipitation_mm": _num((daily.get("precipitation_sum") or [None] * len(times))[i] if i < len(daily.get("precipitation_sum") or []) else None),
-            "rain_mm": _num((daily.get("rain_sum") or [None] * len(times))[i] if i < len(daily.get("rain_sum") or []) else None),
-            "temperature_mean_c": _num((daily.get("temperature_2m_mean") or [None] * len(times))[i] if i < len(daily.get("temperature_2m_mean") or []) else None),
-            "temperature_min_c": _num((daily.get("temperature_2m_min") or [None] * len(times))[i] if i < len(daily.get("temperature_2m_min") or []) else None),
-            "temperature_max_c": _num((daily.get("temperature_2m_max") or [None] * len(times))[i] if i < len(daily.get("temperature_2m_max") or []) else None),
-            "relative_humidity": _num((daily.get("relative_humidity_2m_mean") or [None] * len(times))[i] if i < len(daily.get("relative_humidity_2m_mean") or []) else None),
-            "soil_moisture": _num((daily.get("soil_moisture_0_to_7cm_mean") or [None] * len(times))[i] if i < len(daily.get("soil_moisture_0_to_7cm_mean") or []) else None),
-            "wind_speed_10m": _num((daily.get("wind_speed_10m_mean") or [None] * len(times))[i] if i < len(daily.get("wind_speed_10m_mean") or []) else None),
+            "precipitation_mm": _series_at(daily, "precipitation_sum", i),
+            "rain_mm": _series_at(daily, "rain_sum", i),
+            "temperature_mean_c": _series_at(daily, "temperature_2m_mean", i),
+            "temperature_min_c": _series_at(daily, "temperature_2m_min", i),
+            "temperature_max_c": _series_at(daily, "temperature_2m_max", i),
+            "relative_humidity": _series_at(daily, "relative_humidity_2m_mean", i),
+            "soil_moisture": _series_at(daily, "soil_moisture_0_to_7cm_mean", i),
+            "wind_speed_10m": _series_at(daily, "wind_speed_10m_mean", i),
         }
     rows = []
     for day in daterange(start, end):
@@ -342,10 +378,18 @@ def quality_audit(rows: list[dict], locations: list[dict], start: date, end: dat
     def miss(field: str) -> int:
         return sum(1 for r in rows if r.get(field) is None)
 
-    gaps_by_location = {}
-    for loc in locations:
-        loc_rows = [r for r in rows if r["location_id"] == loc["location_id"]]
-        gaps_by_location[loc["location_id"]] = sum(1 for r in loc_rows if r.get("precipitation_mm") is None)
+    gaps_by_location: dict[str, int] = {loc["location_id"]: 0 for loc in locations}
+    gaps_by_year: dict[str, int] = {}
+    gaps_by_month: dict[str, int] = {f"{m:02d}": 0 for m in range(1, 13)}
+    for row in rows:
+        if row.get("precipitation_mm") is not None:
+            continue
+        loc_id = row["location_id"]
+        gaps_by_location[loc_id] = gaps_by_location.get(loc_id, 0) + 1
+        year = row["date"][:4]
+        month = row["date"][5:7]
+        gaps_by_year[year] = gaps_by_year.get(year, 0) + 1
+        gaps_by_month[month] = gaps_by_month.get(month, 0) + 1
 
     outliers = {
         "precip_gt_400mm": sum(1 for v in precip if v is not None and v > 400),
@@ -380,6 +424,8 @@ def quality_audit(rows: list[dict], locations: list[dict], start: date, end: dat
         "wet_season_precip_missing": sum(1 for r in wet if r.get("precipitation_mm") is None),
         "dry_season_precip_missing": sum(1 for r in dry if r.get("precipitation_mm") is None),
         "gaps_by_location": gaps_by_location,
+        "gaps_by_year": dict(sorted(gaps_by_year.items())),
+        "gaps_by_month": gaps_by_month,
         "outliers": outliers,
         "forbidden_label_fields_present": [f for f in FORBIDDEN_LABEL_FIELDS if any(f in r for r in rows)],
         "missing_not_replaced_with_zero": True,
@@ -463,6 +509,16 @@ def lead_safe_for_event_date(row: dict) -> dict[str, Any]:
     }
 
 
+def persist_raw_payload(location_id: str, payload: dict) -> Path:
+    RAW_DIR.mkdir(parents=True, exist_ok=True)
+    safe = location_id.replace(":", "_")
+    path = RAW_DIR / f"{safe}.json"
+    slim = {k: v for k, v in payload.items() if k != "_chews_request"}
+    slim["_chews_request"] = payload.get("_chews_request")
+    path.write_text(json.dumps(slim, separators=(",", ":")), encoding="utf-8")
+    return path
+
+
 def build_dataset(
     *,
     start: date = PERIOD_START,
@@ -470,6 +526,7 @@ def build_dataset(
     opener: Optional[Callable[[str], dict]] = None,
     sleep_seconds: float = 0.25,
     locations: Optional[list[dict]] = None,
+    persist_raw: bool = False,
 ) -> dict[str, Any]:
     locations = locations or load_canonical_locations()
     fetchable = [loc for loc in locations if loc.get("coordinate_ok")]
@@ -500,6 +557,8 @@ def build_dataset(
             "model_note": "Open-Meteo Archive historical reanalysis (ERA5-family as served by the API)",
         })
         rows.extend(payload_to_daily_rows(loc, payload, start, end))
+        if persist_raw:
+            extracts[-1]["raw_path"] = str(persist_raw_payload(loc["location_id"], payload).relative_to(BACKEND))
         if opener is None and i < len(fetchable) - 1:
             time.sleep(sleep_seconds)
 
