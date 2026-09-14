@@ -1,0 +1,25 @@
+{
+  "$comment": "Empty until an NDMA disaster-register extract is acquired. Do not fabricate rows. Each object is one dated flood at one named place.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["source_record_id", "event_source", "event_start_date", "event_location_name"],
+    "properties": {
+      "source_record_id": {"type": "string"},
+      "event_source": {"type": "string", "description": "ndma_register or ndma_assessment"},
+      "source_url": {"type": ["string", "null"]},
+      "source_document": {"type": ["string", "null"]},
+      "event_start_date": {"type": ["string", "null"], "description": "ISO YYYY-MM-DD only. Null if the source has no calendar day."},
+      "event_end_date": {"type": ["string", "null"]},
+      "event_location_name": {"type": ["string", "null"]},
+      "district": {"type": ["string", "null"]},
+      "chiefdom": {"type": ["string", "null"]},
+      "latitude": {"type": ["number", "null"]},
+      "longitude": {"type": ["number", "null"]},
+      "description": {"type": ["string", "null"]},
+      "affected_households": {"type": ["number", "null"]},
+      "affected_population": {"type": ["number", "null"]},
+      "deaths": {"type": ["number", "null"]}
+    }
+  }
+}
