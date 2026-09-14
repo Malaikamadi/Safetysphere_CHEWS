@@ -1,6 +1,6 @@
 {
   "dataset_version": "flood_weather_history_v1",
-  "generated_at": "2026-09-14T13:29:50Z",
+  "generated_at": "2026-09-14T14:01:13Z",
   "source": "Open-Meteo Archive",
   "api": "https://archive-api.open-meteo.com/v1/archive",
   "model_dataset": "Open-Meteo Archive historical daily (ERA5-family as served)",
@@ -417,63 +417,183 @@
   "fetch_failures": [
     {
       "location_id": "district_centroid:western_area_rural",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Western Area Rural",
+      "district": "western_area_rural",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:57:53Z"
     },
     {
       "location_id": "district_centroid:bo",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Bo",
+      "district": "bo",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:58:25Z"
     },
     {
       "location_id": "district_centroid:pujehun",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Pujehun",
+      "district": "pujehun",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:58:58Z"
     },
     {
       "location_id": "district_centroid:bonthe",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Bonthe",
+      "district": "bonthe",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:59:31Z"
     },
     {
       "location_id": "district_centroid:kenema",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Kenema",
+      "district": "kenema",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:00:03Z"
     },
     {
       "location_id": "district_centroid:port_loko",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Port Loko",
+      "district": "port_loko",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:00:35Z"
     },
     {
       "location_id": "district_centroid:kambia",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Kambia",
+      "district": "kambia",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:07Z"
     },
     {
       "location_id": "district_centroid:tonkolili",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Tonkolili",
+      "district": "tonkolili",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:08Z"
     },
     {
       "location_id": "district_centroid:moyamba",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Moyamba",
+      "district": "moyamba",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:08Z"
     },
     {
       "location_id": "district_centroid:bombali",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Bombali",
+      "district": "bombali",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:09Z"
     },
     {
       "location_id": "district_centroid:kailahun",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Kailahun",
+      "district": "kailahun",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:10Z"
     },
     {
       "location_id": "district_centroid:kono",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Kono",
+      "district": "kono",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:10Z"
     },
     {
       "location_id": "district_centroid:koinadugu",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Koinadugu",
+      "district": "koinadugu",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:11Z"
     },
     {
       "location_id": "district_centroid:falaba",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Falaba",
+      "district": "falaba",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:11Z"
     },
     {
       "location_id": "district_centroid:karene",
-      "error": "skipped_live_fetch_cache_missing"
+      "location_name": "Karene",
+      "district": "karene",
+      "requested_start": "2015-01-01",
+      "requested_end": "2026-08-31",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:12Z"
     }
   ],
   "variables_requested": [
@@ -492,8 +612,12 @@
   "extracts": [
     {
       "location_id": "zone:kroo_bay",
+      "location_name": "Kroo Bay",
+      "district": "western_area_urban",
       "latitude": 8.4892,
       "longitude": -13.2387,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -526,6 +650,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T10:59:05Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -534,8 +659,12 @@
     },
     {
       "location_id": "zone:susans_bay",
+      "location_name": "Susan's Bay",
+      "district": "western_area_urban",
       "latitude": 8.4922,
       "longitude": -13.2333,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -568,6 +697,7 @@
       "elevation_m": 10.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T10:59:14Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -576,8 +706,12 @@
     },
     {
       "location_id": "zone:mabella",
+      "location_name": "Mabella",
+      "district": "western_area_urban",
       "latitude": 8.4945,
       "longitude": -13.2214,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -610,6 +744,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T10:59:17Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -618,8 +753,12 @@
     },
     {
       "location_id": "zone:granville_brook",
+      "location_name": "Granville Brook (Kingtom)",
+      "district": "western_area_urban",
       "latitude": 8.4845,
       "longitude": -13.2475,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -652,6 +791,7 @@
       "elevation_m": 9.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:00:35Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -660,8 +800,12 @@
     },
     {
       "location_id": "zone:regent",
+      "location_name": "Regent / Sugar Loaf",
+      "district": "western_area_urban",
       "latitude": 8.4406,
       "longitude": -13.2336,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -694,6 +838,7 @@
       "elevation_m": 236.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:00:44Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -702,8 +847,12 @@
     },
     {
       "location_id": "zone:kissy",
+      "location_name": "Kissy / Mountain Cut",
+      "district": "western_area_urban",
       "latitude": 8.481,
       "longitude": -13.1862,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -736,6 +885,7 @@
       "elevation_m": 8.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:01:05Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -744,8 +894,12 @@
     },
     {
       "location_id": "zone:wellington",
+      "location_name": "Wellington",
+      "district": "western_area_urban",
       "latitude": 8.4717,
       "longitude": -13.1634,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -778,6 +932,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:01:43Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -786,8 +941,12 @@
     },
     {
       "location_id": "zone:calaba_town",
+      "location_name": "Calaba Town",
+      "district": "western_area_urban",
       "latitude": 8.4633,
       "longitude": -13.149,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -820,6 +979,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:01:50Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -828,8 +988,12 @@
     },
     {
       "location_id": "zone:lumley",
+      "location_name": "Lumley Beach front",
+      "district": "western_area_urban",
       "latitude": 8.467,
       "longitude": -13.2853,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -862,6 +1026,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:01:54Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -870,8 +1035,12 @@
     },
     {
       "location_id": "zone:waterloo",
+      "location_name": "Waterloo",
+      "district": "western_area_rural",
       "latitude": 8.3424,
       "longitude": -13.0719,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -904,6 +1073,7 @@
       "elevation_m": 12.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:03:58Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -912,8 +1082,12 @@
     },
     {
       "location_id": "zone:hastings_jui",
+      "location_name": "Hastings / Jui",
+      "district": "western_area_rural",
       "latitude": 8.4076,
       "longitude": -13.1114,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -946,6 +1120,7 @@
       "elevation_m": 4.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:04:10Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -954,8 +1129,12 @@
     },
     {
       "location_id": "zone:bo_town",
+      "location_name": "Bo Town",
+      "district": "bo",
       "latitude": 7.9647,
       "longitude": -11.7383,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -988,6 +1167,7 @@
       "elevation_m": 99.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:04:15Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -996,8 +1176,12 @@
     },
     {
       "location_id": "zone:sumbuya",
+      "location_name": "Sumbuya",
+      "district": "bo",
       "latitude": 7.6547,
       "longitude": -11.9,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1030,6 +1214,7 @@
       "elevation_m": 46.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:04:24Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1038,8 +1223,12 @@
     },
     {
       "location_id": "zone:pujehun_town",
+      "location_name": "Pujehun Town",
+      "district": "pujehun",
       "latitude": 7.35,
       "longitude": -11.7164,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1072,6 +1261,7 @@
       "elevation_m": 9.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:04:35Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1080,8 +1270,12 @@
     },
     {
       "location_id": "zone:bonthe_island",
+      "location_name": "Bonthe (Sherbro Island)",
+      "district": "bonthe",
       "latitude": 7.5269,
       "longitude": -12.5025,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1114,6 +1308,7 @@
       "elevation_m": 1.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:05:33Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1122,8 +1317,12 @@
     },
     {
       "location_id": "zone:mattru_jong",
+      "location_name": "Mattru Jong",
+      "district": "bonthe",
       "latitude": 7.6242,
       "longitude": -11.9433,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1156,6 +1355,7 @@
       "elevation_m": 39.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:05:43Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1164,8 +1364,12 @@
     },
     {
       "location_id": "zone:kenema_town",
+      "location_name": "Kenema Town",
+      "district": "kenema",
       "latitude": 7.8767,
       "longitude": -11.1903,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1198,6 +1402,7 @@
       "elevation_m": 179.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:05:52Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1206,8 +1411,12 @@
     },
     {
       "location_id": "zone:lungi_tagrin",
+      "location_name": "Lungi / Tagrin",
+      "district": "port_loko",
       "latitude": 8.6044,
       "longitude": -13.1956,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1240,6 +1449,7 @@
       "elevation_m": 30.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:06:51Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1248,8 +1458,12 @@
     },
     {
       "location_id": "zone:kambia_town",
+      "location_name": "Kambia Town",
+      "district": "kambia",
       "latitude": 9.1208,
       "longitude": -12.9181,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1282,6 +1496,7 @@
       "elevation_m": 23.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:07:00Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1290,8 +1505,12 @@
     },
     {
       "location_id": "zone:rokupr",
+      "location_name": "Rokupr",
+      "district": "kambia",
       "latitude": 8.6817,
       "longitude": -12.3825,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1324,6 +1543,7 @@
       "elevation_m": 55.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:07:10Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1332,8 +1552,12 @@
     },
     {
       "location_id": "zone:magburaka",
+      "location_name": "Magburaka",
+      "district": "tonkolili",
       "latitude": 8.7203,
       "longitude": -11.9442,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1366,6 +1590,7 @@
       "elevation_m": 89.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:07:21Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1374,8 +1599,12 @@
     },
     {
       "location_id": "zone:bumbuna",
+      "location_name": "Bumbuna (dam buffer)",
+      "district": "tonkolili",
       "latitude": 9.0292,
       "longitude": -11.7414,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1408,6 +1637,7 @@
       "elevation_m": 264.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:07:29Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1416,8 +1646,12 @@
     },
     {
       "location_id": "zone:shenge",
+      "location_name": "Shenge",
+      "district": "moyamba",
       "latitude": 8.1486,
       "longitude": -12.9533,
+      "location_type": "flood_zone",
+      "coordinate_quality": "catalog_point",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1450,6 +1684,7 @@
       "elevation_m": 0.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:07:39Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1458,8 +1693,12 @@
     },
     {
       "location_id": "district_centroid:western_area_urban",
+      "location_name": "Western Area Urban",
+      "district": "western_area_urban",
       "latitude": 8.4844,
       "longitude": -13.2299,
+      "location_type": "district_centroid",
+      "coordinate_quality": "admin_centroid_fallback",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
       "returned_dates": {
@@ -1492,6 +1731,7 @@
       "elevation_m": 44.0,
       "http_status": 200,
       "retrieved_at": "2026-09-14T11:08:38Z",
+      "attempts": null,
       "from_cache": true,
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive",
@@ -1500,166 +1740,211 @@
     },
     {
       "location_id": "district_centroid:western_area_rural",
-      "latitude": 8.387,
-      "longitude": -13.093,
+      "location_name": "Western Area Rural",
+      "district": "western_area_rural",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:57:53Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:bo",
-      "latitude": 7.9647,
-      "longitude": -11.7383,
+      "location_name": "Bo",
+      "district": "bo",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:58:25Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:pujehun",
-      "latitude": 7.35,
-      "longitude": -11.7164,
+      "location_name": "Pujehun",
+      "district": "pujehun",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:58:58Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:bonthe",
-      "latitude": 7.5269,
-      "longitude": -12.5025,
+      "location_name": "Bonthe",
+      "district": "bonthe",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T13:59:31Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:kenema",
-      "latitude": 7.8767,
-      "longitude": -11.1903,
+      "location_name": "Kenema",
+      "district": "kenema",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:00:03Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:port_loko",
-      "latitude": 8.6044,
-      "longitude": -13.1956,
+      "location_name": "Port Loko",
+      "district": "port_loko",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:00:35Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:kambia",
-      "latitude": 9.1208,
-      "longitude": -12.9181,
+      "location_name": "Kambia",
+      "district": "kambia",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:07Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:tonkolili",
-      "latitude": 8.7203,
-      "longitude": -11.9442,
+      "location_name": "Tonkolili",
+      "district": "tonkolili",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:08Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:moyamba",
-      "latitude": 8.1571,
-      "longitude": -12.4322,
+      "location_name": "Moyamba",
+      "district": "moyamba",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:08Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:bombali",
-      "latitude": 9.05,
-      "longitude": -12.29,
+      "location_name": "Bombali",
+      "district": "bombali",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_200",
+      "http_status": 200,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2026-09-14T14:01:09Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:kailahun",
-      "latitude": 8.2833,
-      "longitude": -10.5667,
+      "location_name": "Kailahun",
+      "district": "kailahun",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:10Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:kono",
-      "latitude": 8.65,
-      "longitude": -10.95,
+      "location_name": "Kono",
+      "district": "kono",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:10Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:koinadugu",
-      "latitude": 9.5,
-      "longitude": -11.3333,
+      "location_name": "Koinadugu",
+      "district": "koinadugu",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:11Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:falaba",
-      "latitude": 9.85,
-      "longitude": -11.32,
+      "location_name": "Falaba",
+      "district": "falaba",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:11Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     },
     {
       "location_id": "district_centroid:karene",
-      "latitude": 9.18,
-      "longitude": -12.29,
+      "location_name": "Karene",
+      "district": "karene",
       "requested_start": "2015-01-01",
       "requested_end": "2026-08-31",
-      "http_status": null,
-      "error": "skipped_live_fetch_cache_missing",
+      "failure_status": "http_429",
+      "http_status": 429,
+      "attempts": 1,
+      "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+      "timestamp": "2026-09-14T14:01:12Z",
       "api": "https://archive-api.open-meteo.com/v1/archive",
       "provider": "Open-Meteo Archive"
     }
@@ -1753,70 +2038,413 @@
     "forbidden_label_fields_present": [],
     "missing_not_replaced_with_zero": true,
     "n_locations_catalog": 39,
+    "n_flood_zones": 23,
+    "n_district_centroids": 16,
     "n_locations_with_series": 24,
     "n_fetch_failures": 15,
     "fetch_failures": [
       {
         "location_id": "district_centroid:western_area_rural",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Western Area Rural",
+        "district": "western_area_rural",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T13:57:53Z"
       },
       {
         "location_id": "district_centroid:bo",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Bo",
+        "district": "bo",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T13:58:25Z"
       },
       {
         "location_id": "district_centroid:pujehun",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Pujehun",
+        "district": "pujehun",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T13:58:58Z"
       },
       {
         "location_id": "district_centroid:bonthe",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Bonthe",
+        "district": "bonthe",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T13:59:31Z"
       },
       {
         "location_id": "district_centroid:kenema",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Kenema",
+        "district": "kenema",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:00:03Z"
       },
       {
         "location_id": "district_centroid:port_loko",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Port Loko",
+        "district": "port_loko",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:00:35Z"
       },
       {
         "location_id": "district_centroid:kambia",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Kambia",
+        "district": "kambia",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=53 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:01:07Z"
       },
       {
         "location_id": "district_centroid:tonkolili",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Tonkolili",
+        "district": "tonkolili",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:01:08Z"
       },
       {
         "location_id": "district_centroid:moyamba",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Moyamba",
+        "district": "moyamba",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:01:08Z"
       },
       {
         "location_id": "district_centroid:bombali",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Bombali",
+        "district": "bombali",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_200",
+        "http_status": 200,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: invalid_json status=200 bytes=62 err=Expecting value: line 1 column 1 (char 0)",
+        "timestamp": "2026-09-14T14:01:09Z"
       },
       {
         "location_id": "district_centroid:kailahun",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Kailahun",
+        "district": "kailahun",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_429",
+        "http_status": 429,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+        "timestamp": "2026-09-14T14:01:10Z"
       },
       {
         "location_id": "district_centroid:kono",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Kono",
+        "district": "kono",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_429",
+        "http_status": 429,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+        "timestamp": "2026-09-14T14:01:10Z"
       },
       {
         "location_id": "district_centroid:koinadugu",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Koinadugu",
+        "district": "koinadugu",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_429",
+        "http_status": 429,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+        "timestamp": "2026-09-14T14:01:11Z"
       },
       {
         "location_id": "district_centroid:falaba",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Falaba",
+        "district": "falaba",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_429",
+        "http_status": 429,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+        "timestamp": "2026-09-14T14:01:11Z"
       },
       {
         "location_id": "district_centroid:karene",
-        "error": "skipped_live_fetch_cache_missing"
+        "location_name": "Karene",
+        "district": "karene",
+        "requested_start": "2015-01-01",
+        "requested_end": "2026-08-31",
+        "failure_status": "http_429",
+        "http_status": 429,
+        "attempts": 1,
+        "last_error": "Open-Meteo Archive request failed after 1 attempts: HTTP 429",
+        "timestamp": "2026-09-14T14:01:12Z"
       }
-    ]
+    ],
+    "n_expected_catalog_location_days": 166179,
+    "expected_days_per_location": 4261,
+    "location_series_integrity": [
+      {
+        "location_id": "zone:kroo_bay",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:susans_bay",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:mabella",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:granville_brook",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:regent",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:kissy",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:wellington",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:calaba_town",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:lumley",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:waterloo",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:hastings_jui",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:bo_town",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:sumbuya",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:pujehun_town",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:bonthe_island",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:mattru_jong",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:kenema_town",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:lungi_tagrin",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:kambia_town",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:rokupr",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:magburaka",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:bumbuna",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "zone:shenge",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "catalog_point",
+        "location_type": "flood_zone"
+      },
+      {
+        "location_id": "district_centroid:western_area_urban",
+        "ok": true,
+        "n_rows": 4261,
+        "n_expected": 4261,
+        "issues": [],
+        "coordinate_quality": "admin_centroid_fallback",
+        "location_type": "district_centroid"
+      }
+    ],
+    "no_cross_location_substitution": true
   },
   "malaria_climate_comparison": {
     "compared": true,
@@ -1856,6 +2484,12 @@
     "15 catalog locations have no daily series in this extract (Open-Meteo Archive rate-limit/500 during ingest)."
   ],
   "disclaimer": "Historical weather data does not constitute historical flood-event ground truth.",
+  "ingest_settings": {
+    "max_retries": 1,
+    "backoff_seconds": 1.0,
+    "request_delay_seconds": 3.0,
+    "max_wait_seconds": 120.0
+  },
   "flood_labels_created": false,
   "model_trained": false,
   "integrated_into_chews": false,

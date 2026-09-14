@@ -180,7 +180,7 @@ Extract generated at **2026-09-14T13:29:50Z**.
 | ----- | ------ |
 | Catalog locations | 39 (23 flood zones + 16 district centroids) |
 | Locations with a daily series | **24** (all 23 flood zones + Western Area Urban centroid) |
-| Locations without a series | **15** district centroids (Open-Meteo Archive 429 then 500 during ingest; not invented) |
+| Locations without a series | **15** district centroids. Live `--resume` did not re-request the 24 cached series. Failures: 10× HTTP 200 with a non-JSON 53–62 byte body; 5× HTTP 429. No rows were fabricated. |
 | Date range | 2015-01-01 – 2026-08-31 (4,261 days) |
 | Rows | 102,264 |
 | Expected rows (24 × 4,261) | 102,264 |
@@ -236,7 +236,7 @@ On this extract the comparison could only use **Western Area Urban** (the only c
 6. Descriptive month medians leak future years if used as a backtest feature; use past-only fields.
 7. `chews_flood_event_v0` is still empty — this file cannot be scored against real floods yet.
 8. Open-Meteo Archive history is long (from 1940 in a probe) but v1 stops at 2015 to keep the extract practical.
-9. Fifteen district-centroid series are missing because Archive returned HTTP 429 then 500 after the first 24 extracts. The 23 flood-zone series are complete.
+9. Fifteen district-centroid series are missing. A hardened `--resume` skipped all 24 cached extracts and requested only the missing centroids. Open-Meteo Archive returned non-JSON HTTP 200 bodies (53–62 bytes) for 10 centroids, then HTTP 429 for the last 5. Cached flood-zone files were not deleted or replaced.
 10. Malaria climate comparison is therefore one district only.
 
 ---
