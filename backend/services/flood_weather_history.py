@@ -14,6 +14,8 @@ import csv
 import hashlib
 import json
 import math
+import os
+import random
 import statistics
 import time
 import urllib.error
@@ -76,6 +78,12 @@ FORBIDDEN_LABEL_FIELDS = (
     "flood_predicted",
 )
 
+RETRYABLE_HTTP = frozenset({429, 500, 502, 503, 504})
+DEFAULT_MAX_RETRIES = 5
+DEFAULT_BACKOFF_SECONDS = 20.0
+DEFAULT_REQUEST_DELAY_SECONDS = 12.0
+DEFAULT_MAX_WAIT_SECONDS = 120.0
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -110,6 +118,100 @@ def daterange(start: date, end: date) -> list[date]:
         days.append(current)
         current += timedelta(days=1)
     return days
+
+
+EXPECTED_DAYS_V1 = len(daterange(PERIOD_START, PERIOD_END))
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None or raw.strip() == "":
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.environ.get(name)
+    if raw is None or raw.strip() == "":
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
+def ingest_settings() -> dict[str, float | int]:
+    return {
+        "max_retries": max(1, _env_int("OPEN_METEO_MAX_RETRIES", DEFAULT_MAX_RETRIES)),
+        "backoff_seconds": max(1.0, _env_float("OPEN_METEO_BACKOFF_SECONDS", DEFAULT_BACKOFF_SECONDS)),
+        "request_delay_seconds": max(0.0, _env_float("OPEN_METEO_REQUEST_DELAY_SECONDS", DEFAULT_REQUEST_DELAY_SECONDS)),
+        "max_wait_seconds": DEFAULT_MAX_WAIT_SECONDS,
+    }
+
+
+def parse_retry_after(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if text.isdigit():
+        return float(text)
+    return None
+
+
+def retry_wait_seconds(
+    attempt: int,
+    *,
+    retry_after: Any = None,
+    backoff_seconds: float = DEFAULT_BACKOFF_SECONDS,
+    max_wait_seconds: float = DEFAULT_MAX_WAIT_SECONDS,
+    rng: Optional[random.Random] = None,
+) -> float:
+    """Exponential backoff with jitter. Retry-After seconds win when present."""
+    parsed = parse_retry_after(retry_after)
+    if parsed is not None:
+        return min(max(parsed, 1.0), max_wait_seconds)
+    rng = rng or random.Random()
+    exponential = backoff_seconds * (2 ** attempt)
+    jitter = rng.uniform(0.0, backoff_seconds)
+    return min(exponential + jitter, max_wait_seconds)
+
+
+class ArchiveFetchError(RuntimeError):
+    def __init__(
+        self,
+        message: str,
+        *,
+        http_status: Optional[int] = None,
+        attempts: int = 0,
+        last_error: Optional[str] = None,
+        retry_after: Any = None,
+    ):
+        super().__init__(message)
+        self.http_status = http_status
+        self.attempts = attempts
+        self.last_error = last_error
+        self.retry_after = retry_after
+
+
+def default_transport(url: str, timeout: int = 90) -> tuple[int, bytes, dict]:
+    req = urllib.request.Request(url, headers={
+        "Accept": "application/json",
+        "User-Agent": "CHEWS-Flood-Weather-History/1.0",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status, resp.read(), dict(resp.headers)
+    except urllib.error.HTTPError as exc:
+        body = b""
+        try:
+            body = exc.read() or b""
+        except Exception:
+            body = b""
+        headers = dict(exc.headers) if exc.headers else {}
+        return exc.code, body, headers
 
 
 def validate_coordinates(lat: Optional[float], lon: Optional[float]) -> dict[str, Any]:
@@ -274,6 +376,11 @@ def fetch_archive_daily(
     *,
     opener: Optional[Callable[[str], dict]] = None,
     timeout: int = 90,
+    transport: Optional[Callable[[str, int], tuple[int, bytes, dict]]] = None,
+    sleeper: Callable[[float], None] = time.sleep,
+    rng: Optional[random.Random] = None,
+    max_retries: Optional[int] = None,
+    backoff_seconds: Optional[float] = None,
 ) -> dict[str, Any]:
     query = {
         "latitude": f"{lat:.4f}",
@@ -285,46 +392,80 @@ def fetch_archive_daily(
     }
     url = f"{ARCHIVE_URL}?{urllib.parse.urlencode(query)}"
     retrieved_at = _now()
+    settings = ingest_settings()
+    retries = max_retries if max_retries is not None else int(settings["max_retries"])
+    backoff = backoff_seconds if backoff_seconds is not None else float(settings["backoff_seconds"])
+    max_wait = float(settings["max_wait_seconds"])
+
     if opener:
         payload = opener(url)
         status = 200
+        attempts = 1
     else:
-        req = urllib.request.Request(url, headers={
-            "Accept": "application/json",
-            "User-Agent": "CHEWS-Flood-Weather-History/1.0",
-        })
-        last_error = None
+        send = transport or default_transport
         payload = None
         status = None
-        for attempt in range(4):
+        last_error = None
+        retry_after = None
+        attempts = 0
+        for attempt in range(retries):
+            attempts = attempt + 1
             try:
-                with urllib.request.urlopen(req, timeout=timeout) as resp:
-                    status = resp.status
-                    payload = json.loads(resp.read().decode("utf-8"))
+                status, body, headers = send(url, timeout)
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                last_error = str(exc)
+                wait = retry_wait_seconds(
+                    attempt, backoff_seconds=backoff, max_wait_seconds=max_wait, rng=rng,
+                )
+                print(f"  network error; waiting {wait:.1f}s (attempt {attempts}/{retries})", flush=True)
+                if attempt < retries - 1:
+                    sleeper(wait)
+                continue
+            retry_after = headers.get("Retry-After") or headers.get("retry-after")
+            if status == 200:
+                try:
+                    payload = json.loads(body.decode("utf-8") if isinstance(body, (bytes, bytearray)) else body)
+                except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                    last_error = f"invalid_json:{exc}"
+                    wait = retry_wait_seconds(
+                        attempt, backoff_seconds=backoff, max_wait_seconds=max_wait, rng=rng,
+                    )
+                    print(f"  invalid JSON; waiting {wait:.1f}s (attempt {attempts}/{retries})", flush=True)
+                    if attempt < retries - 1:
+                        sleeper(wait)
+                    continue
                 break
-            except urllib.error.HTTPError as exc:
-                last_error = exc
-                wait = 8 * (attempt + 1)
-                if exc.code == 429:
-                    retry_after = exc.headers.get("Retry-After") if exc.headers else None
-                    if retry_after and str(retry_after).isdigit():
-                        wait = max(60, int(retry_after))
-                    else:
-                        wait = 60
-                print(f"  HTTP {exc.code}; waiting {wait}s (attempt {attempt + 1}/4)", flush=True)
-                time.sleep(wait)
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
-                last_error = exc
-                time.sleep(8 * (attempt + 1))
+            last_error = f"HTTP {status}"
+            if status in RETRYABLE_HTTP and attempt < retries - 1:
+                wait = retry_wait_seconds(
+                    attempt,
+                    retry_after=retry_after,
+                    backoff_seconds=backoff,
+                    max_wait_seconds=max_wait,
+                    rng=rng,
+                )
+                print(f"  HTTP {status}; waiting {wait:.1f}s (attempt {attempts}/{retries})", flush=True)
+                sleeper(wait)
+                continue
+            break
         if payload is None:
-            raise RuntimeError(f"Open-Meteo Archive request failed after retries: {last_error}")
+            raise ArchiveFetchError(
+                f"Open-Meteo Archive request failed after {attempts} attempts: {last_error}",
+                http_status=status,
+                attempts=attempts,
+                last_error=str(last_error) if last_error else None,
+                retry_after=retry_after,
+            )
     if not isinstance(payload, dict):
         raise ValueError("Open-Meteo Archive JSON root must be an object")
     payload["_chews_request"] = {
-        "url_without_secrets": f"{ARCHIVE_URL}?latitude={lat:.4f}&longitude={lon:.4f}&start_date={start}&end_date={end}",
+        "url_without_secrets": (
+            f"{ARCHIVE_URL}?latitude={lat:.4f}&longitude={lon:.4f}&start_date={start}&end_date={end}"
+        ),
         "http_status": status,
         "retrieved_at": retrieved_at,
         "variables_requested": list(DAILY_VARIABLES),
+        "attempts": attempts,
     }
     return payload
 
@@ -358,6 +499,7 @@ def payload_to_daily_rows(location: dict, payload: dict, start: date, end: date)
             "location_id": location["location_id"],
             "location_name": location["location_name"],
             "location_type": location["location_type"],
+            "coordinate_quality": location.get("coordinate_quality"),
             "district": location["district"],
             "latitude": location["latitude"],
             "longitude": location["longitude"],
@@ -550,45 +692,151 @@ def load_cached_payload(location_id: str, start: date, end: date) -> Optional[di
     return payload
 
 
+def resume_plan(
+    locations: Optional[list[dict]] = None,
+    start: date = PERIOD_START,
+    end: date = PERIOD_END,
+) -> dict[str, list[dict]]:
+    locations = locations or load_canonical_locations()
+    completed, missing = [], []
+    for loc in locations:
+        if not loc.get("coordinate_ok"):
+            missing.append(loc)
+            continue
+        if load_cached_payload(loc["location_id"], start, end):
+            completed.append(loc)
+        else:
+            missing.append(loc)
+    return {"completed": completed, "missing": missing}
+
+
+def validate_location_series(
+    rows: list[dict],
+    location: dict,
+    start: date,
+    end: date,
+) -> dict[str, Any]:
+    expected = daterange(start, end)
+    loc_rows = [r for r in rows if r["location_id"] == location["location_id"]]
+    dates = [r["date"] for r in loc_rows]
+    issues = []
+    if len(loc_rows) != len(expected):
+        issues.append("row_count_mismatch")
+    if len(dates) != len(set(dates)):
+        issues.append("duplicate_dates")
+    if dates != [d.isoformat() for d in expected]:
+        issues.append("date_gap_or_order")
+    if any(r.get("precipitation_mm") is not None and r["precipitation_mm"] < 0 for r in loc_rows):
+        issues.append("negative_precipitation")
+    if any(
+        r.get("temperature_mean_c") is not None and (r["temperature_mean_c"] < 10 or r["temperature_mean_c"] > 45)
+        for r in loc_rows
+    ):
+        issues.append("temperature_out_of_range")
+    if any(
+        r.get("relative_humidity") is not None and not (0 <= r["relative_humidity"] <= 100)
+        for r in loc_rows
+    ):
+        issues.append("humidity_out_of_range")
+    if any(
+        r.get("soil_moisture") is not None and not (0 <= r["soil_moisture"] <= 1)
+        for r in loc_rows
+    ):
+        issues.append("soil_moisture_out_of_range")
+    if any(r.get("latitude") != location.get("latitude") or r.get("longitude") != location.get("longitude") for r in loc_rows):
+        issues.append("coordinate_mismatch")
+    return {
+        "location_id": location["location_id"],
+        "ok": not issues,
+        "n_rows": len(loc_rows),
+        "n_expected": len(expected),
+        "issues": issues,
+        "coordinate_quality": location.get("coordinate_quality"),
+        "location_type": location.get("location_type"),
+    }
+
+
+def _failure_record(loc: dict, start: date, end: date, *, status: str, http_status=None, attempts=0, last_error=None) -> dict[str, Any]:
+    return {
+        "location_id": loc["location_id"],
+        "location_name": loc.get("location_name"),
+        "district": loc.get("district"),
+        "requested_start": start.isoformat(),
+        "requested_end": end.isoformat(),
+        "failure_status": status,
+        "http_status": http_status,
+        "attempts": attempts,
+        "last_error": last_error,
+        "timestamp": _now(),
+    }
+
+
 def build_dataset(
     *,
     start: date = PERIOD_START,
     end: date = PERIOD_END,
     opener: Optional[Callable[[str], dict]] = None,
-    sleep_seconds: float = 0.25,
+    sleep_seconds: Optional[float] = None,
     locations: Optional[list[dict]] = None,
     persist_raw: bool = False,
     reuse_raw: bool = True,
+    live_fetch: bool = True,
+    transport: Optional[Callable[[str, int], tuple[int, bytes, dict]]] = None,
+    sleeper: Callable[[float], None] = time.sleep,
+    rng: Optional[random.Random] = None,
+    max_retries: Optional[int] = None,
+    backoff_seconds: Optional[float] = None,
 ) -> dict[str, Any]:
+    settings = ingest_settings()
+    delay = settings["request_delay_seconds"] if sleep_seconds is None else sleep_seconds
     locations = locations or load_canonical_locations()
     fetchable = [loc for loc in locations if loc.get("coordinate_ok")]
     rows: list[dict] = []
     extracts = []
     fetch_failures = []
+    live_fetches = 0
     for i, loc in enumerate(fetchable):
         payload = None
         if opener is None and reuse_raw:
             payload = load_cached_payload(loc["location_id"], start, end)
         if payload is None:
+            if not live_fetch and opener is None:
+                record = _failure_record(
+                    loc, start, end,
+                    status="skipped_live_fetch_cache_missing",
+                    last_error="cache missing; live fetch disabled",
+                )
+                fetch_failures.append(record)
+                extracts.append({**record, "api": ARCHIVE_URL, "provider": "Open-Meteo Archive"})
+                print(f"[flood_weather_v1] skipped {i + 1}/{len(fetchable)} {loc['location_id']} (cache-only)", flush=True)
+                continue
             print(f"[flood_weather_v1] fetching {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
+            if live_fetches > 0 and opener is None and delay:
+                sleeper(delay)
             try:
-                payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
-            except RuntimeError as exc:
-                fetch_failures.append({"location_id": loc["location_id"], "error": str(exc)})
-                extracts.append({
-                    "location_id": loc["location_id"],
-                    "latitude": loc["latitude"],
-                    "longitude": loc["longitude"],
-                    "requested_start": start.isoformat(),
-                    "requested_end": end.isoformat(),
-                    "http_status": 429 if "429" in str(exc) else None,
-                    "error": str(exc),
-                    "api": ARCHIVE_URL,
-                    "provider": "Open-Meteo Archive",
-                })
+                payload = fetch_archive_daily(
+                    loc["latitude"], loc["longitude"], start, end,
+                    opener=opener,
+                    transport=transport,
+                    sleeper=sleeper,
+                    rng=rng,
+                    max_retries=max_retries,
+                    backoff_seconds=backoff_seconds,
+                )
+                live_fetches += 1
+            except (ArchiveFetchError, RuntimeError) as exc:
+                http_status = getattr(exc, "http_status", None)
+                attempts = getattr(exc, "attempts", 0)
+                record = _failure_record(
+                    loc, start, end,
+                    status=f"http_{http_status}" if http_status else "fetch_failed",
+                    http_status=http_status,
+                    attempts=attempts,
+                    last_error=str(exc),
+                )
+                fetch_failures.append(record)
+                extracts.append({**record, "api": ARCHIVE_URL, "provider": "Open-Meteo Archive"})
                 print(f"  FAILED {loc['location_id']}: {exc}", flush=True)
-                if opener is None and sleep_seconds:
-                    time.sleep(max(sleep_seconds, 30))
                 continue
         else:
             print(f"[flood_weather_v1] cached {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
@@ -596,8 +844,12 @@ def build_dataset(
         daily_keys = list((payload.get("daily") or {}).keys())
         extracts.append({
             "location_id": loc["location_id"],
+            "location_name": loc.get("location_name"),
+            "district": loc.get("district"),
             "latitude": loc["latitude"],
             "longitude": loc["longitude"],
+            "location_type": loc.get("location_type"),
+            "coordinate_quality": loc.get("coordinate_quality"),
             "requested_start": start.isoformat(),
             "requested_end": end.isoformat(),
             "returned_dates": {
@@ -611,22 +863,38 @@ def build_dataset(
             "elevation_m": payload.get("elevation"),
             "http_status": (payload.get("_chews_request") or {}).get("http_status"),
             "retrieved_at": (payload.get("_chews_request") or {}).get("retrieved_at"),
+            "attempts": (payload.get("_chews_request") or {}).get("attempts"),
             "from_cache": from_cache,
             "api": ARCHIVE_URL,
             "provider": "Open-Meteo Archive",
             "model_note": "Open-Meteo Archive historical reanalysis (ERA5-family as served by the API)",
         })
         rows.extend(payload_to_daily_rows(loc, payload, start, end))
-        if persist_raw:
+        if persist_raw and not from_cache:
             extracts[-1]["raw_path"] = str(persist_raw_payload(loc["location_id"], payload).relative_to(BACKEND))
-        if opener is None and not from_cache and i < len(fetchable) - 1:
-            time.sleep(sleep_seconds)
+        elif from_cache:
+            raw = raw_path_for(loc["location_id"])
+            try:
+                extracts[-1]["raw_path"] = str(raw.relative_to(BACKEND))
+            except ValueError:
+                extracts[-1]["raw_path"] = str(raw)
 
     attach_rainfall_features(rows)
     attach_baselines_efficient(rows)
-    quality = quality_audit(rows, [loc for loc in fetchable if loc["location_id"] not in {f["location_id"] for f in fetch_failures}], start, end)
+    successful = [loc for loc in fetchable if loc["location_id"] not in {f["location_id"] for f in fetch_failures}]
+    quality = quality_audit(rows, successful, start, end)
+    quality["n_locations_catalog"] = len(locations)
+    quality["n_flood_zones"] = sum(1 for loc in locations if loc.get("location_type") == "flood_zone")
+    quality["n_district_centroids"] = sum(1 for loc in locations if loc.get("location_type") == "district_centroid")
+    quality["n_locations_with_series"] = len(successful)
     quality["n_fetch_failures"] = len(fetch_failures)
     quality["fetch_failures"] = fetch_failures
+    quality["n_expected_catalog_location_days"] = len(fetchable) * len(daterange(start, end))
+    quality["expected_days_per_location"] = len(daterange(start, end))
+    quality["location_series_integrity"] = [
+        validate_location_series(rows, loc, start, end) for loc in successful
+    ]
+    quality["no_cross_location_substitution"] = True
     comparison = compare_malaria_climate(rows)
     generated_at = _now()
     return {
@@ -648,7 +916,7 @@ def build_dataset(
 
 
 ROW_FIELDS = [
-    "location_id", "location_name", "location_type", "district",
+    "location_id", "location_name", "location_type", "coordinate_quality", "district",
     "latitude", "longitude", "date",
     "precipitation_mm", "rain_mm",
     "temperature_mean_c", "temperature_min_c", "temperature_max_c",
@@ -755,8 +1023,14 @@ def build_manifest(payload: dict) -> dict[str, Any]:
             "Weather is not flood ground truth.",
             "Archive reanalysis is not a rain-gauge observation.",
             "soil_moisture_0_to_10cm was requested in a probe but returned undefined units and was dropped.",
+            *(
+                [f"{quality.get('n_fetch_failures', 0)} catalog locations have no daily series in this extract (Open-Meteo Archive rate-limit/500 during ingest)."]
+                if quality.get("n_fetch_failures")
+                else []
+            ),
         ],
         "disclaimer": payload["disclaimer"],
+        "ingest_settings": ingest_settings(),
         "flood_labels_created": False,
         "model_trained": False,
         "integrated_into_chews": False,

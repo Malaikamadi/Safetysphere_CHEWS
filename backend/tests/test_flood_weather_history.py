@@ -225,6 +225,8 @@ def test_build_dataset_records_fetch_failure_without_flood_labels(monkeypatch):
     )
     assert payload["rows"] == []
     assert payload["fetch_failures"][0]["location_id"] == "zone:fetch_fail"
+    assert payload["fetch_failures"][0]["last_error"]
+    assert payload["fetch_failures"][0]["failure_status"]
     assert payload["flood_labels_created"] is False
     assert "flood_occurred" not in (payload.get("quality") or {})
 
@@ -237,3 +239,279 @@ def test_quality_audit_tracks_year_and_month_gaps():
     assert audit["gaps_by_year"]["2020"] == 1
     assert audit["gaps_by_month"]["09"] == 1
     assert audit["gaps_by_location"]["zone:test"] == 1
+
+
+def _ok_payload(times, precip):
+    n = len(times)
+    return {
+        "daily": {
+            "time": times,
+            "precipitation_sum": precip,
+            "rain_sum": precip,
+            "temperature_2m_mean": [26.0] * n,
+            "temperature_2m_min": [24.0] * n,
+            "temperature_2m_max": [28.0] * n,
+            "relative_humidity_2m_mean": [80.0] * n,
+            "soil_moisture_0_to_7cm_mean": [0.3] * n,
+            "wind_speed_10m_mean": [10.0] * n,
+        },
+        "daily_units": {"precipitation_sum": "mm", "temperature_2m_mean": "°C", "relative_humidity_2m_mean": "%"},
+        "timezone": "Africa/Abidjan",
+    }
+
+
+def test_expected_v1_calendar_is_4261_days():
+    from services.flood_weather_history import EXPECTED_DAYS_V1, PERIOD_END, PERIOD_START
+    assert EXPECTED_DAYS_V1 == 4261
+    assert len(daterange(PERIOD_START, PERIOD_END)) == 4261
+
+
+def test_retry_after_seconds_win_over_exponential():
+    from services.flood_weather_history import retry_wait_seconds
+    wait = retry_wait_seconds(0, retry_after="9", backoff_seconds=20, rng=type("R", (), {"uniform": staticmethod(lambda a, b: 0)})())
+    assert wait == 9.0
+
+
+def test_exponential_backoff_with_zero_jitter():
+    from services.flood_weather_history import retry_wait_seconds
+    rng = type("R", (), {"uniform": staticmethod(lambda a, b: 0.0)})()
+    assert retry_wait_seconds(0, backoff_seconds=20, rng=rng) == 20
+    assert retry_wait_seconds(1, backoff_seconds=20, rng=rng) == 40
+    assert retry_wait_seconds(2, backoff_seconds=20, rng=rng) == 80
+
+
+def test_429_retries_then_succeeds_without_tight_loop():
+    import json
+    from services.flood_weather_history import fetch_archive_daily
+
+    waits = []
+    calls = {"n": 0}
+
+    def transport(_url, _timeout):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            return 429, b"rate limited", {"Retry-After": "11"}
+        body = json.dumps(_ok_payload(["2015-08-01"], [1.0]))
+        return 200, body.encode(), {}
+
+    payload = fetch_archive_daily(
+        8.4892, -13.2387, date(2015, 8, 1), date(2015, 8, 1),
+        transport=transport,
+        sleeper=waits.append,
+        max_retries=5,
+        backoff_seconds=20,
+    )
+    assert calls["n"] == 3
+    assert waits == [11.0, 11.0]
+    assert payload["daily"]["precipitation_sum"] == [1.0]
+    assert payload["_chews_request"]["attempts"] == 3
+
+
+def test_500_uses_exponential_backoff_not_immediate_retry():
+    from services.flood_weather_history import ArchiveFetchError, fetch_archive_daily
+
+    waits = []
+
+    def transport(_url, _timeout):
+        return 500, b'{"error":true}', {}
+
+    rng = type("R", (), {"uniform": staticmethod(lambda a, b: 0.0)})()
+    try:
+        fetch_archive_daily(
+            8.4, -13.2, date(2015, 8, 1), date(2015, 8, 1),
+            transport=transport,
+            sleeper=waits.append,
+            rng=rng,
+            max_retries=3,
+            backoff_seconds=20,
+        )
+        raise AssertionError("expected ArchiveFetchError")
+    except ArchiveFetchError as exc:
+        assert exc.http_status == 500
+        assert exc.attempts == 3
+    assert waits == [20.0, 40.0]
+
+
+def test_resume_does_not_request_cached_locations(tmp_path, monkeypatch):
+    import json
+    from services import flood_weather_history as mod
+
+    monkeypatch.setattr(mod, "RAW_DIR", tmp_path)
+    loc = {
+        "location_id": "district_centroid:bo",
+        "location_name": "Bo",
+        "location_type": "district_centroid",
+        "district": "bo",
+        "latitude": 7.9647,
+        "longitude": -11.7383,
+        "source": "test",
+        "coordinate_quality": "admin_centroid_fallback",
+        "coordinate_ok": True,
+    }
+    cached = _ok_payload(["2015-08-01", "2015-08-02"], [1.0, 2.0])
+    (tmp_path / "district_centroid_bo.json").write_text(json.dumps(cached), encoding="utf-8")
+    calls = []
+
+    def transport(url, _timeout):
+        calls.append(url)
+        raise AssertionError(f"cached location was requested: {url}")
+
+    payload = mod.build_dataset(
+        start=date(2015, 8, 1),
+        end=date(2015, 8, 2),
+        locations=[loc],
+        reuse_raw=True,
+        live_fetch=True,
+        persist_raw=False,
+        transport=transport,
+        sleep_seconds=0,
+    )
+    assert calls == []
+    assert payload["extracts"][0]["from_cache"] is True
+    assert payload["rows"][0]["coordinate_quality"] == "admin_centroid_fallback"
+    assert payload["quality"]["n_fetch_failures"] == 0
+
+
+def test_request_throttling_is_serialized_between_live_fetches():
+    import json
+    from services.flood_weather_history import build_dataset
+
+    waits = []
+    urls = []
+
+    def transport(url, _timeout):
+        urls.append(url)
+        body = json.dumps(_ok_payload(["2015-08-01"], [0.0]))
+        return 200, body.encode(), {}
+
+    locs = [
+        {
+            "location_id": "district_centroid:bo",
+            "location_name": "Bo",
+            "location_type": "district_centroid",
+            "district": "bo",
+            "latitude": 7.9647,
+            "longitude": -11.7383,
+            "source": "test",
+            "coordinate_quality": "admin_centroid_fallback",
+            "coordinate_ok": True,
+        },
+        {
+            "location_id": "district_centroid:kenema",
+            "location_name": "Kenema",
+            "location_type": "district_centroid",
+            "district": "kenema",
+            "latitude": 7.8767,
+            "longitude": -11.1903,
+            "source": "test",
+            "coordinate_quality": "admin_centroid_fallback",
+            "coordinate_ok": True,
+        },
+    ]
+    payload = build_dataset(
+        start=date(2015, 8, 1),
+        end=date(2015, 8, 1),
+        locations=locs,
+        reuse_raw=False,
+        live_fetch=True,
+        persist_raw=False,
+        transport=transport,
+        sleeper=waits.append,
+        sleep_seconds=3.5,
+        max_retries=1,
+    )
+    assert len(urls) == 2
+    assert waits == [3.5]
+    assert payload["quality"]["n_rows"] == 2
+
+
+def test_failed_location_stays_missing_without_zero_or_substitution():
+    import json
+    from services.flood_weather_history import build_dataset
+
+    def transport(url, _timeout):
+        if "7.9647" in url:
+            return 429, b"rate limited", {}
+        body = json.dumps(_ok_payload(["2015-08-01"], [4.0]))
+        return 200, body.encode(), {}
+
+    locs = [
+        {
+            "location_id": "district_centroid:bo",
+            "location_name": "Bo",
+            "location_type": "district_centroid",
+            "district": "bo",
+            "latitude": 7.9647,
+            "longitude": -11.7383,
+            "source": "test",
+            "coordinate_quality": "admin_centroid_fallback",
+            "coordinate_ok": True,
+        },
+        {
+            "location_id": "zone:kroo_bay",
+            "location_name": "Kroo Bay",
+            "location_type": "flood_zone",
+            "district": "western_area_urban",
+            "latitude": 8.4892,
+            "longitude": -13.2387,
+            "source": "test",
+            "coordinate_quality": "catalog_point",
+            "coordinate_ok": True,
+        },
+    ]
+    payload = build_dataset(
+        start=date(2015, 8, 1),
+        end=date(2015, 8, 1),
+        locations=locs,
+        reuse_raw=False,
+        persist_raw=False,
+        transport=transport,
+        sleeper=lambda _s: None,
+        sleep_seconds=0,
+        max_retries=2,
+        backoff_seconds=1,
+        rng=type("R", (), {"uniform": staticmethod(lambda a, b: 0.0)})(),
+    )
+    ids = {r["location_id"] for r in payload["rows"]}
+    assert ids == {"zone:kroo_bay"}
+    assert payload["rows"][0]["precipitation_mm"] == 4.0
+    assert payload["rows"][0]["latitude"] == 8.4892
+    fail = payload["fetch_failures"][0]
+    assert fail["location_id"] == "district_centroid:bo"
+    assert fail["http_status"] == 429
+    assert fail["attempts"] >= 1
+    assert fail["timestamp"]
+    assert payload["quality"]["missing_not_replaced_with_zero"] is True
+    assert "flood_occurred" not in payload["rows"][0]
+
+
+def test_complete_daily_series_validation():
+    from services.flood_weather_history import payload_to_daily_rows, validate_location_series
+
+    loc = {
+        "location_id": "zone:kroo_bay",
+        "location_name": "Kroo Bay",
+        "location_type": "flood_zone",
+        "coordinate_quality": "catalog_point",
+        "district": "western_area_urban",
+        "latitude": 8.4892,
+        "longitude": -13.2387,
+    }
+    payload = _ok_payload(["2015-01-01", "2015-01-02", "2015-01-03"], [0.0, None, 2.0])
+    rows = payload_to_daily_rows(loc, payload, date(2015, 1, 1), date(2015, 1, 3))
+    result = validate_location_series(rows, loc, date(2015, 1, 1), date(2015, 1, 3))
+    assert result["ok"] is True
+    assert result["n_rows"] == 3
+    assert rows[1]["precipitation_mm"] is None
+    assert rows[0]["precipitation_mm"] == 0.0
+    assert rows[0]["coordinate_quality"] == "catalog_point"
+
+
+def test_geographic_grains_are_not_merged():
+    locations = load_canonical_locations()
+    zones = [loc for loc in locations if loc["location_type"] == "flood_zone"]
+    cents = [loc for loc in locations if loc["location_type"] == "district_centroid"]
+    assert {z["coordinate_quality"] for z in zones} == {"catalog_point"}
+    assert {c["coordinate_quality"] for c in cents} == {"admin_centroid_fallback"}
+    assert {z["location_type"] for z in zones}.isdisjoint({c["location_type"] for c in cents})
+

@@ -7,9 +7,9 @@ Does NOT train a flood model, create flood labels, or modify production CHEWS.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
-import time
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parent.parent
@@ -23,9 +23,9 @@ from services.flood_weather_history import (  # noqa: E402
     assert_protected_unchanged,
     build_dataset,
     build_manifest,
-    load_cached_payload,
-    load_canonical_locations,
+    ingest_settings,
     protected_hashes,
+    resume_plan,
     write_csv,
 )
 
@@ -60,21 +60,48 @@ def _write_dataset_json(path: Path, payload: dict) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Build flood weather history v1 (no training, no flood labels).")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        default=True,
+        help="Skip cached locations and fetch only missing ones (default).",
+    )
+    parser.add_argument(
+        "--cache-only",
+        action="store_true",
+        help="Do not call Open-Meteo; use cached raw extracts only.",
+    )
+    args = parser.parse_args()
     before = protected_hashes()
-    needed = [
-        loc for loc in load_canonical_locations()
-        if loc.get("coordinate_ok")
-        and load_cached_payload(loc["location_id"], PERIOD_START, PERIOD_END) is None
-    ]
-    if needed:
-        print(f"[flood_weather_v1] {len(needed)} locations need live fetch; 90s rate-limit cooldown", flush=True)
-        time.sleep(90)
+    settings = ingest_settings()
+    plan = resume_plan()
+    live_fetch = not args.cache_only
+    print(json.dumps({
+        "resume": True,
+        "cache_only": args.cache_only,
+        "completed_cached": [loc["location_id"] for loc in plan["completed"]],
+        "missing": [loc["location_id"] for loc in plan["missing"]],
+        "n_completed": len(plan["completed"]),
+        "n_missing": len(plan["missing"]),
+        "ingest_settings": settings,
+        "disclaimer": "Historical weather data does not constitute historical flood-event ground truth.",
+    }, indent=2), flush=True)
+    if args.cache_only:
+        print(f"[flood_weather_v1] cache-only: {len(plan['missing'])} locations will remain missing", flush=True)
+    elif plan["missing"]:
+        print(
+            f"[flood_weather_v1] resume: fetching {len(plan['missing'])} missing; "
+            f"skipping {len(plan['completed'])} cached; delay={settings['request_delay_seconds']}s",
+            flush=True,
+        )
     payload = build_dataset(
         start=PERIOD_START,
         end=PERIOD_END,
         persist_raw=True,
         reuse_raw=True,
-        sleep_seconds=8.0,
+        live_fetch=live_fetch,
+        sleep_seconds=float(settings["request_delay_seconds"]),
     )
     TRAINING.mkdir(parents=True, exist_ok=True)
     DIAG.mkdir(parents=True, exist_ok=True)
@@ -105,6 +132,8 @@ def main() -> None:
         "missing_precipitation": quality["missing_precipitation"],
         "n_duplicate_location_dates": quality["n_duplicate_location_dates"],
         "n_fetch_failures": quality.get("n_fetch_failures", 0),
+        "n_locations_with_series": quality.get("n_locations_with_series"),
+        "integrity_ok": all(item.get("ok") for item in quality.get("location_series_integrity") or [True]),
         "flood_labels_created": False,
         "model_trained": False,
         "csv": str(CSV_OUT),

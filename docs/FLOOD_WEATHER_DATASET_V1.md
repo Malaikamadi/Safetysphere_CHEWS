@@ -2,6 +2,10 @@
 
 **Status:** weather foundation only. **No flood model was trained. No flood labels were created. Production CHEWS was not modified.**
 
+**Recommendation: B. WEATHER DATA NEEDS IMPROVEMENT**
+
+The 23 flood-zone series are complete and join-ready at catalog-community grain. Fifteen of sixteen district-centroid fallback series are missing because Open-Meteo Archive returned HTTP 429 then 500 after the first 24 extracts. Do not treat incomplete centroid coverage as national weather completeness.
+
 **Historical weather data does not constitute historical flood-event ground truth.**
 
 This packet sits after `docs/FLOOD_EARLY_WARNING_VALIDATION.md` (verdict **E** — current flood model is not defensible) and `docs/FLOOD_EVENT_DATA_FOUNDATION.md` (verdict **B** — real event source identified, acquisition required). Weather is being built **separately** so a future `chews_flood_event_v0` table can join past-only rainfall without converting rain into synthetic floods.
@@ -71,8 +75,8 @@ Canonical location table (see diagnostics locations JSON):
 
 | `location_type` | Count | Coordinate quality | Role |
 | --------------- | ----- | ------------------ | ---- |
-| `flood_zone` | 23 | `catalog_point` from `flood_zones.json` | **Primary** weather grid |
-| `district_centroid` | 16 | `admin_centroid_fallback` from `admin_hierarchy.csv` | Documented fallback; malaria monthly comparison only |
+| `flood_zone` | 23 catalog; **23 with daily series** | `catalog_point` from `flood_zones.json` | **Primary** weather grid |
+| `district_centroid` | 16 catalog; **1 with daily series** (Western Area Urban) | `admin_centroid_fallback` from `admin_hierarchy.csv` | Documented fallback; malaria monthly comparison only |
 
 Rules:
 
@@ -168,11 +172,45 @@ No `flood_occurred` (or alias) field exists.
 
 ## 9. Data-quality findings
 
-Filled after extract. See the reviewable manifest:
+Reviewable manifest: `backend/data/04_ai/diagnostics/flood_weather_history_v1_manifest.json`
 
-`backend/data/04_ai/diagnostics/flood_weather_history_v1_manifest.json`
+Extract generated at **2026-09-14T13:29:50Z**.
 
-Audit includes: row counts vs expected calendar, missing dates, duplicate location-dates, missing precipitation / temperature / humidity / soil moisture, negative precipitation, outliers, gaps by location / year / month, wet-season vs dry-season coverage. Missing weather is preserved as missing.
+| Check | Result |
+| ----- | ------ |
+| Catalog locations | 39 (23 flood zones + 16 district centroids) |
+| Locations with a daily series | **24** (all 23 flood zones + Western Area Urban centroid) |
+| Locations without a series | **15** district centroids (Open-Meteo Archive 429 then 500 during ingest; not invented) |
+| Date range | 2015-01-01 – 2026-08-31 (4,261 days) |
+| Rows | 102,264 |
+| Expected rows (24 × 4,261) | 102,264 |
+| Missing calendar days | 0 |
+| Duplicate location-dates | 0 |
+| Missing precipitation / temperature / humidity / soil moisture | 0 / 0 / 0 / 0 |
+| Negative precipitation | 0 |
+| Outliers (precip >400 mm, mean temp outside 10–45 °C, humidity outside 0–100, soil moisture outside 0–1) | all 0 |
+| Wet-season rows (May–Oct) | 51,528 |
+| Dry-season rows | 50,736 |
+| Gaps by year / month / location (among series that were fetched) | none |
+| `flood_occurred` or other flood labels | **not present** |
+| Missing replaced with zero | **no** |
+
+The 15 missing centroids are **no observation**, not no rain. They have no location-day rows.
+
+Resume only the missing locations (do not re-download the 24 successful extracts):
+
+```
+cd backend
+./venv/bin/python training/run_flood_weather_history_v1.py --resume
+```
+
+Throttle / retry (no credentials; Open-Meteo Archive is unauthenticated):
+
+- `OPEN_METEO_MAX_RETRIES` (default 5)
+- `OPEN_METEO_BACKOFF_SECONDS` (default 20; exponential + jitter)
+- `OPEN_METEO_REQUEST_DELAY_SECONDS` (default 12; serialized delay between live requests)
+
+`--cache-only` rebuilds the canonical files from cache without calling the API.
 
 ---
 
@@ -184,7 +222,7 @@ Comparison uses **district-centroid daily rows only**, summed/averaged to month,
 
 Flood-zone catalog coordinates are not expected to match district-centroid monthly totals. Units: both precipitation series are millimetres (daily vs monthly sum).
 
-Exact MAE and overlap counts are in the manifest `malaria_climate_comparison` object.
+On this extract the comparison could only use **Western Area Urban** (the only centroid series retrieved). For that district, **38 overlapping months** (2023-07 through 2026-08) match malaria monthly rainfall and temperature with **MAE 0.0 mm** and **0.0 °C**. Coordinates match. Other districts were not compared because their centroid extracts are missing. The malaria file was not overwritten.
 
 ---
 
@@ -198,6 +236,8 @@ Exact MAE and overlap counts are in the manifest `malaria_climate_comparison` ob
 6. Descriptive month medians leak future years if used as a backtest feature; use past-only fields.
 7. `chews_flood_event_v0` is still empty — this file cannot be scored against real floods yet.
 8. Open-Meteo Archive history is long (from 1940 in a probe) but v1 stops at 2015 to keep the extract practical.
+9. Fifteen district-centroid series are missing because Archive returned HTTP 429 then 500 after the first 24 extracts. The 23 flood-zone series are complete.
+10. Malaria climate comparison is therefore one district only.
 
 ---
 
