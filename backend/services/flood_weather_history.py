@@ -296,15 +296,25 @@ def fetch_archive_daily(
         last_error = None
         payload = None
         status = None
-        for attempt in range(3):
+        for attempt in range(6):
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
                     status = resp.status
                     payload = json.loads(resp.read().decode("utf-8"))
                 break
-            except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            except urllib.error.HTTPError as exc:
                 last_error = exc
-                time.sleep(1.5 * (attempt + 1))
+                wait = 8 * (attempt + 1)
+                if exc.code == 429:
+                    retry_after = exc.headers.get("Retry-After") if exc.headers else None
+                    if retry_after and str(retry_after).isdigit():
+                        wait = max(45, int(retry_after))
+                    else:
+                        wait = 45 * (attempt + 1)
+                time.sleep(wait)
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+                last_error = exc
+                time.sleep(4 * (attempt + 1))
         if payload is None:
             raise RuntimeError(f"Open-Meteo Archive request failed after retries: {last_error}")
     if not isinstance(payload, dict):
@@ -509,14 +519,34 @@ def lead_safe_for_event_date(row: dict) -> dict[str, Any]:
     }
 
 
+def raw_path_for(location_id: str) -> Path:
+    return RAW_DIR / f"{location_id.replace(':', '_')}.json"
+
+
 def persist_raw_payload(location_id: str, payload: dict) -> Path:
     RAW_DIR.mkdir(parents=True, exist_ok=True)
-    safe = location_id.replace(":", "_")
-    path = RAW_DIR / f"{safe}.json"
+    path = raw_path_for(location_id)
     slim = {k: v for k, v in payload.items() if k != "_chews_request"}
     slim["_chews_request"] = payload.get("_chews_request")
     path.write_text(json.dumps(slim, separators=(",", ":")), encoding="utf-8")
     return path
+
+
+def load_cached_payload(location_id: str, start: date, end: date) -> Optional[dict]:
+    path = raw_path_for(location_id)
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    times = ((payload.get("daily") or {}).get("time") or [])
+    if not times:
+        return None
+    if times[0] > start.isoformat() or times[-1] < end.isoformat():
+        return None
+    payload.setdefault("_chews_request", {})
+    payload["_chews_request"]["http_status"] = payload["_chews_request"].get("http_status") or 200
+    payload["_chews_request"]["retrieved_at"] = payload["_chews_request"].get("retrieved_at") or "cached"
+    payload["_chews_request"]["from_cache"] = True
+    return payload
 
 
 def build_dataset(
@@ -527,13 +557,19 @@ def build_dataset(
     sleep_seconds: float = 0.25,
     locations: Optional[list[dict]] = None,
     persist_raw: bool = False,
+    reuse_raw: bool = True,
 ) -> dict[str, Any]:
     locations = locations or load_canonical_locations()
     fetchable = [loc for loc in locations if loc.get("coordinate_ok")]
     rows: list[dict] = []
     extracts = []
     for i, loc in enumerate(fetchable):
-        payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
+        payload = None
+        if opener is None and reuse_raw:
+            payload = load_cached_payload(loc["location_id"], start, end)
+        if payload is None:
+            payload = fetch_archive_daily(loc["latitude"], loc["longitude"], start, end, opener=opener)
+        print(f"[flood_weather_v1] {i + 1}/{len(fetchable)} {loc['location_id']}", flush=True)
         daily_keys = list((payload.get("daily") or {}).keys())
         extracts.append({
             "location_id": loc["location_id"],

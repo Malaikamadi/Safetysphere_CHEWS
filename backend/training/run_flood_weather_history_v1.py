@@ -62,6 +62,8 @@ def main() -> None:
         start=PERIOD_START,
         end=PERIOD_END,
         persist_raw=True,
+        reuse_raw=True,
+        sleep_seconds=2.0,
     )
     TRAINING.mkdir(parents=True, exist_ok=True)
     DIAG.mkdir(parents=True, exist_ok=True)
