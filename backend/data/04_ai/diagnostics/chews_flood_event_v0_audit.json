@@ -1,0 +1,120 @@
+{
+  "n_records_loaded": 12,
+  "n_daily_target_events": 11,
+  "n_unique_event_ids": 11,
+  "events_by_source": {
+    "copernicus_ems": 1,
+    "ifrc_dref": 8,
+    "ndma_assessment": 2
+  },
+  "events_by_year": {
+    "2017": 1,
+    "2022": 8,
+    "2023": 1,
+    "2024": 1
+  },
+  "events_by_district": {
+    "western_area_urban": 8,
+    "bonthe": 2,
+    "tonkolili": 1
+  },
+  "events_by_flood_zone": {
+    "zone:regent": 1,
+    "unmatched": 9,
+    "zone:bumbuna": 1
+  },
+  "n_events_with_exact_dates": 11,
+  "n_events_year_or_month_only": 1,
+  "n_catalog_year_only_context": 41,
+  "n_events_with_coordinates": 0,
+  "n_matched_to_catalog": 2,
+  "n_unmatched": 9,
+  "n_duplicate_groups": 0,
+  "n_with_corroborating_sources": 2,
+  "n_unverified_reports": 0,
+  "n_events_complete_weather": 2,
+  "n_events_missing_weather_windows": 9,
+  "unmatched_review": [
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-kanikay",
+      "event_location_name": "Kanikay",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-culvert",
+      "event_location_name": "Culvert",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-kaningo",
+      "event_location_name": "Kaningo",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-tengbeh-town",
+      "event_location_name": "Tengbeh Town",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-looking-town",
+      "event_location_name": "Looking Town",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-cassava-town",
+      "event_location_name": "Cassava Town",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-ons-2022-08-28-brooks-field",
+      "event_location_name": "Brooks Field",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ndma-bonthe-2022-09-03",
+      "event_location_name": "Bonthe District (Kwamebai Krim, Nongoba Bullom, Gbap, Yawbeko, Sogbini chiefdoms)",
+      "district": "bonthe",
+      "event_start_date": "2022-09-03",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ndma-delken-2023-09-01",
+      "event_location_name": "Delken Village",
+      "district": "bonthe",
+      "event_start_date": "2023-09-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    }
+  ],
+  "duplicates": [],
+  "ndma_register_acquired": false,
+  "negative_labels_created": false,
+  "rainfall_threshold_labels_created": false,
+  "flood_occurred_created": false,
+  "planning_criteria": {
+    "min_dated_events": 30,
+    "min_wet_seasons": 3,
+    "min_districts": 8,
+    "n_dated_events": 11,
+    "n_wet_seasons_with_dated_events": 4,
+    "n_districts_with_dated_events": 3,
+    "n_catalog_matched_dated_events": 2,
+    "met": false
+  },
+  "classification": "C",
+  "classification_label": "INSUFFICIENT REAL EVENTS FOR BACKTEST",
+  "disclaimer": "Historical weather data does not constitute historical flood-event ground truth."
+}
