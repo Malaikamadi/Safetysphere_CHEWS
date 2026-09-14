@@ -424,15 +424,18 @@ def fetch_archive_daily(
             retry_after = headers.get("Retry-After") or headers.get("retry-after")
             if status == 200:
                 try:
-                    payload = json.loads(body.decode("utf-8") if isinstance(body, (bytes, bytearray)) else body)
+                    text = body.decode("utf-8") if isinstance(body, (bytes, bytearray)) else body
+                    payload = json.loads(text)
                 except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-                    last_error = f"invalid_json:{exc}"
+                    last_error = f"invalid_json status={status} bytes={len(body or b'')} err={exc}"
                     wait = retry_wait_seconds(
                         attempt, backoff_seconds=backoff, max_wait_seconds=max_wait, rng=rng,
                     )
-                    print(f"  invalid JSON; waiting {wait:.1f}s (attempt {attempts}/{retries})", flush=True)
                     if attempt < retries - 1:
+                        print(f"  invalid JSON (HTTP {status}); waiting {wait:.1f}s (attempt {attempts}/{retries})", flush=True)
                         sleeper(wait)
+                    else:
+                        print(f"  invalid JSON (HTTP {status}); giving up (attempt {attempts}/{retries})", flush=True)
                     continue
                 break
             last_error = f"HTTP {status}"
