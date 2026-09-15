@@ -120,12 +120,13 @@ def test_thirty_dated_events_can_meet_event_data_floor_while_unmatched():
         "western_area_urban", "bonthe", "tonkolili", "bo", "pujehun",
         "kenema", "moyamba", "kono",
     ]
+    years = [2019, 2022, 2024]
     for i in range(30):
         events.append({
             "event_id": f"e{i}",
             "in_daily_target": True,
             "temporal_grain": "day",
-            "event_start_date": f"2022-08-{(i % 28) + 1:02d}",
+            "event_start_date": f"{years[i % 3]}-08-{(i % 28) + 1:02d}",
             "district": districts[i % len(districts)],
             "location_match_status": "unmatched",
             "matched_flood_zone_id": None,
