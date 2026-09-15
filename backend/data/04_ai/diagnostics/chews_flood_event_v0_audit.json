@@ -1,39 +1,109 @@
 {
-  "n_records_loaded": 12,
-  "n_daily_target_events": 11,
-  "n_unique_event_ids": 11,
+  "n_records_loaded": 48,
+  "n_daily_target_events": 43,
+  "n_unique_dated_events": 43,
+  "n_unique_event_ids": 43,
   "events_by_source": {
-    "copernicus_ems": 1,
-    "ifrc_dref": 8,
-    "ndma_assessment": 2
+    "copernicus_ems": 2,
+    "ifrc_dref": 34,
+    "ndma_assessment": 6,
+    "un_spider": 1
+  },
+  "events_by_source_type": {
+    "remote_sensing_copernicus": 2,
+    "humanitarian_ifrc": 34,
+    "government_ndma": 6,
+    "humanitarian_un": 1
   },
   "events_by_year": {
-    "2017": 1,
-    "2022": 8,
+    "2017": 3,
+    "2022": 14,
     "2023": 1,
-    "2024": 1
+    "2024": 4,
+    "2015": 2,
+    "2019": 12,
+    "2025": 7
+  },
+  "events_by_wet_season": {
+    "2017": 3,
+    "2022": 14,
+    "2023": 1,
+    "2024": 4,
+    "2015": 2,
+    "2019": 12,
+    "2025": 7
   },
   "events_by_district": {
-    "western_area_urban": 8,
-    "bonthe": 2,
-    "tonkolili": 1
+    "western_area_urban": 30,
+    "bonthe": 3,
+    "tonkolili": 1,
+    "bo": 2,
+    "pujehun": 1,
+    "western_area_rural": 1,
+    "kenema": 1,
+    "moyamba": 1,
+    "kono": 1,
+    "falaba": 1,
+    "koinadugu": 1
   },
   "events_by_flood_zone": {
     "zone:regent": 1,
-    "unmatched": 9,
-    "zone:bumbuna": 1
+    "unmatched": 35,
+    "zone:bumbuna": 1,
+    "zone:lumley": 2,
+    "zone:kroo_bay": 2,
+    "zone:mabella": 1,
+    "zone:wellington": 1
   },
-  "n_events_with_exact_dates": 11,
-  "n_events_year_or_month_only": 1,
+  "n_events_with_exact_dates": 43,
+  "n_events_year_or_month_only": 5,
   "n_catalog_year_only_context": 41,
   "n_events_with_coordinates": 0,
-  "n_matched_to_catalog": 2,
-  "n_unmatched": 9,
+  "n_matched_to_catalog": 8,
+  "n_unmatched": 35,
   "n_duplicate_groups": 0,
-  "n_with_corroborating_sources": 2,
+  "n_duplicate_candidates_merged": 1,
+  "n_corroborated_events": 5,
+  "n_with_corroborating_sources": 5,
   "n_unverified_reports": 0,
-  "n_events_complete_weather": 2,
-  "n_events_missing_weather_windows": 9,
+  "n_events_complete_weather": 8,
+  "n_events_missing_weather_windows": 35,
+  "earliest_event": "2015-09-05",
+  "latest_event": "2025-08-31",
+  "unmatched_locations": [
+    "Bathurst",
+    "Berwick Section",
+    "Bo District (unnamed communities in 2025 DREF)",
+    "Bonthe District (Kwamebai Krim, Nongoba Bullom, Gbap, Yawbeko, Sogbini chiefdoms)",
+    "Bonthe District (unnamed communities in 2025 DREF)",
+    "Brooks Field",
+    "Cassava Town",
+    "Clinetown",
+    "Colleh Town",
+    "Culvert",
+    "Delken Village",
+    "Dodo",
+    "Falaba District (unnamed communities in 2025 DREF)",
+    "Kamayama",
+    "Kanikay",
+    "Kaningo",
+    "Kenema District (unnamed communities in 2025 DREF)",
+    "Koinadugu District (unnamed communities in 2025 DREF)",
+    "Kono District (unnamed communities in 2025 DREF)",
+    "Kpahn",
+    "Looking Town",
+    "Lower Kuntolor",
+    "Moiba",
+    "Mount Aurel",
+    "Moyamba District (unnamed communities in 2025 DREF)",
+    "Ogu Farm",
+    "Pujehun District (two unnamed communities in one chiefdom)",
+    "Racecourse",
+    "Tengbeh Town",
+    "Texaco Old Road",
+    "Tombo",
+    "Upper Melon Street"
+  ],
   "unmatched_review": [
     {
       "event_id": "ifrc-mdrsl013-ons-2022-08-28-kanikay",
@@ -89,7 +159,7 @@
       "event_location_name": "Bonthe District (Kwamebai Krim, Nongoba Bullom, Gbap, Yawbeko, Sogbini chiefdoms)",
       "district": "bonthe",
       "event_start_date": "2022-09-03",
-      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
     },
     {
       "event_id": "ndma-delken-2023-09-01",
@@ -97,24 +167,257 @@
       "district": "bonthe",
       "event_start_date": "2023-09-01",
       "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl006-kpahn-2015-09-05",
+      "event_location_name": "Kpahn",
+      "district": "bo",
+      "event_start_date": "2015-09-05",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl006-pujehun-2015-09-05",
+      "event_location_name": "Pujehun District (two unnamed communities in one chiefdom)",
+      "district": "pujehun",
+      "event_start_date": "2015-09-05",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "unspider-2017-08-14-racecourse",
+      "event_location_name": "Racecourse",
+      "district": "western_area_urban",
+      "event_start_date": "2017-08-14",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-kamayama",
+      "event_location_name": "Kamayama",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-kaningo",
+      "event_location_name": "Kaningo",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-bathurst",
+      "event_location_name": "Bathurst",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-berwick-section",
+      "event_location_name": "Berwick Section",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-culvert",
+      "event_location_name": "Culvert",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-dodo",
+      "event_location_name": "Dodo",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-ogu-farm",
+      "event_location_name": "Ogu Farm",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-clinetown",
+      "event_location_name": "Clinetown",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-01-moiba",
+      "event_location_name": "Moiba",
+      "district": "western_area_urban",
+      "event_start_date": "2019-08-01",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl008-2019-08-06-tombo",
+      "event_location_name": "Tombo",
+      "district": "western_area_rural",
+      "event_start_date": "2019-08-06",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-2022-08-28-kamayama",
+      "event_location_name": "Kamayama",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-2022-08-28-colleh-town",
+      "event_location_name": "Colleh Town",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl013-2022-08-28-mount-aurel",
+      "event_location_name": "Mount Aurel",
+      "district": "western_area_urban",
+      "event_start_date": "2022-08-28",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ndma-freetown-2024-10-24-texaco-old-road",
+      "event_location_name": "Texaco Old Road",
+      "district": "western_area_urban",
+      "event_start_date": "2024-10-24",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ndma-freetown-2024-10-24-lower-kuntolor",
+      "event_location_name": "Lower Kuntolor",
+      "district": "western_area_urban",
+      "event_start_date": "2024-10-24",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ndma-freetown-2024-10-24-upper-melon-street",
+      "event_location_name": "Upper Melon Street",
+      "district": "western_area_urban",
+      "event_start_date": "2024-10-24",
+      "reason": "Named place/district was not matched to the 23 catalog flood zones. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-bonthe",
+      "event_location_name": "Bonthe District (unnamed communities in 2025 DREF)",
+      "district": "bonthe",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-kenema",
+      "event_location_name": "Kenema District (unnamed communities in 2025 DREF)",
+      "district": "kenema",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-bo",
+      "event_location_name": "Bo District (unnamed communities in 2025 DREF)",
+      "district": "bo",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-moyamba",
+      "event_location_name": "Moyamba District (unnamed communities in 2025 DREF)",
+      "district": "moyamba",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-kono",
+      "event_location_name": "Kono District (unnamed communities in 2025 DREF)",
+      "district": "kono",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-falaba",
+      "event_location_name": "Falaba District (unnamed communities in 2025 DREF)",
+      "district": "falaba",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
+    },
+    {
+      "event_id": "ifrc-mdrsl019-2025-08-31-koinadugu",
+      "event_location_name": "Koinadugu District (unnamed communities in 2025 DREF)",
+      "district": "koinadugu",
+      "event_start_date": "2025-08-31",
+      "reason": "District/chiefdom/country grain was not converted into a catalog flood zone. District centroid was not assigned."
     }
   ],
   "duplicates": [],
+  "duplicate_candidates": [
+    {
+      "key": {
+        "event_date": "2022-08-28",
+        "location": "wellington",
+        "district": "western_area_urban"
+      },
+      "record_ids": [
+        "ndma-2022-08-28-wellington-water-street",
+        "ifrc-mdrsl013-2022-08-28-wellington"
+      ],
+      "canonical_id": "ndma-2022-08-28-wellington-water-street",
+      "action": "merged_to_one_event"
+    }
+  ],
   "ndma_register_acquired": false,
   "negative_labels_created": false,
   "rainfall_threshold_labels_created": false,
   "flood_occurred_created": false,
+  "model_trained": false,
+  "backtest_run": false,
   "planning_criteria": {
     "min_dated_events": 30,
     "min_wet_seasons": 3,
     "min_districts": 8,
-    "n_dated_events": 11,
-    "n_wet_seasons_with_dated_events": 4,
-    "n_districts_with_dated_events": 3,
-    "n_catalog_matched_dated_events": 2,
-    "met": false
+    "or_western_area_plus_four_regimes": true,
+    "n_dated_events": 43,
+    "n_wet_seasons_with_dated_events": 7,
+    "wet_seasons": [
+      "2015",
+      "2017",
+      "2019",
+      "2022",
+      "2023",
+      "2024",
+      "2025"
+    ],
+    "n_districts_with_dated_events": 11,
+    "n_catalog_matched_dated_events": 8,
+    "n_catalog_matched_with_complete_weather": 8,
+    "geographic": {
+      "n_districts": 11,
+      "has_western_area": true,
+      "n_other_geographic_regimes": 9,
+      "other_geographic_regimes": [
+        "bo",
+        "bonthe",
+        "falaba",
+        "kenema",
+        "koinadugu",
+        "kono",
+        "moyamba",
+        "pujehun",
+        "tonkolili"
+      ],
+      "eight_districts_met": true,
+      "western_area_plus_four_regimes_met": true,
+      "met": true
+    },
+    "event_data_floor_met": true,
+    "met": true
   },
-  "classification": "C",
-  "classification_label": "INSUFFICIENT REAL EVENTS FOR BACKTEST",
-  "disclaimer": "Historical weather data does not constitute historical flood-event ground truth."
+  "stopping_rule": "Event-data floor reached. This phase still stops before negative-label construction, rainfall-threshold selection, backtesting, flood model training, and CHEWS integration.",
+  "classification": "B",
+  "classification_label": "EVENT-DATA FLOOR REACHED \u2014 STOP BEFORE MODELING",
+  "disclaimer": "Historical weather data does not constitute historical flood-event ground truth.",
+  "n_raw_records_loaded": 49,
+  "n_records_after_merge": 48
 }
