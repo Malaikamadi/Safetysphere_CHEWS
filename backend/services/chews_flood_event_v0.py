@@ -25,6 +25,7 @@ from typing import Any, Optional
 BACKEND = Path(__file__).resolve().parent.parent
 FLOOD_ZONES = BACKEND / "data" / "reference" / "flood_zones.json"
 PUBLIC_ASSESSMENTS = BACKEND / "data" / "01_raw" / "flood_events" / "public_assessments_v0.json"
+ACQUIRED_EVENTS_V1 = BACKEND / "data" / "01_raw" / "flood_events" / "acquired_dated_events_v1.json"
 NDMA_EXTRACT = BACKEND / "data" / "01_raw" / "flood_events" / "ndma_extract.json"
 WEATHER_CSV = BACKEND / "data" / "04_ai" / "training_sets" / "flood_weather_history_v1.csv"
 
@@ -56,6 +57,7 @@ NAME_ALIASES = {
     "susan's bay": "susans_bay",
     "susans bay": "susans_bay",
     "mabella": "mabella",
+    "mabela": "mabella",
     "granville brook": "granville_brook",
     "kingtom": "granville_brook",
     "regent": "regent",
@@ -86,14 +88,16 @@ NAME_ALIASES = {
 }
 
 EVENT_FIELDS = [
-    "event_id", "event_source", "source_url", "source_document", "source_record_id",
-    "event_start_date", "event_end_date", "temporal_grain",
-    "event_location_name", "event_location_type", "district",
+    "event_id", "event_date", "event_start_date", "event_end_date",
+    "location_name", "event_location_name", "event_location_type", "district",
     "latitude", "longitude",
+    "source", "event_source", "source_type", "source_url", "source_document", "source_record_id",
+    "evidence_text", "confidence", "catalog_zone_match",
+    "temporal_grain",
     "location_match_status", "matched_flood_zone_id", "matched_flood_zone_name",
     "location_match_method", "centroid_assigned_silently",
-    "observation_status", "confidence",
-    "description", "corroborating_sources",
+    "observation_status",
+    "description", "corroborating_sources", "corroboration_count",
     "weather_join_status",
     "rainfall_prev_24h", "rainfall_prev_72h", "rainfall_prev_7d", "rainfall_prev_14d",
     "event_day_precipitation_mm", "event_day_rainfall_24h",
@@ -188,11 +192,15 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 2 * radius * math.asin(math.sqrt(a))
 
 
+DISTRICT_GRAIN_TYPES = {"district", "chiefdom", "country", "multi_district"}
+
+
 def match_event_location(event: dict, zones: list[dict]) -> dict[str, Any]:
     """Match to catalog flood zones. Never silent centroid."""
     lat = event.get("latitude")
     lon = event.get("longitude")
-    name = _norm_name(event.get("event_location_name"))
+    name = _norm_name(event.get("event_location_name") or event.get("location_name"))
+    loc_type = str(event.get("event_location_type") or "").strip().lower()
 
     if lat is not None and lon is not None:
         best = None
@@ -208,7 +216,20 @@ def match_event_location(event: dict, zones: list[dict]) -> dict[str, Any]:
                 "matched_flood_zone_name": best.get("name"),
                 "location_match_method": "exact_coordinates",
                 "centroid_assigned_silently": False,
-            }
+                }
+
+    if loc_type in DISTRICT_GRAIN_TYPES:
+        return {
+            "location_match_status": "unmatched",
+            "matched_flood_zone_id": None,
+            "matched_flood_zone_name": None,
+            "location_match_method": "unmatched_no_centroid",
+            "centroid_assigned_silently": False,
+            "unmatched_reason": (
+                "District/chiefdom/country grain was not converted into a catalog flood zone. "
+                "District centroid was not assigned."
+            ),
+        }
 
     if name:
         alias = NAME_ALIASES.get(name)
@@ -241,6 +262,8 @@ def match_event_location(event: dict, zones: list[dict]) -> dict[str, Any]:
 
 def load_acquired_records() -> list[dict]:
     records = json.loads(PUBLIC_ASSESSMENTS.read_text(encoding="utf-8"))
+    if ACQUIRED_EVENTS_V1.exists():
+        records = list(records) + json.loads(ACQUIRED_EVENTS_V1.read_text(encoding="utf-8"))
     if NDMA_EXTRACT.exists():
         extra = json.loads(NDMA_EXTRACT.read_text(encoding="utf-8"))
         if extra:
@@ -249,9 +272,13 @@ def load_acquired_records() -> list[dict]:
 
 
 def canonicalize_record(raw: dict, zones: list[dict]) -> dict[str, Any]:
-    start = parse_iso_date(raw.get("event_start_date"))
+    from services.flood_event_registry import source_type_for
+
+    start = parse_iso_date(raw.get("event_start_date") or raw.get("event_date"))
     end = parse_iso_date(raw.get("event_end_date"))
     exclude = bool(raw.get("exclude_from_daily_target"))
+    location_name = raw.get("event_location_name") or raw.get("location_name")
+    source = raw.get("event_source") or raw.get("source")
     if start is None:
         temporal_grain = "year_or_month" if raw.get("event_year") else "unknown"
         in_daily = False
@@ -259,29 +286,41 @@ def canonicalize_record(raw: dict, zones: list[dict]) -> dict[str, Any]:
         temporal_grain = "day"
         in_daily = not exclude
     match = match_event_location(raw, zones)
+    catalog_zone = match.get("matched_flood_zone_id")
+    corroborating = list(raw.get("corroborating_sources") or [])
+    corroboration_count = raw.get("corroboration_count")
+    if corroboration_count is None:
+        corroboration_count = 1 + len(corroborating)
     event = {
-        "event_id": raw.get("source_record_id"),
-        "event_source": raw.get("event_source"),
-        "source_url": raw.get("source_url"),
-        "source_document": raw.get("source_document"),
-        "source_record_id": raw.get("source_record_id"),
+        "event_id": raw.get("source_record_id") or raw.get("event_id"),
+        "event_date": start.isoformat() if start else None,
         "event_start_date": start.isoformat() if start else None,
         "event_end_date": end.isoformat() if end else None,
-        "temporal_grain": temporal_grain,
-        "event_location_name": raw.get("event_location_name"),
+        "location_name": location_name,
+        "event_location_name": location_name,
         "event_location_type": raw.get("event_location_type"),
         "district": raw.get("district"),
         "latitude": raw.get("latitude"),
         "longitude": raw.get("longitude"),
+        "source": source,
+        "event_source": source,
+        "source_type": source_type_for(source, raw.get("source_type")),
+        "source_url": raw.get("source_url"),
+        "source_document": raw.get("source_document"),
+        "source_record_id": raw.get("source_record_id"),
+        "evidence_text": raw.get("evidence_text") or raw.get("description"),
+        "confidence": raw.get("confidence"),
+        "catalog_zone_match": catalog_zone,
+        "temporal_grain": temporal_grain,
         "location_match_status": match["location_match_status"],
-        "matched_flood_zone_id": match.get("matched_flood_zone_id"),
+        "matched_flood_zone_id": catalog_zone,
         "matched_flood_zone_name": match.get("matched_flood_zone_name"),
         "location_match_method": match.get("location_match_method"),
         "centroid_assigned_silently": False,
         "observation_status": raw.get("observation_status") or "observed",
-        "confidence": raw.get("confidence"),
         "description": raw.get("description"),
-        "corroborating_sources": raw.get("corroborating_sources") or [],
+        "corroborating_sources": corroborating,
+        "corroboration_count": corroboration_count,
         "in_daily_target": in_daily,
         "unmatched_reason": match.get("unmatched_reason"),
         "flood_occurred_created": False,
@@ -335,7 +374,7 @@ def _num(value: Any) -> Optional[float]:
 
 def join_weather(event: dict, weather: dict[tuple[str, str], dict]) -> dict[str, Any]:
     """Past-only windows from weather history. Event-day rain is context only."""
-    start = event.get("event_start_date")
+    start = event.get("event_start_date") or event.get("event_date")
     zone = event.get("matched_flood_zone_id")
     result = {
         "weather_join_status": "not_attempted",
@@ -369,39 +408,60 @@ def join_weather(event: dict, weather: dict[tuple[str, str], dict]) -> dict[str,
     return result
 
 
-def quality_audit(events: list[dict], context: list[dict], duplicates: list[dict]) -> dict[str, Any]:
+def quality_audit(
+    events: list[dict],
+    context: list[dict],
+    duplicates: list[dict],
+    duplicate_candidates: Optional[list[dict]] = None,
+) -> dict[str, Any]:
+    from services.flood_event_registry import geographic_floor_met, wet_season_year
+
     daily = [event for event in events if event.get("in_daily_target")]
     dated = [event for event in daily if event.get("temporal_grain") == "day"]
     matched = [event for event in daily if event.get("location_match_status") == "matched"]
     unmatched = [event for event in daily if event.get("location_match_status") == "unmatched"]
-    years = sorted({(event.get("event_start_date") or "")[:4] for event in dated if event.get("event_start_date")})
+    dates = sorted(
+        (event.get("event_date") or event.get("event_start_date"))
+        for event in dated
+        if event.get("event_start_date") or event.get("event_date")
+    )
+    years = sorted({(day or "")[:4] for day in dates if day})
+    wet_years = [wet_season_year(event.get("event_date") or event.get("event_start_date")) for event in dated]
+    wet_years = sorted({year for year in wet_years if year})
     n_dated = len(dated)
     n_matched = len(matched)
-    n_districts = len({event.get("district") for event in dated if event.get("district")})
-    n_wet_seasons = len(years)
-    enough = (
+    districts = {event.get("district") for event in dated if event.get("district")}
+    n_districts = len(districts)
+    n_wet_seasons = len(wet_years)
+    geo = geographic_floor_met(districts)
+    event_data_floor_met = (
         n_dated >= PLANNING_MIN_DATED_EVENTS
         and n_wet_seasons >= PLANNING_MIN_WET_SEASONS
-        and n_districts >= PLANNING_MIN_DISTRICTS
-        and n_matched >= PLANNING_MIN_DATED_EVENTS
+        and geo["met"]
     )
     ndma_acquired = False
     if NDMA_EXTRACT.exists():
         ndma_acquired = bool(json.loads(NDMA_EXTRACT.read_text(encoding="utf-8")))
-    if enough:
-        classification, label = "A", "REAL FLOOD EVENT DATA READY FOR WEATHER JOIN"
-    elif n_dated == 0 and not ndma_acquired:
+    n_complete_weather = sum(1 for event in daily if event.get("weather_join_status") == "complete")
+    if n_dated == 0 and not ndma_acquired:
         classification, label = "D", "SOURCE ACCESS BLOCKED"
-    elif n_dated > 0 and not enough:
+    elif not event_data_floor_met:
         classification, label = "C", "INSUFFICIENT REAL EVENTS FOR BACKTEST"
     else:
-        classification, label = "B", "REAL FLOOD EVENT DATA INCOMPLETE"
+        classification, label = "B", "EVENT-DATA FLOOR REACHED — STOP BEFORE MODELING"
+    duplicate_candidates = duplicate_candidates or []
     return {
         "n_records_loaded": len(events),
         "n_daily_target_events": len(daily),
+        "n_unique_dated_events": len({event["event_id"] for event in dated}),
         "n_unique_event_ids": len({event["event_id"] for event in daily}),
-        "events_by_source": dict(Counter(event.get("event_source") for event in daily)),
+        "events_by_source": dict(Counter(event.get("source") or event.get("event_source") for event in daily)),
+        "events_by_source_type": dict(Counter(event.get("source_type") for event in daily)),
         "events_by_year": dict(Counter((event.get("event_start_date") or "")[:4] for event in daily)),
+        "events_by_wet_season": dict(Counter(
+            wet_season_year(event.get("event_date") or event.get("event_start_date")) or "not_wet_season"
+            for event in dated
+        )),
         "events_by_district": dict(Counter(event.get("district") or "unknown" for event in daily)),
         "events_by_flood_zone": dict(Counter(event.get("matched_flood_zone_id") or "unmatched" for event in daily)),
         "n_events_with_exact_dates": n_dated,
@@ -413,14 +473,21 @@ def quality_audit(events: list[dict], context: list[dict], duplicates: list[dict
         "n_matched_to_catalog": n_matched,
         "n_unmatched": len(unmatched),
         "n_duplicate_groups": len(duplicates),
+        "n_duplicate_candidates_merged": len(duplicate_candidates),
+        "n_corroborated_events": sum(1 for event in daily if int(event.get("corroboration_count") or 1) >= 2),
         "n_with_corroborating_sources": sum(1 for event in daily if event.get("corroborating_sources")),
         "n_unverified_reports": sum(1 for event in daily if event.get("observation_status") == "reported_unverified"),
-        "n_events_complete_weather": sum(1 for event in daily if event.get("weather_join_status") == "complete"),
+        "n_events_complete_weather": n_complete_weather,
         "n_events_missing_weather_windows": sum(
             1 for event in daily if event.get("weather_join_status") in {
                 "missing_weather_row", "incomplete_windows", "unmatched_location_no_centroid_weather",
             }
         ),
+        "earliest_event": dates[0] if dates else None,
+        "latest_event": dates[-1] if dates else None,
+        "unmatched_locations": sorted({
+            event.get("location_name") or event.get("event_location_name") for event in unmatched
+        }),
         "unmatched_review": [
             {
                 "event_id": event["event_id"],
@@ -432,20 +499,37 @@ def quality_audit(events: list[dict], context: list[dict], duplicates: list[dict
             for event in unmatched
         ],
         "duplicates": duplicates,
+        "duplicate_candidates": duplicate_candidates,
         "ndma_register_acquired": ndma_acquired,
         "negative_labels_created": False,
         "rainfall_threshold_labels_created": False,
         "flood_occurred_created": False,
+        "model_trained": False,
+        "backtest_run": False,
         "planning_criteria": {
             "min_dated_events": PLANNING_MIN_DATED_EVENTS,
             "min_wet_seasons": PLANNING_MIN_WET_SEASONS,
             "min_districts": PLANNING_MIN_DISTRICTS,
+            "or_western_area_plus_four_regimes": True,
             "n_dated_events": n_dated,
             "n_wet_seasons_with_dated_events": n_wet_seasons,
+            "wet_seasons": wet_years,
             "n_districts_with_dated_events": n_districts,
             "n_catalog_matched_dated_events": n_matched,
-            "met": enough,
+            "n_catalog_matched_with_complete_weather": n_complete_weather,
+            "geographic": geo,
+            "event_data_floor_met": event_data_floor_met,
+            "met": event_data_floor_met,
         },
+        "stopping_rule": (
+            "Event-data floor not met. Do not construct negatives, select rainfall thresholds, "
+            "backtest, train, or integrate into CHEWS."
+            if not event_data_floor_met
+            else (
+                "Event-data floor reached. This phase still stops before negative-label construction, "
+                "rainfall-threshold selection, backtesting, flood model training, and CHEWS integration."
+            )
+        ),
         "classification": classification,
         "classification_label": label,
         "disclaimer": "Historical weather data does not constitute historical flood-event ground truth.",
@@ -453,8 +537,12 @@ def quality_audit(events: list[dict], context: list[dict], duplicates: list[dict
 
 
 def build_registry(*, weather: Optional[dict] = None) -> dict[str, Any]:
+    from services.flood_event_registry import merge_corroborated_records
+
     zones = load_flood_zones()
-    events = [canonicalize_record(item, zones) for item in load_acquired_records()]
+    raw_records = load_acquired_records()
+    merged_records, duplicate_candidates = merge_corroborated_records(raw_records)
+    events = [canonicalize_record(item, zones) for item in merged_records]
     weather_index = weather if weather is not None else load_weather_index()
     for event in events:
         joined = join_weather(event, weather_index)
@@ -466,7 +554,9 @@ def build_registry(*, weather: Optional[dict] = None) -> dict[str, Any]:
         )
     context = historical_context_from_catalog(zones)
     duplicates = detect_duplicates(events)
-    audit = quality_audit(events, context, duplicates)
+    audit = quality_audit(events, context, duplicates, duplicate_candidates)
+    audit["n_raw_records_loaded"] = len(raw_records)
+    audit["n_records_after_merge"] = len(merged_records)
     return {
         "version": "chews_flood_event_v0",
         "generated_at": _now(),
@@ -479,6 +569,7 @@ def build_registry(*, weather: Optional[dict] = None) -> dict[str, Any]:
         "events": [event for event in events if event.get("in_daily_target")],
         "held_out_without_calendar_day": [event for event in events if not event.get("in_daily_target")],
         "historical_context_year_only": context,
+        "duplicate_candidates": duplicate_candidates,
         "audit": audit,
     }
 

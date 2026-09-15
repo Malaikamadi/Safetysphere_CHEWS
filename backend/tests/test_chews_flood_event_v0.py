@@ -19,6 +19,11 @@ ZONES = [
     {"id": "regent", "name": "Regent / Sugar Loaf", "district": "western_area_urban", "lat": 8.4406, "lng": -13.2336},
     {"id": "bumbuna", "name": "Bumbuna (dam buffer)", "district": "tonkolili", "lat": 8.72, "lng": -11.94},
     {"id": "kroo_bay", "name": "Kroo Bay", "district": "western_area_urban", "lat": 8.4892, "lng": -13.2387},
+    {"id": "mabella", "name": "Mabella", "district": "western_area_urban", "lat": 8.49, "lng": -13.23},
+    {"id": "wellington", "name": "Wellington", "district": "western_area_urban", "lat": 8.46, "lng": -13.17},
+    {"id": "lumley", "name": "Lumley", "district": "western_area_urban", "lat": 8.45, "lng": -13.27},
+    {"id": "bo_town", "name": "Bo Town", "district": "bo", "lat": 7.96, "lng": -11.74},
+    {"id": "kissy", "name": "Kissy", "district": "western_area_urban", "lat": 8.47, "lng": -13.18},
 ]
 
 
@@ -176,3 +181,66 @@ def test_insufficient_events_are_not_declared_backtest_ready():
     }], [], [])
     assert audit["classification"] == "C"
     assert audit["planning_criteria"]["met"] is False
+    assert audit["planning_criteria"]["event_data_floor_met"] is False
+
+
+def test_event_date_alias_and_source_type_are_preserved():
+    event = canonicalize_record({
+        "source_record_id": "ndma-delken-2023-09-01",
+        "event_source": "ndma_assessment",
+        "source_url": "https://ndma.gov.sl/example",
+        "event_start_date": "2023-09-01",
+        "event_end_date": "2023-09-01",
+        "event_location_name": "Delken Village",
+        "district": "bonthe",
+        "description": "NDMA dated Delken flood.",
+        "latitude": None,
+        "longitude": None,
+    }, ZONES)
+    assert event["event_date"] == "2023-09-01"
+    assert event["location_name"] == "Delken Village"
+    assert event["source"] == "ndma_assessment"
+    assert event["source_type"] == "government_ndma"
+    assert event["evidence_text"]
+    assert event["catalog_zone_match"] is None
+    assert event["latitude"] is None
+
+
+def test_mabela_matches_catalog_mabella_without_inventing_coords():
+    event = canonicalize_record({
+        "source_record_id": "ifrc-mabela",
+        "event_source": "ifrc_dref",
+        "event_start_date": "2019-08-01",
+        "event_location_name": "Mabela",
+        "district": "western_area_urban",
+        "latitude": None,
+        "longitude": None,
+    }, ZONES)
+    assert event["location_match_status"] == "matched"
+    assert event["catalog_zone_match"] == "zone:mabella"
+    assert event["latitude"] is None
+    assert event["centroid_assigned_silently"] is False
+
+
+def test_looking_town_does_not_become_kissy():
+    match = match_event_location({
+        "event_location_name": "Looking Town",
+        "district": "western_area_urban",
+        "latitude": None,
+        "longitude": None,
+    }, ZONES)
+    assert match["location_match_status"] == "unmatched"
+    assert match["matched_flood_zone_id"] is None
+
+
+def test_district_grain_does_not_match_town_catalog_zone():
+    match = match_event_location({
+        "event_location_name": "Bo Town",
+        "event_location_type": "district",
+        "district": "bo",
+        "latitude": None,
+        "longitude": None,
+    }, ZONES)
+    assert match["location_match_status"] == "unmatched"
+    assert match["matched_flood_zone_id"] is None
+    assert match["centroid_assigned_silently"] is False
